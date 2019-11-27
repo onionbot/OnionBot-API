@@ -1,5 +1,5 @@
 # mlx90640-library
-MLX90640 library functions
+NOTE - This is a clone of a publically available directory, submodule referencing to the fork's original will be added soon 
 
 ## Raspberry Pi Users
 
