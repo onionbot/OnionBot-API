@@ -1,2 +1,2 @@
-# SOLO
+# onionbot
 BEN COBLEY - DE4 SOLO PROJECT 
