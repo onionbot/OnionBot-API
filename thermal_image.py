@@ -110,7 +110,6 @@ class THERMAL_CAMERA(object):
             self.mlx.getFrame(frame)
         except ValueError:
             print("ValueError: Retrying...")
-            continue        # these happen, no biggie - retry
 
         print("Read 2 frames in %0.2f s" % (time.monotonic()-stamp))
 
@@ -125,14 +124,14 @@ class THERMAL_CAMERA(object):
         if frame != None:
             h = 12
             w = 16        
-            t = self.frame[h*32 + w]
+            t = self.latest_frame[h*32 + w]
             return t 
 
 
     def save_latest_jpg(self, path, visualise=False):
 
         frame = self.latest_frame 
-        file_name = self.latest_stamp    
+        file_name = str(self.latest_stamp)
         
         for i in range(COLORDEPTH):
             colormap[i] = self._gradient(i, COLORDEPTH, heatmap)
@@ -166,18 +165,18 @@ class THERMAL_CAMERA(object):
     def save_latest_csv(self, path):
 
         frame = self.latest_frame 
-        file_name = self.latest_stamp
+        file_name = str(self.latest_stamp)
 
-        data_string = []
-
-        if frame != None:        
-            for h in range(24):
-                for w in range(32):
-                    t = self.frame[h*32 + w]
-                    data_string.append("%0.1f, " % t, end="")
+        if frame != None:
             file_path = path+"/"+file_name+".csv"
-            file = open(file_path)
-            file.write(data_string)
+            file = open(file_path, "w")
+            for h in range(24):
+                data_string = ""
+                for w in range(32):
+                    t = self.latest_frame[h*32 + w]
+                    data_string = data_string + "{:.1f}".format(t) + ","
+                file.write(data_string.strip(',') + "\n")
+                
             file.close()
 
 
