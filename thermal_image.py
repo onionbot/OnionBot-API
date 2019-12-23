@@ -95,11 +95,15 @@ class THERMAL_CAMERA(object):
 
     def _visualise(self, img):
         
+        stamp = self.latest_stamp
+        
         img_surface = pygame.image.fromstring(img.tobytes(), img.size, img.mode)
         pygame.transform.scale(img_surface.convert(), screen.get_size(), screen)
         pygame.display.update()
         print("Completed 2 frames in %0.2f s (%d FPS)" %
               (time.monotonic()-stamp, 1.0 / (time.monotonic()-stamp)))
+        
+        time.sleep(1)
 
 
     def capture_frame(self):
@@ -119,19 +123,25 @@ class THERMAL_CAMERA(object):
 
     def get_latest_temperature(self):
         
-        frame = self.latest_frame 
+        frame = self.latest_frame
+        
+        if frame == None:
+            raise ValueError("Run capture function first")
 
         if frame != None:
             h = 12
             w = 16        
             t = self.latest_frame[h*32 + w]
-            return t 
+            return "{:.1f}".format(t) 
 
 
     def save_latest_jpg(self, path, visualise=False):
 
         frame = self.latest_frame 
         file_name = str(self.latest_stamp)
+        
+        if frame == None:
+            raise ValueError("Run capture function first")
         
         for i in range(COLORDEPTH):
             colormap[i] = self._gradient(i, COLORDEPTH, heatmap)
@@ -159,6 +169,8 @@ class THERMAL_CAMERA(object):
 
         if visualise==True:
             self._visualise(img)
+            
+        return file_path
 
 
 
@@ -167,19 +179,21 @@ class THERMAL_CAMERA(object):
         frame = self.latest_frame 
         file_name = str(self.latest_stamp)
 
-        if frame != None:
-            file_path = path+"/"+file_name+".csv"
-            file = open(file_path, "w")
-            for h in range(24):
-                data_string = ""
-                for w in range(32):
-                    t = self.latest_frame[h*32 + w]
-                    data_string = data_string + "{:.1f}".format(t) + ","
-                file.write(data_string.strip(',') + "\n")
-                
-            file.close()
+        if frame == None:
+            raise ValueError("Run capture function first")
 
+        file_path = path+"/"+file_name+".csv"
+        file = open(file_path, "w")
+        for h in range(24):
+            data_string = ""
+            for w in range(32):
+                t = self.latest_frame[h*32 + w]
+                data_string = data_string + "{:.1f}".format(t) + ","
+            file.write(data_string.strip(',') + "\n")
+            
+        file.close()
 
+        return file_path
 
 
 
