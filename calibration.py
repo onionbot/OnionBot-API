@@ -14,15 +14,15 @@ nc = normal_cam()
 
 time = datetime.datetime.now()
 
-path1 = cloud.get_path("testsession", "nc", "jpg", time)
+path1 = cloud.get_path("testsession", "nc", "jpg", time, "0")
 n = nc.capture(path1)
-cloud.upload(path1)
+#cloud.upload_from_filename(path1)
 
 
-path2 = cloud.get_path("testsession", "tc", "jpg", time)
+path2 = cloud.get_path("testsession", "tc", "jpg", time, "0")
 tc.capture_frame()
 t = tc.save_latest_jpg(path2)
-cloud.upload(path2)
+#cloud.upload_from_filename(path2)
 
 timg = PIL.Image.open(t).convert("RGBA")
 nimg = PIL.Image.open(n).convert("RGBA")
