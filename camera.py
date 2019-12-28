@@ -8,7 +8,8 @@ class CAMERA(object):
         
         camera = PiCamera()
         camera.rotation = 180
-        camera.zoom = (0., 0., 0.9, 0.9)
+        camera.zoom = (0.05, 0.0, 0.75, 0.95)
+                      #L,  ,   R,  
         camera.resolution = (1024, 768)
         
         #camera.start_preview()
