@@ -170,7 +170,6 @@ class THERMAL_CAMERA(object):
         img = img.resize((32*INTERPOLATE, 24*INTERPOLATE), Image.BICUBIC)
         img = img.transpose(method=Image.ROTATE_90)
         img = img.transpose(method=Image.FLIP_LEFT_RIGHT)
-
         img.save(file_path)
 
         if self.visualise_on==True:
@@ -179,7 +178,7 @@ class THERMAL_CAMERA(object):
         return file_path
 
 
-    def save_latest_csv(self, path):
+    def save_latest_csv(self, file_path):
 
         frame = self._latest_frame 
         file_name = str(self._latest_stamp)
@@ -187,7 +186,6 @@ class THERMAL_CAMERA(object):
         if frame == None:
             raise ValueError("Run capture function first")
 
-        file_path = path+"/"+file_name+".csv"
         file = open(file_path, "w")
         for h in range(24):
             data_string = ""
