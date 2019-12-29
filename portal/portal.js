@@ -2,7 +2,7 @@
 $('#btn-set-temp').on('click', function() {
   $.ajax({
     type: "POST",
-    url: "http://192.168.0.11:5000/",
+    url: "http://192.168.0.73:5000/",
     data: {
       action: "set_temp",
       temp: $("#temp").val()
