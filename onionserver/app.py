@@ -1,6 +1,6 @@
 from flask import Flask
 from flask import request
-from .. import control
+import control 
 
 ctrl = control.CONTROL()
 
