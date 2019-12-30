@@ -1,16 +1,13 @@
-from thermal_camera import THERMAL_CAMERA as thermal_cam
-from camera import CAMERA as normal_cam
-import PIL.Image
-import PIL.ImageEnhance
-from cloud import CLOUD as cloud
+from thermal_camera import THERMAL_CAMERA
+from camera import CAMERA
+from cloud import CLOUD
 from time import sleep 
 import datetime
 import json
 
-cloud = cloud()
-
-tc = thermal_cam(visualise_on=False)
-nc = normal_cam()
+cloud = CLOUD()
+thermal = THERMAL_CAMERA(visualise_on=False)
+camera = CAMERA()
 
 session_id = "testsession"
 measurement_id = 0
@@ -21,11 +18,11 @@ while True:
     measurement_id += 1
     time_stamp = datetime.datetime.now()
 
-    image_path = nc.capture(cloud.get_path(session_id, "camera", "jpg", time_stamp, measurement_id))
+    image_path = camera.capture(cloud.get_path(session_id, "camera", "jpg", time_stamp, measurement_id))
     
-    tc.capture_frame()
-    thermal_path = tc.save_latest_jpg(cloud.get_path(session_id, "thermal", "jpg", time_stamp, measurement_id))
-    temperature = tc.get_latest_temperature()
+    thermal.capture_frame()
+    thermal_path = thermal.save_latest_jpg(cloud.get_path(session_id, "thermal", "jpg", time_stamp, measurement_id))
+    temperature = thermal.get_latest_temperature()
     
     data = {
         "session_id":session_id,
