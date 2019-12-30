@@ -5,6 +5,7 @@
 import logging
 import threading
 import time
+from time import sleep
 
 from thermal_camera import THERMAL_CAMERA
 from camera import CAMERA
@@ -24,6 +25,14 @@ class LOCAL(object):
         
         self.latest_meta = None
         self.stop_flag = False
+        
+        self.latest_meta = None
+        self.chosen_labels = None
+        self.active_label = None
+        self.active_model = None
+        
+        self.camera_frame_rate = 1
+        self.temperature_set_point = 1
 
 
     def start(self, session_name):
@@ -47,9 +56,9 @@ class LOCAL(object):
                 model = self.set_active_model
                 
                 # Capture sensor data 
-                image_filepath = camera.capture(cloud.get_path(session_id, "camera", "jpg", time_stamp, measurement_id))
+                image_filepath = camera.capture(cloud.get_path(session_name, "camera", "jpg", time_stamp, measurement_id))
                 thermal.capture_frame()
-                thermal_filepath = thermal.save_latest_jpg(cloud.get_path(session_id, "thermal", "jpg", time_stamp, measurement_id))
+                thermal_filepath = thermal.save_latest_jpg(cloud.get_path(session_name, "thermal", "jpg", time_stamp, measurement_id))
                 temperature = thermal.get_latest_temperature()
                 
                 # Upload to cloud
@@ -63,14 +72,14 @@ class LOCAL(object):
                 data = {
                     "session_name":session_name,
                     "label":label,
-                    "prediction":prediction
+                    "prediction":prediction,
                     "measurement_id":measurement_id,
                     "time_stamp":str(time_stamp),
                     "temperature":temperature,
                     "image_filepath":image_filepath,
                     "thermal_filepath":thermal_filepath
                         }
-                json_filepath = cloud.get_path(session_id, "meta", "json", time_stamp, measurement_id)
+                json_filepath = cloud.get_path(session_name, "meta", "json", time_stamp, measurement_id)
                 with open(json_filepath, "w") as write_file:
                     json.dump(data, write_file)
                 
@@ -94,7 +103,7 @@ class LOCAL(object):
                 measurement_id += 1
                 self.latest_meta = capture(measurement_id)
                 
-                sleep(1/self.frame_rate)
+                sleep(1/self.camera_frame_rate)
             
             logging.info("Thread %s: finishing", name)
         
