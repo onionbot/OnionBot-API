@@ -1,5 +1,5 @@
 """ Server - handles communication with 'local' Pi device - currently also running on Pi but 
-designed with future proofing in mind, could be run on Python backend"""
+designed as a passthrough with future proofing in mind, could be run on Python backend"""
 
 import local
 
@@ -7,13 +7,15 @@ import local
 class SERVER(object):
 
     def __init__(self):
+        """Cloud-server-to-pi communication could be initiated here, 
+        in future if running in cloud"""
         pass
 
 
-    def start(self):
+    def start(self, session_name):
         """Sends start command to Pi"""
 
-        return local.start()
+        return local.start(session_name)
 
 
     def stop(self):
@@ -37,9 +39,7 @@ class SERVER(object):
     def set_active_label(self, string):
         """Command to change current active label -  for building training datasets"""
 
-        local.set_active_label(string)
-
-        return 1
+        return local.set_active_label(string)
 
 
     def get_models(self):
@@ -51,14 +51,18 @@ class SERVER(object):
     def set_active_model(self, string):
         """Command to change current active model for predictions"""
 
-        local.set_active_model(string)
-
-        return 1
+        return local.set_active_model(string)
 
 
     def set_temperature_setpoint(self, value):
         """Command to change current temperature setpoint"""
 
-        local.set_temperature_setpoint(value)
+        return local.set_temperature_setpoint(value)
 
-        return 1
+
+    def set_camera_frame_rate(self, value):
+        """Command to change camera targe refresh rate"""
+
+        return local.set_camera_frame_rate(value)
+
+
