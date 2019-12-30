@@ -14,9 +14,19 @@ ctrl = control.CONTROL()
 
 
 def index():
+	"""Index is run automatically on init by flask"""
     if request.form['action'] == 'set_hob':
         return ctrl.set_hob(request.form['temp'])
     # return request.args.get('action')
+
+
+
+
+
+
+
+
+
 
 if __name__ == '__main__':
     # TODO: add authentication
