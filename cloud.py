@@ -6,7 +6,9 @@ from google.cloud import storage
 client = storage.Client()
 # GOTO: https://console.cloud.google.com/storage/browser/[bucket-id]/
 
-bucket=client.get_bucket('onionbucket')
+bucket_name = 'onionbucket'
+
+bucket=client.get_bucket(bucket_name)
 
 class CLOUD(object):
     """Save image to file"""
@@ -29,3 +31,7 @@ class CLOUD(object):
         
         os.makedirs(path, exist_ok=True)
         return"%s/%s" % (path, filename)
+
+    def get_bucket_name():
+
+        return bucket_name

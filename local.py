@@ -39,6 +39,7 @@ class LOCAL(object):
         """Start logging"""
 
         self.session_name = session_name
+        self.bucket_name = cloud.bucket_name
 
         def thread_function(name):
             """Threaded to run capture loop in background while allowing other processes to continue"""
@@ -76,8 +77,8 @@ class LOCAL(object):
                     "measurement_id":measurement_id,
                     "time_stamp":str(time_stamp),
                     "temperature":temperature,
-                    "image_filepath":image_filepath,
-                    "thermal_filepath":thermal_filepath
+                    "image_filepath":self.bucket_name+"/"+image_filepath,
+                    "thermal_filepath":self.bucket_name+"/"+thermal_filepath
                         }
                 json_filepath = cloud.get_path(session_name, "meta", "json", time_stamp, measurement_id)
                 with open(json_filepath, "w") as write_file:
