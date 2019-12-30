@@ -12,10 +12,10 @@ class SERVER(object):
         pass
 
 
-    def start(self, session_name, chosen_labels):
+    def start(self, session_name):
         """Sends start command to Pi"""
 
-        return local.start(session_name), chosen_labels
+        return local.start(session_name)
 
 
     def stop(self):
@@ -31,8 +31,17 @@ class SERVER(object):
 
         return local.get_latest_meta()
 
-
+    
     def get_chosen_labels(self):
+        """Returns options for labels selected from `all_labels` in new session process"""
+
+        return local.get_chosen_labels()
+
+
+    def set_chosen_labels(self, string):
+        """Returns options for labels selected from `all_labels` in new session process"""
+
+        return local.set_chosen_labels(string)
 
 
     def set_active_label(self, string):
@@ -86,8 +95,4 @@ class SERVER(object):
         """Returns available models for prediction"""
 
         return local.get_all_models()
-
-
-
-
 
