@@ -13,17 +13,13 @@ class SERVER(object):
     def start(self):
         """Sends start command to Pi"""
 
-        local.start()
-
-        return 1
+        return local.start()
 
 
     def stop(self):
         """Sends stop command to Pi"""
 
-        local.stop()
-
-        return 1 
+        return local.stop()
 
 
     def get_latest_meta(self):
