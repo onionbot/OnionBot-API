@@ -1,5 +1,5 @@
 """ Server - handles communication with 'local' Pi device - currently also running on Pi but 
-designed as a passthrough with future proofing in mind, could be run on Python backend"""
+designed as a passthrough with future proofing in mind, could be run on web hosted Python backend"""
 
 import local
 
@@ -12,10 +12,10 @@ class SERVER(object):
         pass
 
 
-    def start(self, session_name):
+    def start(self, session_name, chosen_labels):
         """Sends start command to Pi"""
 
-        return local.start(session_name)
+        return local.start(session_name), chosen_labels
 
 
     def stop(self):
@@ -24,16 +24,15 @@ class SERVER(object):
         return local.stop()
 
 
+    # PARAMETERS STORED IN LOCAL VARIABLES ON PI (lost at end of session)
+
     def get_latest_meta(self):
         """Returns cloud filepath of latest meta.json - includes path location of images"""
 
-        return local.get_latest_meta
+        return local.get_latest_meta()
 
 
-    def get_labels(self):
-        """Returns cloud filepath of labels.json - includes available image labels"""
-
-        return local.get_labels()
+    def get_chosen_labels(self):
 
 
     def set_active_label(self, string):
@@ -42,16 +41,13 @@ class SERVER(object):
         return local.set_active_label(string)
 
 
-    def get_models(self):
-        """Returns cloud filepath of models.json - available models for prediction"""
-
-        return local.get_models()
-
-
     def set_active_model(self, string):
         """Command to change current active model for predictions"""
 
         return local.set_active_model(string)
+
+
+    # PARAMETERS STORED IN CONFIG FILE ON PI (saved after each session on pi)
 
 
     def set_temperature_setpoint(self, value):
@@ -64,5 +60,22 @@ class SERVER(object):
         """Command to change camera targe refresh rate"""
 
         return local.set_camera_frame_rate(value)
+
+
+    # PARAMETERS STORED IN TEXT FILES ON PI (retrieve hard copies on pi)
+
+    def get_all_labels(self):
+        """Returns available image labels for training"""
+
+        return local.get_all_labels()
+
+
+    def get_all_models(self):
+        """Returns available models for prediction"""
+
+        return local.get_all_models()
+
+
+
 
 
