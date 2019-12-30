@@ -4,7 +4,7 @@ $('#btn-set-temp').on('click', function() {
     type: "POST",
     url: "http://192.168.0.73:5000/",
     data: {
-      action: "set_temp",
+      action: "set_hob",
       temp: $("#temp").val()
     },
     success: function(data) {
