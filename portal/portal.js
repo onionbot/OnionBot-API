@@ -1,3 +1,4 @@
+"use strict";
 
 $('#btn-set-temp').on('click', function() {
   $.ajax({
@@ -12,3 +13,21 @@ $('#btn-set-temp').on('click', function() {
     },
   });
 });
+
+
+function myFn(arg1, arg2) {
+  alert(arg1);
+  $("#btn-set-temp").html("button");
+  $(".btn").html("button");
+}
+
+
+function refresh() {
+  $.getJSON("url goes here ?key=skdhflskfhldf", function(data) {
+    // data is a js object 
+    console.log(data.hobtemp);
+  });
+}
+
+
+setInterval(refresh, 500);
