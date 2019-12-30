@@ -25,44 +25,76 @@ class LOCAL(object):
         self.latest_meta = None
         self.stop_flag = False
 
-        self.config_file_path = "config.txt"
-        self._update_config()
 
-
-    def _update_config(self):
-
-        # Refresh config.txt file 
-
-        self.active_label = 
-        self.active_model = 
-        self.temperature_setpoint = 
-        self.frame_rate = 
-
-
-    def start(self, session_name, chosen_labels):
+    def start(self, session_name):
         """Start logging"""
 
         self.session_name = session_name
-        self.chosen_labels = chosen_labels
 
         def thread_function(name):
             """Threaded to run capture loop in background while allowing other processes to continue"""
 
 
+            def capture(measurement_id):
+                """Subfunction to capture sensor data"""
+
+                # Start timer
+                time_stamp = datetime.datetime.now()
+
+                # Update variables
                 session_name = self.session_name
-                chosen_labels = self.chosen_labels
+                label = self.active_label
+                model = self.set_active_model
+                
+                # Capture sensor data 
+                image_filepath = camera.capture(cloud.get_path(session_id, "camera", "jpg", time_stamp, measurement_id))
+                thermal.capture_frame()
+                thermal_filepath = thermal.save_latest_jpg(cloud.get_path(session_id, "thermal", "jpg", time_stamp, measurement_id))
+                temperature = thermal.get_latest_temperature()
+                
+                # Upload to cloud
+                cloud.upload_from_filename(image_filepath)
+                cloud.upload_from_filename(thermal_filepath)
+
+                # Make prediction based on specified deep learning model
+                prediction = "None"
+
+                # Generate metadata
+                data = {
+                    "session_name":session_name,
+                    "label":label,
+                    "prediction":prediction
+                    "measurement_id":measurement_id,
+                    "time_stamp":str(time_stamp),
+                    "temperature":temperature,
+                    "image_filepath":image_filepath,
+                    "thermal_filepath":thermal_filepath
+                        }
+                json_filepath = cloud.get_path(session_id, "meta", "json", time_stamp, measurement_id)
+                with open(json_filepath, "w") as write_file:
+                    json.dump(data, write_file)
+                
+                # Upload to cloud
+                cloud.upload_from_filename(json_filepath)
+                
+                return json_filepath
+
+
+
 
             logging.info("Thread %s: starting", name)
+            measurement_id = 0
+
+            # WHILE LOOP
             
             while self.stop_flag == False:
 
-                self._update_config()
+                print ("Capturing measurement {measurement_id}")
 
-                print ("Onionlog")
-
-                self.latest_meta = onionbot.capture
+                measurement_id += 1
+                self.latest_meta = capture(measurement_id)
                 
-                time.sleep(1/self.frame_rate)
+                sleep(1/self.frame_rate)
             
             logging.info("Thread %s: finishing", name)
         
@@ -88,6 +120,11 @@ class LOCAL(object):
 
         self.stop_flag = True
 
+        self.latest_meta = None
+        self.chosen_labels = None
+        self.active_label = None
+        self.active_model = None
+
         return 1 
 
 
@@ -99,11 +136,23 @@ class LOCAL(object):
         return self.latest_meta
 
 
+    def get_chosen_labels(self):
+        """Returns options for labels selected from `all_labels` in new session process"""
+
+        return self.chosen_labels
+
+    
+    def set_chosen_labels(self, string):
+        """Returns options for labels selected from `all_labels` in new session process"""
+
+        self.chosen_labels = string
+        return 1
+
+
     def set_active_label(self, string):
         """Command to change current active label -  for building training datasets"""
 
         self.active_label = string
-
         return 1
 
 
@@ -111,7 +160,6 @@ class LOCAL(object):
         """Command to change current active model for predictions"""
 
         self.active_model = string
-
         return 1
 
 
@@ -126,14 +174,13 @@ class LOCAL(object):
     def get_camera_frame_rate(self):
         """Command to change camera targe refresh rate"""
 
-        return.camera_frame_rate
+        return self.camera_frame_rate
 
 
     def set_temperature_setpoint(self, value):
         """Command to change current temperature setpoint"""
 
         self.temperature_setpoint = value
-
         return 1
 
 
@@ -141,7 +188,6 @@ class LOCAL(object):
         """Command to change camera targe refresh rate"""
 
         self.camera_frame_rate = value
-
         return 1
 
 

@@ -50,6 +50,18 @@ class SERVER(object):
     # PARAMETERS STORED IN CONFIG FILE ON PI (saved after each session on pi)
 
 
+    def get_temperature_setpoint(self, value):
+        """Command to change current temperature setpoint"""
+
+        return local.get_temperature_setpoint()
+
+
+    def get_camera_frame_rate(self, value):
+        """Command to change camera targe refresh rate"""
+
+        return local.get_camera_frame_rate()
+
+
     def set_temperature_setpoint(self, value):
         """Command to change current temperature setpoint"""
 
