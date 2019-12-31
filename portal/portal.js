@@ -1,5 +1,15 @@
 'use strict';
 
+
+/*******************************************************/
+// Application variables 
+
+var endpoint_url = 'http://192.168.0.73:5000/';
+
+var meta_url;
+
+/*******************************************************/
+
 // $('#btn-set-temp').on('click', function() {
 //   $.ajax({
 //     type: 'POST',
@@ -33,8 +43,14 @@ $(document).ready(function() {
 $('#start').on('click', function() {
   
   set('set_chosen_labels', $('#labels').val());
+  
+  set('set_active_label', 'None')
+  set('set_active_model', 'None')
+
   // Show hidden boxes
-  execute('start');
+
+  set('start', $('#session-id').val());
+
   // Refresh stuff
   setInterval(refresh, 500);
 
@@ -42,22 +58,33 @@ $('#start').on('click', function() {
 
 function refresh() {
   
-  var meta_url; 
-  meta_url = get('get_latest_meta');
-  $.getJSON(meta_url, function(data) {
-    // data is a js object 
-    
-    $('#session_name').html(data.session_name);
-    $('#label').html(data.label);
-    $('#camera_prediction').html(data.camera_prediction);
-    $('#thermal_prediction').html(data.thermal_prediction);
-    $('#measurement_id').html(data.measurement_id);
-    $('#time_stamp').html(data.time_stamp);
-    $('#temperature').html(data.temperature);
-    $('#camera_image').src = data.camera_filepath;
-    $('#thermal_image').src = data.thermal_filepath;
+  var new_meta_url = get('get_latest_meta');
+  if (new_meta_url != meta_url) {
+    meta_url = new_meta_url;
 
-  });
+    // meta_url has changed so update page information 
+
+    $.getJSON(meta_url, function(data) {
+      // data is a js object 
+      
+      $('#session_name').html(data.session_name);
+      $('#label').html(data.label);
+      $('#camera_prediction').html(data.camera_prediction);
+      $('#thermal_prediction').html(data.thermal_prediction);
+      $('#measurement_id').html(data.measurement_id);
+      $('#time_stamp').html(data.time_stamp);
+      $('#temperature').html(data.temperature);
+      $('#camera_filepath').html(data.camera_filepath);
+      $('#thermal_filepath').html(data.thermal_filepath);
+      $('#camera_filepath').href = data.camera_filepath;
+      $('#thermal_filepath').href = data.thermal_filepath;
+      $('#camera_image').src = data.camera_filepath;
+      $('#thermal_image').src = data.thermal_filepath;
+
+    });
+  }
+
+  
 }
 
 
@@ -65,26 +92,26 @@ function refresh() {
 function set(function_name, argument) {
   $.ajax({
     type: 'POST',
-    url: 'http://192.168.0.73:5000/',
+    url: endpoint_url,
     data: {
-      func: function_name,
-      arg: argument
+      action: function_name,
+      value: argument
     },
     success: function(confirmation) {
-      return confirmation;
+      console.log(confirmation);
     },
   });
 }
 
 function get(function_name) {
   $.ajax({
-    type: 'POST',
-    url: 'http://192.168.0.73:5000/',
+    type: 'GET',
+    url: endpoint_url,
     data: {
-      func: function_name,
+      action: function_name,
     },
     success: function(data) {
-      return data;
+      console.log(data);
     },
   });
 }
@@ -93,12 +120,12 @@ function get(function_name) {
 function execute(function_name) {
   $.ajax({
     type: 'POST',
-    url: 'http://192.168.0.73:5000/',
+    url: endpoint_url,
     data: {
-      func: function_name,
+      action: function_name,
     },
     success: function(confirmation) {
-      return confirmation;
+      console.log(confirmation);
     },
   });
 }
