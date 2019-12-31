@@ -22,7 +22,7 @@ def index():
 
 
     if request.form['action'] == 'start':
-        return server.start(request.form['session_name']):
+        return server.start(request.form['value']):
 
 
     if request.form['action'] == 'stop':
@@ -38,15 +38,15 @@ def index():
 
 
     if request.form['action'] == 'set_chosen_labels':
-        return server.set_chosen_labels(request.form['string']):
+        return server.set_chosen_labels(request.form['value']):
 
 
     if request.form['action'] == 'set_active_label':
-        return server.set_active_label(request.form['string']):
+        return server.set_active_label(request.form['value']):
 
 
     if request.form['action'] == 'set_active_model':
-        return server.set_active_model(request.form['string']):
+        return server.set_active_model(request.form['value']):
 
 
     if request.form['action'] == 'get_temperature_setpoint':
