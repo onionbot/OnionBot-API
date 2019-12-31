@@ -67,17 +67,19 @@ class LOCAL(object):
                 cloud.upload_from_filename(thermal_filepath)
 
                 # Make prediction based on specified deep learning model
-                prediction = "None"
+                camera_prediction = "None"
+                thermal_prediction = "None"
 
                 # Generate metadata
                 data = {
                     "session_name":session_name,
                     "label":label,
-                    "prediction":prediction,
+                    "camera_prediction":camera_prediction,
+                    "thermal_prediction":thermal_prediction,
                     "measurement_id":measurement_id,
                     "time_stamp":str(time_stamp),
                     "temperature":temperature,
-                    "image_filepath":self.bucket_name+"/"+image_filepath,
+                    "image_filepath":self.bucket_name+"/"+camera_filepath,
                     "thermal_filepath":self.bucket_name+"/"+thermal_filepath
                         }
                 json_filepath = cloud.get_path(session_name, "meta", "json", time_stamp, measurement_id)
