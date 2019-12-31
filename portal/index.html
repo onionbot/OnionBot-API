@@ -7,7 +7,11 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
         <!-- Load BootStrap resources -->
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
-        <style type="text/css">h2{padding-top: 25px} label{width:100%}</style>
+        <style type="text/css">
+            h2{padding-top: 25px; padding-bottom: 15px;}
+            label{width:100%}
+            a{overflow-wrap: break-word; word-wrap: break-word; -ms-word-break: break-all;word-break: break-word;}
+        </style>
     </head>
     <body style="padding: 100px">
         
@@ -50,6 +54,7 @@
                 <div class="col-5" style="padding-right: 30px">
                     <div class="row">
                         <label>Set live label</label>
+                        <h4 id="label">not_boiling</h4>
                         <div class="btn-group" role="group" style="width: 100%">
                             <button type="button" class="btn btn-secondary">discard</button>
                             <button type="button" class="btn btn-secondary">not_boiling</button>
@@ -58,7 +63,7 @@
                     </div>
                     <div class="row">
                         <label for="temperature" style="padding-top: 15px">Measured temperature at centre</label>
-                        <h4 id="temperature">55.0 degrees</h4>
+                        <h4><span id="temperature">55.0</span> degrees</h4>
                     </div>
                     <div class="row">
                         <label for="hob-setpoint" style="padding-top: 15px;">Hob setpoint</label>
@@ -78,12 +83,12 @@
                 <div class="col">
                     <label for="camera-image">Camera view</label>
                     <img id="camera-image" src="cameraexample.jpg" style="width: 100%">
-                    <a href="https://storage.cloud.google.com/onionbucket/logs/testsession/camera/testsession_0001_2019-12-24_19-42-35-290960_camera.jpg">Image GCP Link</a>
+                    <a id="camera_filepath" href="https://storage.cloud.google.com/onionbucket/logs/testsession/camera/testsession_0001_2019-12-24_19-42-35-290960_camera.jpg">https://storage.cloud.google.com/onionbucket/logs/testsession/camera/testsession_0001_2019-12-24_19-42-35-290960_camera.jpg</a>
                 </div>
                 <div class="col">
                     <label for="thermal-image">Thermal imaging view</label>
                     <img id="thermal-image" src="thermalexample.jpg" style="width: 100%">
-                    <a href="https://storage.cloud.google.com/onionbucket/logs/testsession/camera/testsession_0001_2019-12-24_19-42-35-290960_camera.jpg">Image GCP Link</a>
+                    <a id="thermal_filepath" href="https://storage.cloud.google.com/onionbucket/logs/testsession/camera/testsession_0001_2019-12-24_19-42-35-290960_camera.jpg">https://storage.cloud.google.com/onionbucket/logs/testsession/camera/testsession_0001_2019-12-24_19-42-35-290960_camera.jpg</a>
                 </div>
             </div>
             <div class="row">
