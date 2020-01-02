@@ -1,16 +1,18 @@
 """ Server - handles communication with 'local' Pi device - currently also running on Pi but 
 designed as a passthrough with future proofing in mind, could be run on web hosted Python backend"""
 
-import local
 
+from local import LOCAL
+local = LOCAL()
 
 class SERVER(object):
 
     def __init__(self):
         """Cloud-server-to-pi communication could be initiated here, 
         in future if running in cloud"""
+        
         pass
-
+        
 
     def start(self, session_name):
         """Sends start command to Pi"""
@@ -96,3 +98,5 @@ class SERVER(object):
 
         return local.get_all_models()
 
+#server = SERVER()
+#server.start('test')
