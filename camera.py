@@ -18,7 +18,7 @@ class CAMERA(object):
     
     def capture(self, file_path):
 
-        self.camera.capture(file_path, resize=(240, 320))
+        self.camera.capture(file_path, resize=(240, 240))
         
         return file_path
         

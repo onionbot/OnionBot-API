@@ -122,7 +122,7 @@ class THERMAL_CAMERA(object):
         except ValueError:
             print("ValueError: Retrying...")
 
-        print("Read 2 frames in %0.2f s" % (time.monotonic()-stamp))
+        #print("Read 2 frames in %0.2f s" % (time.monotonic()-stamp))
 
         self._latest_frame = frame
         self._latest_stamp = stamp
@@ -167,7 +167,8 @@ class THERMAL_CAMERA(object):
 
         img = Image.new('RGB', (32, 24))
         img.putdata(pixels)
-        img = img.resize((32*INTERPOLATE, 24*INTERPOLATE), Image.BICUBIC)
+        img = img.resize((24*INTERPOLATE, 24*INTERPOLATE), Image.BICUBIC)
+        
         img = img.transpose(method=Image.ROTATE_90)
         img = img.transpose(method=Image.FLIP_LEFT_RIGHT)
         img.save(file_path)
