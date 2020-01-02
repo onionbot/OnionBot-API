@@ -72,40 +72,39 @@ function execute(function_name) {
 
 function refresh() {
     
-  var new_meta_url = get('get_latest_meta', update);
+  //var new_meta_url = get('get_latest_meta', update);
+  update();
   
 }
 
 
-function update(new_meta_url) {
+function update() {
 
-  if (new_meta_url != meta_url) {
 
-    meta_url = new_meta_url;
+  // meta has changed so update page information 
 
-    // meta_url has changed so update page information 
+  get("get_latest_meta", function( data ) {
+    // data is a js object 
 
-    $.getJSON(meta_url, function( data ) {
-      // data is a js object 
+    data = JSON.parse(data);
 
-      console.log(data);
-      
-      $('#session_name').html(data.session_name);
-      $('#label').html(data.label);
-      $('#camera_prediction').html(data.camera_prediction);
-      $('#thermal_prediction').html(data.thermal_prediction);
-      $('#measurement_id').html(data.measurement_id);
-      $('#time_stamp').html(data.time_stamp);
-      $('#temperature').html(data.temperature);
-      $('#camera_filepath').html(data.camera_filepath);
-      $('#thermal_filepath').html(data.thermal_filepath);
-      $('#camera_filepath').href = data.camera_filepath; $('#camera_filepath').html = data.camera_filepath;
-      $('#thermal_filepath').href = data.thermal_filepath; $('#thermal_filepath').html = data.thermal_filepath;
-      $('#camera_image').src = data.camera_filepath;
-      $('#thermal_image').src = data.thermal_filepath;
+    console.log(data);
+    $('#session-name').html(data.session_name);
+    $('#label').html(data.label);
+    $('#camera-prediction').html(data.camera_prediction);
+    $('#thermal-prediction').html(data.thermal_prediction);
+    $('#measurement-id').html(data.measurement_id);
+    $('#time-stamp').html(data.time_stamp);
+    $('#temperature').html(data.temperature);
+    $('#camera-filepath').html(data.camera_filepath);
+    $('#thermal-filepath').html(data.thermal_filepath);
+    $('#camera-filepath').attr("href", data.camera_filepath);
+    $('#thermal-filepath').attr("href", data.thermal_filepath);
+    $('#camera-image').attr("src", data.camera_filepath);
+    $('#thermal-image').attr("src", data.thermal_filepath);
 
-    });
-  }
+  });
+  
 }
 
 
