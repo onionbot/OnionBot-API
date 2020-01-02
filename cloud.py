@@ -20,18 +20,28 @@ class CLOUD(object):
     def upload_from_filename(self, path):
         blob = bucket.blob(path)
         blob.upload_from_filename(path)
+        blob.make_public()
         print("Uploaded to cloud:", path)
+        print("Blob is pubicly accesible at ", blob.public_url) 
         
 
     def get_path(self, session_name, sensor, file_type, time, measurement_id):
         
+        #Make local path
         time_data = time.strftime("%Y-%m-%d_%H-%M-%S-%f")
-        path = "logs/%s/%s" % (session_name, sensor)
-        filename = "%s_%s_%s_%s.%s" % (session_name, str(measurement_id).zfill(5), time_data, sensor,  file_type)
-        
+        path = F"logs/{session_name}/{sensor}"
+        filename = F"{session_name}_{str(measurement_id).zfill(5)}_{time_data}_{sensor}.{file_type}"
         os.makedirs(path, exist_ok=True)
-        return"%s/%s" % (path, filename)
+        
+        return F"{path}/{filename}"
+        
+        
+        
+    def get_public_path(self, local_path):
+        
+        # Public URL 
+        cloud_location = "https://storage.googleapis.com/" + bucket_name
+        
+        return F"{cloud_location}/{local_path}"
 
-    def get_bucket_name():
 
-        return bucket_name
