@@ -25,51 +25,51 @@ def index():
         return server.start(request.form['value']):
 
 
-    if request.form['action'] == 'stop':
+    elif request.form['action'] == 'stop':
         return server.stop():
 
 
-    if request.form['action'] == 'get_latest_meta':
+    elif request.form['action'] == 'get_latest_meta':
         return server.get_latest_meta():
 
 
-    if request.form['action'] == 'get_chosen_labels':
+    elif request.form['action'] == 'get_chosen_labels':
         return server.get_chosen_labels():
 
 
-    if request.form['action'] == 'set_chosen_labels':
+    elif request.form['action'] == 'set_chosen_labels':
         return server.set_chosen_labels(request.form['value']):
 
 
-    if request.form['action'] == 'set_active_label':
+    elif request.form['action'] == 'set_active_label':
         return server.set_active_label(request.form['value']):
 
 
-    if request.form['action'] == 'set_active_model':
+    elif request.form['action'] == 'set_active_model':
         return server.set_active_model(request.form['value']):
 
 
-    if request.form['action'] == 'get_temperature_setpoint':
+    elif request.form['action'] == 'get_temperature_setpoint':
         return server.get_temperature_setpoint():
 
 
-    if request.form['action'] == 'get_camera_frame_rate':
+    elif request.form['action'] == 'get_camera_frame_rate':
         return server.get_camera_frame_rate():
 
 
-    if request.form['action'] == 'set_temperature_setpoint':
+    elif request.form['action'] == 'set_temperature_setpoint':
         return server.set_temperature_setpoint(float(request.form['value'])):
 
 
-    if request.form['action'] == 'set_camera_frame_rate':
+    elif request.form['action'] == 'set_camera_frame_rate':
         return server.set_camera_frame_rate(float(request.form['value'])):
 
 
-    if request.form['action'] == 'get_all_labels':
+    elif request.form['action'] == 'get_all_labels':
         return server.get_all_labels():
 
 
-    if request.form['action'] == 'get_all_models':
+    elif request.form['action'] == 'get_all_models':
         return server.get_all_models():
 
 
