@@ -18,19 +18,19 @@ class CLOUD(object):
     
     
     def upload_from_filename(self, path):
-            blob = bucket.blob(path)
+        blob = bucket.blob(path)
         blob.upload_from_filename(path)
         blob.make_public()
         #print("Uploaded to cloud:", path)
         #print("Blob is publicly accessible at ", blob.public_url) 
         
 
-    def get_path(self, session_name, sensor, file_type, time, measurement_id):
+    def get_path(self, session_name, sensor, file_type, time, measurement_id, label):
         
         #Make local path
         time_data = time.strftime("%Y-%m-%d_%H-%M-%S-%f")
-        path = F"logs/{session_name}/{sensor}"
-        filename = F"{session_name}_{str(measurement_id).zfill(5)}_{time_data}_{sensor}.{file_type}"
+        path = F"logs/{session_name}/{sensor}/{label}"
+        filename = F"{session_name}_{str(measurement_id).zfill(5)}_{time_data}_{sensor}_{label}.{file_type}"
         os.makedirs(path, exist_ok=True)
         
         return F"{path}/{filename}"
