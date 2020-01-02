@@ -5,27 +5,8 @@
 /*************** Application variables *****************/
 
 var endpoint_url = 'http://192.168.0.73:5000/';
-var refresh_interval = 500;
-
-var meta_url;
-
+var update_interval = 500;
 /*******************************************************/
-
-
-// $('#btn-set-temp').on('click', function() {
-//   $.ajax({
-//     type: 'POST',
-//     url: 'http://192.168.0.73:5000/',
-//     data: {
-//       action: 'set_hob',
-//       temp: $('#temp').val()
-//     },
-//     success: function(data) {
-//       alert(data);
-//     },
-//   });
-// });
-
 
 
 
@@ -55,53 +36,29 @@ function get(function_name, callback) {
   });
 }
 
-
-function execute(function_name) {
-  $.ajax({
-    type: 'POST',
-    url: endpoint_url,
-    data: {
-      action: function_name,
-    },
-    success: function(confirmation) {
-      console.log(confirmation);
-    },
-  });
-}
-
-
-function refresh() {
-    
-  //var new_meta_url = get('get_latest_meta', update);
-  update();
-  
-}
-
-
 function update() {
 
-
-  // meta has changed so update page information 
 
   get("get_latest_meta", function( data ) {
     // data is a js object 
 
     data = JSON.parse(data);
-
-    console.log(data);
-    $('#session-name').html(data.session_name);
-    $('#label').html(data.label);
-    $('#camera-prediction').html(data.camera_prediction);
-    $('#thermal-prediction').html(data.thermal_prediction);
-    $('#measurement-id').html(data.measurement_id);
-    $('#time-stamp').html(data.time_stamp);
-    $('#temperature').html(data.temperature);
-    $('#camera-filepath').html(data.camera_filepath);
-    $('#thermal-filepath').html(data.thermal_filepath);
-    $('#camera-filepath').attr("href", data.camera_filepath);
-    $('#thermal-filepath').attr("href", data.thermal_filepath);
-    $('#camera-image').attr("src", data.camera_filepath);
-    $('#thermal-image').attr("src", data.thermal_filepath);
+    
+    console.log(data)
+    $('#session-name').html(data.attributes.session_name);
+    $('#active-label').html(data.attributes.active_label);
+    $('#active-model').html(data.attributes.active_model);
+    $('#camera-prediction').html(data.attributes.camera_prediction);
+    $('#thermal-prediction').html(data.attributes.thermal_prediction);
+    $('#measurement-id').html(data.attributes.measurement_id);
+    $('#time-stamp').html(data.attributes.time_stamp);
+    $('#temperature').html(data.attributes.temperature);
+    $('#camera-filepath').html(data.attributes.camera_filepath);
+    $('#thermal-filepath').html(data.attributes.thermal_filepath);
+    $('#camera-filepath').attr("href", data.attributes.camera_filepath);
+    $('#thermal-filepath').attr("href", data.attributes.thermal_filepath);
+    $('#camera-image').attr("src", data.attributes.camera_filepath);
+    $('#thermal-image').attr("src", data.attributes.thermal_filepath);
 
   });
   
@@ -110,39 +67,62 @@ function update() {
 
 $(document).ready(function() {
   
-
-  //   init() {
-  //     var dropdownOptions;
-  //     // call to python script, save repsonse to dropdownOptions 
-  //       // in callback function (once response has been obtained):
-  //       // populate dropdown with jQuery
-
-  //   }
-
-
-  // });
-
-
+  $("#stop").hide();
 
   // Event listeners for page interactions 
+
+  get("get_all_labels", function( data ) {
+    // data is a js object 
+
+    var label_json
+    label_json = data //JSON.parse(data);
+
+    let dropdown = $('#select-labels');
+
+    dropdown.empty();
+
+    dropdown.append('<option selected="true" disabled>Select labels</option>');
+    dropdown.prop('selectedIndex', 0);
+
+    // Populate dropdown with list of provinces
+    var dataJSON = JSON.parse(data);
+
+    $.each(dataJSON, function (key, entry) {
+      dropdown.append($('<option></option>').attr('value', entry.label).text(entry.label));
+    });
+
+    
+  });
+
 
 
   $('#start').on('click', function() {
     
     set('start', $('#session-id').val());
 
-    set('set_chosen_labels', $('#labels').val());
-    
-    set('set_active_label', 'testlabeljson')
-    set('set_active_model', 'testmodeljson')
+    set('set_chosen_labels', $('#select-labels').val());
 
-    // Show hidden boxes
+    $("#start").hide();
+    $("#stop").show();
 
-
-    // Refresh stuff
-    setInterval(refresh, refresh_interval);
+    // Refresh page
+    setInterval(update, update_interval);
   });
 
+  $('#stop').on('click', function() {
+    
+    get("stop", function( foo ) {
+      console.log("Stopping")
+
+
+      $("#stop").hide();
+      $("#start").show();
+      clearInterval(update)
+      update()
+
+    });
+
+  });
 
 
 });

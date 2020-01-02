@@ -31,98 +31,78 @@
                 </div>
                 <div class="col-5">
                     <label for="select-labels">Labels</label>
-                    <div class="dropdown">
-                        <button class="btn btn-secondary dropdown-toggle" type="button" id="labels" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="width: 100%">
-                        Select labels
-                        </button>
-                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            <a class="dropdown-item" href="#">Water boiling</a>
-                            <a class="dropdown-item" href="#">Water simmering</a>
-                            <a class="dropdown-item" href="#">Onion frying</a>
-                        </div>
-                    </div>
+                    <select id="select-labels" class="custom-select"></select>
                 </div>
                 <div class = 'col-2'>
                     <label for="start">Start session</label>
                     <button id="start" type="button" class="btn btn-primary" style="width: 100%">Start</button>
+                    <button id="stop" type="button" class="btn btn-danger" style="width: 100%">Stop</button>
                 </div>
             </div>
-            <div class="row">
-                <h2>Live control and labelling</h2>
-            </div>
-            <div class="row" style="margin: 0px">
-                <div class="col-5" style="padding-right: 30px">
-                    <div class="row">
-                        <label>Set live label</label>
-                        <h4 id="label">not_boiling</h4>
-                        <div class="btn-group" role="group" style="width: 100%">
-                            <button type="button" class="btn btn-secondary">discard</button>
-                            <button type="button" class="btn btn-secondary">not_boiling</button>
-                            <button type="button" class="btn btn-secondary">boiling</button>
+            <div>
+
+                <div class="row">
+                    <h2>Live control and labelling</h2>
+                </div>
+                <div class="row" style="margin: 0px">
+                    <div class="col-5" style="padding-right: 30px">
+                        <div class="row">
+                            <label>Set live label</label>
+                            <h4 id="active-label">_</h4>
+                            <div class="btn-group" role="group" style="width: 100%">
+                                <button type="button" class="btn btn-secondary">1</button>
+                                <button type="button" class="btn btn-secondary">2</button>
+                                <button type="button" class="btn btn-secondary">3</button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <label for="temperature" style="padding-top: 15px">Measured temperature at centre</label>
+                            <h4><span id="temperature">_</span> degrees</h4>
+                        </div>
+                        <div class="row">
+                            <label for="hob-setpoint" style="padding-top: 15px;">Hob setpoint</label>
+                            <div class="btn-group" role="group" style="width: 100%">
+                                <input type="text" class="form-control" id="hob-setpoint" placeholder="_" style="width: 75%">
+                                <button id="hob-setpoint-button" type="button" class="btn btn-secondary" style="width: 25%">Update</button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <label for="frame-rate" style="padding-top: 15px;">Frame rate</label>
+                            <div class="btn-group" role="group" style="width: 100%">
+                                <input type="text" class="form-control" id="frame-rate" placeholder="_" style="width: 75%">
+                                <button id="frame-rate-button" type="button" class="btn btn-secondary" style="width: 25%">Update</button>
+                            </div>
                         </div>
                     </div>
-                    <div class="row">
-                        <label for="temperature" style="padding-top: 15px">Measured temperature at centre</label>
-                        <h4><span id="temperature">55.0</span> degrees</h4>
+                    <div class="col">
+                        <label for="camera-image">Camera view</label>
+                        <img id="camera-image" src="placeholder.png" style="width: 100%">
+                        <a id="camera-filepath" href="#">_</a>
                     </div>
-                    <div class="row">
-                        <label for="hob-setpoint" style="padding-top: 15px;">Hob setpoint</label>
-                        <div class="btn-group" role="group" style="width: 100%">
-                            <input type="text" class="form-control" id="hob-setpoint" placeholder="Current setpoint: 100" style="width: 75%">
-                            <button id="hob-setpoint-button" type="button" class="btn btn-secondary" style="width: 25%">Update</button>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <label for="frame-rate" style="padding-top: 15px;">Frame rate</label>
-                        <div class="btn-group" role="group" style="width: 100%">
-                            <input type="text" class="form-control" id="frame-rate" placeholder="Current frame rate: 100" style="width: 75%">
-                            <button id="frame-rate-button" type="button" class="btn btn-secondary" style="width: 25%">Update</button>
-                        </div>
+                    <div class="col">
+                        <label for="thermal-image">Thermal imaging view</label>
+                        <img id="thermal-image" src="placeholder.png" style="width: 100%">
+                        <a id="thermal-filepath" href="#">_</a>
                     </div>
                 </div>
-                <div class="col">
-                    <label for="camera-image">Camera view</label>
-                    <img id="camera-image" src="cameraexample.jpg" style="width: 100%">
-                    <a id="camera_filepath" href="https://storage.cloud.google.com/onionbucket/logs/testsession/camera/testsession_0001_2019-12-24_19-42-35-290960_camera.jpg">https://storage.cloud.google.com/onionbucket/logs/testsession/camera/testsession_0001_2019-12-24_19-42-35-290960_camera.jpg</a>
+                <div class="row">
+                    <h2>Live prediction</h2>
                 </div>
-                <div class="col">
-                    <label for="thermal-image">Thermal imaging view</label>
-                    <img id="thermal-image" src="thermalexample.jpg" style="width: 100%">
-                    <a id="thermal_filepath" href="https://storage.cloud.google.com/onionbucket/logs/testsession/camera/testsession_0001_2019-12-24_19-42-35-290960_camera.jpg">https://storage.cloud.google.com/onionbucket/logs/testsession/camera/testsession_0001_2019-12-24_19-42-35-290960_camera.jpg</a>
-                </div>
-            </div>
-            <div class="row">
-                <h2>Live prediction</h2>
-            </div>
-            <div class="row">
-                <div class="col-5">
-                    <label for="select-model">Select pre-trained deep learning model</label>
-                    <div class="dropdown">
-                        <button class="btn btn-secondary dropdown-toggle" type="button" id="select-model" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="width: 100%">
-                        Select Model
-                        </button>
-                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            <a class="dropdown-item" href="#">Model 1</a>
-                            <a class="dropdown-item" href="#">Model 2</a>
-                            <a class="dropdown-item" href="#">Model 3</a>
-                        </div>
+                <div class="row">
+                    <div class="col-5">
+                        <label for="select-model">Select pre-trained deep learning model</label>
+                        <select id="select-model" class="custom-select"></select>
+                        <h4 id="active-model">_</h4>
                     </div>
-                    
+                    <div class="col">
+                        <label for="camera-prediction">Camera image prediction result:</label>
+                        <h4 id="camera-prediction">_</h4>
+                    </div>
+                    <div class="col">
+                        <label for="thermal-prediction">Thermal image prediction result:</label>
+                        <h4 id="thermal-prediction">_</h4>
+                    </div>
                 </div>
-                <div class="col">
-                    <label for="camera-prediction">Camera image prediction result:</label>
-                    <h4 id="camera_prediction">boiling_water 0.97</h4>
-                </div>
-                <div class="col">
-                    <label for="thermal_prediction">Thermal image prediction result:</label>
-                    <h4 id="thermal_prediction">boiling_water 0.99</h4>
-                </div>
-            </div>
-            <div class="row">
-                <h2>Output</h2>
-            </div>
-            <div class="row" style="background-color: #000">
-                <p style="color: #fff; padding: 5px; font-family: monospace; height: 100px;">Error message</p>
             </div>
         </div>
         
