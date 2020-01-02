@@ -23,15 +23,15 @@ class LOCAL(object):
 
     def __init__(self):
         
-        self.latest_meta = None
+
+        self.latest_meta = "onions"
         self.stop_flag = False
         
-        self.latest_meta = None
-        self.chosen_labels = None
-        self.active_label = None
-        self.active_model = None
+        self.chosen_labels = "onions"
+        self.active_label = "onions"
+        self.active_model = "onions"
         
-        self.camera_frame_rate = 1
+        self.camera_frame_rate = 10000
         self.temperature_set_point = 1
 
 
@@ -39,7 +39,6 @@ class LOCAL(object):
         """Start logging"""
 
         self.session_name = session_name
-        self.bucket_name = cloud.bucket_name
 
         def thread_function(name):
             """Threaded to run capture loop in background while allowing other processes to continue"""
@@ -57,13 +56,13 @@ class LOCAL(object):
                 model = self.set_active_model
                 
                 # Capture sensor data 
-                image_filepath = camera.capture(cloud.get_path(session_name, "camera", "jpg", time_stamp, measurement_id))
+                camera_filepath = camera.capture(cloud.get_path(session_name, "camera", "jpg", time_stamp, measurement_id))
                 thermal.capture_frame()
                 thermal_filepath = thermal.save_latest_jpg(cloud.get_path(session_name, "thermal", "jpg", time_stamp, measurement_id))
                 temperature = thermal.get_latest_temperature()
                 
                 # Upload to cloud
-                cloud.upload_from_filename(image_filepath)
+                cloud.upload_from_filename(camera_filepath)
                 cloud.upload_from_filename(thermal_filepath)
 
                 # Make prediction based on specified deep learning model
@@ -72,16 +71,36 @@ class LOCAL(object):
 
                 # Generate metadata
                 data = {
-                    "session_name":session_name,
-                    "label":label,
-                    "camera_prediction":camera_prediction,
-                    "thermal_prediction":thermal_prediction,
-                    "measurement_id":measurement_id,
-                    "time_stamp":str(time_stamp),
-                    "temperature":temperature,
-                    "image_filepath":self.bucket_name+"/"+camera_filepath,
-                    "thermal_filepath":self.bucket_name+"/"+thermal_filepath
+                    "session_name": session_name,
+                    "label": label,
+                    "camera_prediction": camera_prediction,
+                    "thermal_prediction": thermal_prediction,
+                    "measurement_id": measurement_id,
+                    "time_stamp": str(time_stamp),
+                    "temperature": temperature,
+                    "camera_filepath": cloud.get_public_path(camera_filepath),
+                    "thermal_filepath": cloud.get_public_path(thermal_filepath)
                         }
+                """            `    
+                data = {
+                  "type": "meta",
+                    "id": session_name_measurement_id_,
+                    "attributes": {
+                        "session_name": session_name,
+                        "label": label,
+                        "camera_prediction": camera_prediction,
+                        "thermal_prediction": thermal_prediction,
+                        "measurement_id": measurement_id,
+                        "time_stamp": str(time_stamp),
+                        "temperature": str(temperature),
+                        "camera_filepath": cloud.get_public_path(camera_filepath),
+                        "thermal_filepath": cloud.get_public_path(thermal_filepath)
+                    },
+                  }
+                }
+                """                
+                
+                
                 json_filepath = cloud.get_path(session_name, "meta", "json", time_stamp, measurement_id)
                 with open(json_filepath, "w") as write_file:
                     json.dump(data, write_file)
@@ -89,7 +108,7 @@ class LOCAL(object):
                 # Upload to cloud
                 cloud.upload_from_filename(json_filepath)
                 
-                return json_filepath
+                return json.dumps(data)
 
 
 
@@ -124,7 +143,7 @@ class LOCAL(object):
         logging.info("Main    : all done")
 
 
-        return 1
+        return "success"
 
 
     def stop(self):
@@ -132,12 +151,12 @@ class LOCAL(object):
 
         self.stop_flag = True
 
-        self.latest_meta = None
+        self.latest_meta = "stoponions"
         self.chosen_labels = None
         self.active_label = None
         self.active_model = None
 
-        return 1 
+        return "success" 
 
 
     # PARAMETERS STORED IN LOCAL VARIABLE (lost at end of session)
@@ -158,21 +177,22 @@ class LOCAL(object):
         """Returns options for labels selected from `all_labels` in new session process"""
 
         self.chosen_labels = string
-        return 1
+        self.set_active_label = list(string.split(","))[0] 
+        return "success"
 
 
     def set_active_label(self, string):
         """Command to change current active label -  for building training datasets"""
 
         self.active_label = string
-        return 1
+        return "success"
 
 
     def set_active_model(self, string):
         """Command to change current active model for predictions"""
 
         self.active_model = string
-        return 1
+        return "success"
 
 
     # PARAMETERS STORED IN CONFIG FILE (saved after each session on pi)
@@ -193,14 +213,14 @@ class LOCAL(object):
         """Command to change current temperature setpoint"""
 
         self.temperature_setpoint = value
-        return 1
+        return "success"
 
 
     def set_camera_frame_rate(self, value):
         """Command to change camera targe refresh rate"""
 
         self.camera_frame_rate = value
-        return 1
+        return "success"
 
 
     # PARAMETERS STORED IN TEXT FILES (retrieve hard copies)
@@ -215,10 +235,6 @@ class LOCAL(object):
         """Returns available models for prediction"""
 
         return self.all_models
-
-
-local = LOCAL()
-
-local.start("test")
-
-
+    
+#local = LOCAL()
+#local.start('test')
