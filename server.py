@@ -73,7 +73,7 @@ class SERVER(object):
         return local.get_camera_frame_rate()
 
 
-    def set_temperature_setpoint(self, value):
+    def set_hob_setpoint(self, value):
         """Command to change current temperature setpoint"""
 
         return local.set_temperature_setpoint(value)
