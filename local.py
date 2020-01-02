@@ -32,7 +32,9 @@ INITIAL_META = {
                     "time_stamp": "Initialising...",
                     "temperature": "Initialising...",
                     "camera_filepath": "placeholder.png",
-                    "thermal_filepath": "placeholder.png"
+                    "thermal_filepath": "placeholder.png",
+                    "hob_setpoint": "Initialising...",
+                    "camera_sleep": "Initialising...",
                 },
               }
     
@@ -48,11 +50,11 @@ class LOCAL(object):
         self.stop_flag = False
         
         self.chosen_labels = "_"
-        self.active_label = "_"
+        self.active_label = "discard"
         self.active_model = "_"
         
-        self.camera_frame_rate = 10000
-        self.temperature_set_point = 1
+        self.camera_sleep = "0"
+        self.hob_setpoint = " 100"
 
 
     def start(self, session_name):
@@ -71,9 +73,9 @@ class LOCAL(object):
                 time_stamp = datetime.datetime.now()
                 
                 # Capture sensor data 
-                camera_filepath = camera.capture(cloud.get_path(self.session_name, "camera", "jpg", time_stamp, measurement_id))
+                camera_filepath = camera.capture(cloud.get_path(self.session_name, "camera", "jpg", time_stamp, measurement_id, self.active_label))
                 thermal.capture_frame()
-                thermal_filepath = thermal.save_latest_jpg(cloud.get_path(self.session_name, "thermal", "jpg", time_stamp, measurement_id))
+                thermal_filepath = thermal.save_latest_jpg(cloud.get_path(self.session_name, "thermal", "jpg", time_stamp, measurement_id, self.active_label))
                 temperature = thermal.get_latest_temperature()
                 
                 # Upload to cloud
@@ -100,11 +102,13 @@ class LOCAL(object):
                         "time_stamp": str(time_stamp),
                         "temperature": str(temperature),
                         "camera_filepath": cloud.get_public_path(camera_filepath),
-                        "thermal_filepath": cloud.get_public_path(thermal_filepath)
+                        "thermal_filepath": cloud.get_public_path(thermal_filepath),
+                        "hob_setpoint": self.hob_setpoint,
+                        "camera_sleep": self.camera_sleep,
                     },
                   }
                 
-                json_filepath = cloud.get_path(self.session_name, "meta", "json", time_stamp, measurement_id)
+                json_filepath = cloud.get_path(self.session_name, "meta", "json", time_stamp, measurement_id, self.active_label)
                 with open(json_filepath, "w") as write_file:
                     json.dump(data, write_file)
                 
@@ -122,13 +126,14 @@ class LOCAL(object):
             # WHILE LOOP
             
             while self.stop_flag == False:
-
-                print ("Capturing measurement {measurement_id}")
-
+                
                 measurement_id += 1
+                
+                print (F"Capturing measurement {measurement_id} with label {self.active_label}")
+                
                 self.latest_meta = capture(measurement_id)
                 
-                sleep(1/self.camera_frame_rate)
+                sleep(float(self.camera_sleep))
             
             logging.info("Thread %s: finishing", name)
         
@@ -172,15 +177,29 @@ class LOCAL(object):
 
     def get_chosen_labels(self):
         """Returns options for labels selected from `all_labels` in new session process"""
+        
+#         chosen_labels = self.chosen_labels
+#         label_list = str(list(chosen_labels.split(",")))
+#         custom_json = 
+#         
+#         output = ""
+#         for n in length(label_list):
+#             label = F'{"ID:"{n}","label":{label_list[0]"'
+#             output = output + label
+#         
+#         {"ID":"0","label":"discard,water_boiling,water_not_boiling"}
 
-        return self.chosen_labels
+
+        return '[{"ID":"0","label":"discard"},{"ID":"1","label":"water_boiling"},{"ID":"2","label":"water_not_boiling"}]'
 
     
     def set_chosen_labels(self, string):
         """Returns options for labels selected from `all_labels` in new session process"""
-
+        
+        
         self.chosen_labels = string
-                
+        
+        
         self.active_label = str(list(string.split(","))[0])
         return "success"
 
@@ -201,29 +220,24 @@ class LOCAL(object):
 
     # PARAMETERS STORED IN CONFIG FILE (saved after each session on pi)
 
-    def get_temperature_setpoint(self):
+
+
+    def set_hob_setpoint(self, value):
         """Command to change current temperature setpoint"""
-
-        return self.temperature_setpoint
-
-
-    def get_camera_frame_rate(self):
-        """Command to change camera targe refresh rate"""
-
-        return self.camera_frame_rate
-
-
-    def set_temperature_setpoint(self, value):
-        """Command to change current temperature setpoint"""
-
-        self.temperature_setpoint = value
+        
+        self.hob_setpoint = value
+        
+        # val = float(val) 
+        # send command to hob to set         
+        
         return "success"
 
 
-    def set_camera_frame_rate(self, value):
+    def set_camera_sleep(self, value):
         """Command to change camera targe refresh rate"""
 
-        self.camera_frame_rate = value
+        self.camera_sleep = value
+        
         return "success"
 
 
@@ -232,15 +246,17 @@ class LOCAL(object):
     def get_all_labels(self):
         """Returns available image labels for training"""
 
-        data = '[{"ID":"0","label":"water_boiling,water_not_boiling"},{"ID":"1","label":"onions_cooked,onions_not_cooked"}]'
+        data = '[{"ID":"0","label":"discard,water_boiling,water_not_boiling"},{"ID":"1","label":"discard,onions_cooked,onions_not_cooked"}]'
         
         return data 
 
 
     def get_all_models(self):
         """Returns available models for prediction"""
-
-        return self.all_models
+        
+        data = '[{"ID":"0","label":"test_model"}]'
+        
+        return data
     
 #local = LOCAL()
 #local.start('test')
