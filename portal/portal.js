@@ -19,7 +19,6 @@ function set(function_name, argument) {
       value: argument
     },
     success: function(confirmation) {
-      console.log(confirmation);
     },
   });
 }
@@ -44,7 +43,6 @@ function update() {
 
     data = JSON.parse(data);
     
-    console.log(data)
     $('#session-name').html(data.attributes.session_name);
     $('#active-label').html(data.attributes.active_label);
     $('#active-model').html(data.attributes.active_model);
@@ -59,7 +57,8 @@ function update() {
     $('#thermal-filepath').attr("href", data.attributes.thermal_filepath);
     $('#camera-image').attr("src", data.attributes.camera_filepath);
     $('#thermal-image').attr("src", data.attributes.thermal_filepath);
-
+    $('#hob-setpoint').attr("placeholder", data.attributes.hob_setpoint);
+    $('#camera-sleep').attr("placeholder", data.attributes.camera_sleep);
   });
   
 }
@@ -95,6 +94,40 @@ $(document).ready(function() {
   });
 
 
+  get("get_all_models", function( data ) {
+    // data is a js object 
+
+    var label_json
+    label_json = data //JSON.parse(data);
+
+    let dropdown = $('#select-model');
+
+    dropdown.empty();
+
+    dropdown.append('<option selected="true" disabled>Select model</option>');
+    dropdown.prop('selectedIndex', 0);
+
+    // Populate dropdown with list of provinces
+    var dataJSON = JSON.parse(data);
+
+    $.each(dataJSON, function (key, entry) {
+      dropdown.append($('<option></option>').attr('value', entry.label).text(entry.label));
+    });
+
+    
+  });
+
+
+  $('#label-button1').on('click', function() {
+    set('set_active_label', $('#label-button1').text());
+  });
+  $('#label-button2').on('click', function() {
+    set('set_active_label', $('#label-button2').text());
+  });
+  $('#label-button3').on('click', function() {
+    set('set_active_label', $('#label-button3').text());
+  });
+
 
   $('#start').on('click', function() {
     
@@ -114,7 +147,6 @@ $(document).ready(function() {
     get("stop", function( foo ) {
       console.log("Stopping")
 
-
       $("#stop").hide();
       $("#start").show();
       clearInterval(update)
@@ -122,6 +154,17 @@ $(document).ready(function() {
 
     });
 
+   });
+
+  $('#hob-setpoint-button').on('click', function() {
+    console.log("test")
+    set('set_hob_setpoint', $('#hob-setpoint').val());
+  });
+  
+
+  $('#camera-sleep-button').on('click', function() {
+    console.log("test")
+    set('set_camera_sleep', $('#camera-sleep').val());
   });
 
 

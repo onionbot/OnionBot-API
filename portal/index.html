@@ -49,10 +49,11 @@
                         <div class="row">
                             <label>Set live label</label>
                             <h4 id="active-label">_</h4>
-                            <div class="btn-group" role="group" style="width: 100%">
-                                <button type="button" class="btn btn-secondary">1</button>
-                                <button type="button" class="btn btn-secondary">2</button>
-                                <button type="button" class="btn btn-secondary">3</button>
+                            <div id="#label-button-group" class="btn-group" role="group" style="width: 100%">
+                                 <button id="label-button1" type="button" class="btn btn-secondary">discard</button>
+                                <button id="label-button2" type="button" class="btn btn-secondary">boiling</button>
+                                <button id="label-button3" type="button" class="btn btn-secondary">not_boiling</button>
+
                             </div>
                         </div>
                         <div class="row">
@@ -60,19 +61,19 @@
                             <h4><span id="temperature">_</span> degrees</h4>
                         </div>
                         <div class="row">
-                            <label for="hob-setpoint" style="padding-top: 15px;">Hob setpoint</label>
+                            <label style="padding-top: 15px;">Hob setpoint</span></label>
                             <div class="btn-group" role="group" style="width: 100%">
                                 <input type="text" class="form-control" id="hob-setpoint" placeholder="_" style="width: 75%">
                                 <button id="hob-setpoint-button" type="button" class="btn btn-secondary" style="width: 25%">Update</button>
                             </div>
                         </div>
                         <div class="row">
-                            <label for="frame-rate" style="padding-top: 15px;">Frame rate</label>
+                            <label style="padding-top: 15px;">Onionbot sensor sleep period (seconds)</label>
                             <div class="btn-group" role="group" style="width: 100%">
-                                <input type="text" class="form-control" id="frame-rate" placeholder="_" style="width: 75%">
-                                <button id="frame-rate-button" type="button" class="btn btn-secondary" style="width: 25%">Update</button>
+                                <input id="camera-sleep" type="text" class="form-control" id="frame-rate" placeholder="_" style="width: 75%">
+                                <button id="camera-sleep-button" type="button" class="btn btn-secondary" style="width: 25%">Update</button>
                             </div>
-                        </div>
+                        </div> 
                     </div>
                     <div class="col">
                         <label for="camera-image">Camera view</label>
