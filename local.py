@@ -19,17 +19,37 @@ thermal = THERMAL_CAMERA(visualise_on=False)
 camera = CAMERA()
 
 
+
+INITIAL_META = {
+              "type": "meta",
+                "id": "pre_start",
+                "attributes": {
+                    "session_name": "Initialising...",
+                    "label": "Initialising...",
+                    "camera_prediction": "Initialising...",
+                    "thermal_prediction": "Initialising...",
+                    "measurement_id": "Initialising...",
+                    "time_stamp": "Initialising...",
+                    "temperature": "Initialising...",
+                    "camera_filepath": "placeholder.png",
+                    "thermal_filepath": "placeholder.png"
+                },
+              }
+    
+               
+
+
 class LOCAL(object):
 
     def __init__(self):
         
 
-        self.latest_meta = "onions"
+        self.latest_meta = json.dumps(INITIAL_META)
         self.stop_flag = False
         
-        self.chosen_labels = "onions"
-        self.active_label = "onions"
-        self.active_model = "onions"
+        self.chosen_labels = "_"
+        self.active_label = "_"
+        self.active_model = "_"
         
         self.camera_frame_rate = 10000
         self.temperature_set_point = 1
@@ -49,16 +69,11 @@ class LOCAL(object):
 
                 # Start timer
                 time_stamp = datetime.datetime.now()
-
-                # Update variables
-                session_name = self.session_name
-                label = self.active_label
-                model = self.set_active_model
                 
                 # Capture sensor data 
-                camera_filepath = camera.capture(cloud.get_path(session_name, "camera", "jpg", time_stamp, measurement_id))
+                camera_filepath = camera.capture(cloud.get_path(self.session_name, "camera", "jpg", time_stamp, measurement_id))
                 thermal.capture_frame()
-                thermal_filepath = thermal.save_latest_jpg(cloud.get_path(session_name, "thermal", "jpg", time_stamp, measurement_id))
+                thermal_filepath = thermal.save_latest_jpg(cloud.get_path(self.session_name, "thermal", "jpg", time_stamp, measurement_id))
                 temperature = thermal.get_latest_temperature()
                 
                 # Upload to cloud
@@ -66,28 +81,19 @@ class LOCAL(object):
                 cloud.upload_from_filename(thermal_filepath)
 
                 # Make prediction based on specified deep learning model
-                camera_prediction = "None"
-                thermal_prediction = "None"
+                
+                camera_prediction = "_aaa"
+                thermal_prediction = "_aaaa"
 
                 # Generate metadata
-                data = {
-                    "session_name": session_name,
-                    "label": label,
-                    "camera_prediction": camera_prediction,
-                    "thermal_prediction": thermal_prediction,
-                    "measurement_id": measurement_id,
-                    "time_stamp": str(time_stamp),
-                    "temperature": temperature,
-                    "camera_filepath": cloud.get_public_path(camera_filepath),
-                    "thermal_filepath": cloud.get_public_path(thermal_filepath)
-                        }
-                """            `    
+   
                 data = {
                   "type": "meta",
-                    "id": session_name_measurement_id_,
+                    "id": F"{session_name}_{measurement_id}_{str(time_stamp)}",
                     "attributes": {
                         "session_name": session_name,
-                        "label": label,
+                        "active_label": self.active_label,
+                        "active_model": self.active_model,
                         "camera_prediction": camera_prediction,
                         "thermal_prediction": thermal_prediction,
                         "measurement_id": measurement_id,
@@ -97,11 +103,8 @@ class LOCAL(object):
                         "thermal_filepath": cloud.get_public_path(thermal_filepath)
                     },
                   }
-                }
-                """                
                 
-                
-                json_filepath = cloud.get_path(session_name, "meta", "json", time_stamp, measurement_id)
+                json_filepath = cloud.get_path(self.session_name, "meta", "json", time_stamp, measurement_id)
                 with open(json_filepath, "w") as write_file:
                     json.dump(data, write_file)
                 
@@ -151,10 +154,10 @@ class LOCAL(object):
 
         self.stop_flag = True
 
-        self.latest_meta = "stoponions"
-        self.chosen_labels = None
-        self.active_label = None
-        self.active_model = None
+        self.latest_meta = json.dumps(INITIAL_META)
+        self.chosen_labels = "_"
+        self.active_label = "_"
+        self.active_model = "_"
 
         return "success" 
 
@@ -177,7 +180,8 @@ class LOCAL(object):
         """Returns options for labels selected from `all_labels` in new session process"""
 
         self.chosen_labels = string
-        self.set_active_label = list(string.split(","))[0] 
+                
+        self.active_label = str(list(string.split(","))[0])
         return "success"
 
 
@@ -228,7 +232,9 @@ class LOCAL(object):
     def get_all_labels(self):
         """Returns available image labels for training"""
 
-        return self.all_labels
+        data = '[{"ID":"0","label":"water_boiling,water_not_boiling"},{"ID":"1","label":"onions_cooked,onions_not_cooked"}]'
+        
+        return data 
 
 
     def get_all_models(self):
