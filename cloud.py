@@ -21,8 +21,8 @@ class CLOUD(object):
         blob = bucket.blob(path)
         blob.upload_from_filename(path)
         blob.make_public()
-        print("Uploaded to cloud:", path)
-        print("Blob is pubicly accesible at ", blob.public_url) 
+        #print("Uploaded to cloud:", path)
+        #print("Blob is publicly accessible at ", blob.public_url) 
         
 
     def get_path(self, session_name, sensor, file_type, time, measurement_id):
