@@ -15,11 +15,11 @@ cloud = Cloud()
 thermal = ThermalCamera(visualise_on=False)
 camera = Camera()
 camera_classifier = Classify(\
-                labels="tflite-boiling_water_1_20200111094256-2020-01-11T11_51_24.886Z_dict.txt", \
-                model="tflite-boiling_water_1_20200111094256-2020-01-11T11_51_24.886Z_model.tflite")
+                labels="models/tflite-boiling_water_1_20200111094256-2020-01-11T11_51_24.886Z_dict.txt", \
+                model="models/tflite-boiling_water_1_20200111094256-2020-01-11T11_51_24.886Z_model.tflite")
 thermal_classifier = Classify(\
-                labels="tflite-boiling_water_1_20200111094256-2020-01-11T11_51_24.886Z_dict.txt", \
-                model="tflite-boiling_water_1_20200111094256-2020-01-11T11_51_24.886Z_model.tflite")
+                labels="models/tflite-boiling_1_thermal_20200111031542-2020-01-11T18_45_13.068Z_dict.txt", \
+                model="models/tflite-boiling_1_thermal_20200111031542-2020-01-11T18_45_13.068Z_model.tflite")
 
 
 INITIAL_META = {
