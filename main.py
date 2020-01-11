@@ -28,8 +28,8 @@ INITIAL_META = {
                     "measurement_id": "Initialising...",
                     "time_stamp": "Initialising...",
                     "temperature": "Initialising...",
-                    "camera_filepath": "placeholder.png",
-                    "thermal_filepath": "placeholder.png",
+                    "camera_filepath": "Initialising...",
+                    "thermal_filepath": "Initialising...",
                     "hob_setpoint": "Initialising...",
                     "camera_sleep": "Initialising...",
                 },
@@ -200,7 +200,7 @@ class OnionBot(object):
         """Command to change current active model for predictions"""
 
         
-        if string = "tflite_water_boiling_1":
+        if string == "tflite_water_boiling_1":
             self.camera_classifier = Classify(\
                     labels="models/tflite-boiling_water_1_20200111094256-2020-01-11T11_51_24.886Z_dict.txt", \
                     model="models/tflite-boiling_water_1_20200111094256-2020-01-11T11_51_24.886Z_model.tflite")
