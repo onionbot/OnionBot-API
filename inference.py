@@ -71,7 +71,7 @@ class CLASSIFY(object):
         ordered = np.argpartition(-output, top_k)
         #return [(i, output[i]) for i in ordered[:top_k]]
 
-        return label_id, prob = ordered[0] # Only returns single result, assumes top_k = 1
+        return ordered[0] # Only returns single result, assumes top_k = 1
 
 
 
