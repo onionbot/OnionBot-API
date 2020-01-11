@@ -27,7 +27,7 @@ from tflite_runtime.interpreter import Interpreter
 
 
 
-class CLASSIFY(object):
+class Classify(object):
 
 
     def __init__(self, labels, model):
@@ -73,7 +73,7 @@ class CLASSIFY(object):
         result = [(self.labels[i], output[i]) for i in ordered[:top_k]][0] # Only returns single result, assumes top_k = 1
         
         
-        return F"{result[0]}_{result[1]}" 
+        return F"{result[0]}_{"{:.2f}".format(result[1])}" 
 
 
 
