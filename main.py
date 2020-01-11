@@ -3,18 +3,21 @@ import threading
 import time
 from time import sleep
 
-from thermal_camera import THERMAL_CAMERA
-from camera import CAMERA
-from cloud import CLOUD
-from inference import CLASSIFY
+from thermal_camera import ThermalCamera
+from camera import Camera
+from cloud import Cloud
+from inference import Classify
 
 import datetime
 import json
 
-cloud = CLOUD()
-thermal = THERMAL_CAMERA(visualise_on=False)
-camera = CAMERA()
-camera_classifier = CLASSIFY(\
+cloud = Cloud()
+thermal = ThermalCamera(visualise_on=False)
+camera = Camera()
+camera_classifier = Classify(\
+                labels="tflite-boiling_water_1_20200111094256-2020-01-11T11_51_24.886Z_dict.txt", \
+                model="tflite-boiling_water_1_20200111094256-2020-01-11T11_51_24.886Z_model.tflite")
+thermal_classifier = Classify(\
                 labels="tflite-boiling_water_1_20200111094256-2020-01-11T11_51_24.886Z_dict.txt", \
                 model="tflite-boiling_water_1_20200111094256-2020-01-11T11_51_24.886Z_model.tflite")
 
@@ -40,7 +43,7 @@ INITIAL_META = {
                
 
 
-class ONIONBOT(object):
+class OnionBot(object):
 
     def __init__(self):
         
@@ -84,7 +87,7 @@ class ONIONBOT(object):
                 # Make prediction based on specified deep learning model
                 
                 camera_prediction = camera_classifier.classify_image(camera_filepath)
-                thermal_prediction = "_aaaa"
+                thermal_prediction = thermal_classifier.classify_image(thermal_filepath)
 
                 # Generate metadata
    

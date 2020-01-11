@@ -10,7 +10,7 @@ bucket_name = 'onionbucket'
 
 bucket=client.get_bucket(bucket_name)
 
-class CLOUD(object):
+class Cloud(object):
     """Save image to file"""
 
     def __init__(self):

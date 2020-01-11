@@ -1,15 +1,15 @@
-from thermal_camera import THERMAL_CAMERA as thermal_cam
-from camera import CAMERA as normal_cam
+from thermal_camera import ThermalCamera
+from camera import Camera
 import PIL.Image
 import PIL.ImageEnhance
-from cloud import CLOUD as cloud
+from cloud import Cloud as cloud
 
 import datetime 
 
 cloud = cloud()
 
-tc = thermal_cam(visualise_on=False)
-nc = normal_cam()
+tc = ThermalCamera(visualise_on=False)
+nc = Camera()
 
 
 time = datetime.datetime.now()

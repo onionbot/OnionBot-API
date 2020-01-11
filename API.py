@@ -1,6 +1,6 @@
 
-from main import ONIONBOT
-bot = ONIONBOT()
+from main import OnionBot
+bot = OnionBot()
 
 from flask import Flask
 from flask import request

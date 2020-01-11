@@ -32,7 +32,7 @@ COLORDEPTH = 1000
 colormap = [0] * COLORDEPTH
 
 
-class THERMAL_CAMERA(object):
+class ThermalCamera(object):
     """Save image to file"""
 
 
