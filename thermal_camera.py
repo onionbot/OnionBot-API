@@ -11,7 +11,7 @@ import adafruit_mlx90640
 INTERPOLATE = 10
 
 MINTEMP = 20. #-40 #low range of the sensor (this will be black on the screen)
-MAXTEMP = 50. #300 #high range of the sensor (this will be white on the screen)
+MAXTEMP = 200. #previous 50 #max 300 #high range of the sensor (this will be white on the screen)
 SCALE = 25
 
 
