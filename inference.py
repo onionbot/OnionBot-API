@@ -36,8 +36,9 @@ class CLASSIFY(object):
 
         interpreter = Interpreter(model)
         interpreter.allocate_tensors()
-        
-        _, height, width, _ = interpreter.get_input_details()[0]['shape']
+        self.interpreter = interpreter
+
+        _, self.height, self.width, _ = interpreter.get_input_details()[0]['shape']
 
     
     def load_labels(self, path):
@@ -51,8 +52,12 @@ class CLASSIFY(object):
         input_tensor[:, :] = image
 
 
-    def classify_image(self, interpreter, image, top_k=1):
+    def classify_image(self, imagefilepath, top_k=1):
         """Returns a sorted array of classification results."""
+        image = Image.open(imagefilepath).convert('RGB').resize((self.width, self.height),Image.ANTIALIAS)
+
+        interpreter = self.interpreter
+
         self.set_input_tensor(interpreter, image)
         interpreter.invoke()
         output_details = interpreter.get_output_details()[0]
@@ -65,4 +70,12 @@ class CLASSIFY(object):
 
         ordered = np.argpartition(-output, top_k)
         return [(i, output[i]) for i in ordered[:top_k]]
+
+
+
+
+
+
+
+
 

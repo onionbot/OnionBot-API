@@ -14,7 +14,7 @@ import json
 cloud = CLOUD()
 thermal = THERMAL_CAMERA(visualise_on=False)
 camera = CAMERA()
-classifier = CLASSIFY(\
+camera_classifier = CLASSIFY(\
                 labels="tflite-boiling_water_1_20200111094256-2020-01-11T11_51_24.886Z_dict.txt", \
                 model="tflite-boiling_water_1_20200111094256-2020-01-11T11_51_24.886Z_model.tflite")
 
@@ -83,7 +83,7 @@ class ONIONBOT(object):
 
                 # Make prediction based on specified deep learning model
                 
-                camera_prediction = "_aaa"
+                camera_prediction = camera_classifier.classify_image(camera_filepath)
                 thermal_prediction = "_aaaa"
 
                 # Generate metadata
