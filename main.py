@@ -14,12 +14,7 @@ import json
 cloud = Cloud()
 thermal = ThermalCamera(visualise_on=False)
 camera = Camera()
-camera_classifier = Classify(\
-                labels="models/tflite-boiling_water_1_20200111094256-2020-01-11T11_51_24.886Z_dict.txt", \
-                model="models/tflite-boiling_water_1_20200111094256-2020-01-11T11_51_24.886Z_model.tflite")
-thermal_classifier = Classify(\
-                labels="models/tflite-boiling_1_thermal_20200111031542-2020-01-11T18_45_13.068Z_dict.txt", \
-                model="models/tflite-boiling_1_thermal_20200111031542-2020-01-11T18_45_13.068Z_model.tflite")
+
 
 
 INITIAL_META = {
@@ -86,8 +81,9 @@ class OnionBot(object):
 
                 # Make prediction based on specified deep learning model
                 
-                camera_prediction = camera_classifier.classify_image(camera_filepath)
-                thermal_prediction = thermal_classifier.classify_image(thermal_filepath)
+                if self.active_model != "_":
+                    camera_prediction = self.camera_classifier.classify_image(camera_filepath)
+                    thermal_prediction = self.thermal_classifier.classify_image(thermal_filepath)
 
                 # Generate metadata
    
@@ -169,8 +165,6 @@ class OnionBot(object):
         return "success" 
 
 
-    # PARAMETERS STORED IN LOCAL VARIABLE (lost at end of session)
-
     def get_latest_meta(self):
         """Returns cloud filepath of latest meta.json - includes path location of images"""
 
@@ -205,12 +199,17 @@ class OnionBot(object):
     def set_active_model(self, string):
         """Command to change current active model for predictions"""
 
-        self.active_model = string
+        
+        if string = "tflite_water_boiling_1":
+            self.camera_classifier = Classify(\
+                    labels="models/tflite-boiling_water_1_20200111094256-2020-01-11T11_51_24.886Z_dict.txt", \
+                    model="models/tflite-boiling_water_1_20200111094256-2020-01-11T11_51_24.886Z_model.tflite")
+            self.thermal_classifier = Classify(\
+                            labels="models/tflite-boiling_1_thermal_20200111031542-2020-01-11T18_45_13.068Z_dict.txt", \
+                            model="models/tflite-boiling_1_thermal_20200111031542-2020-01-11T18_45_13.068Z_model.tflite")
+            self.active_model = string
+
         return "success"
-
-
-    # PARAMETERS STORED IN CONFIG FILE (saved after each session on pi)
-
 
 
     def set_hob_setpoint(self, value):
@@ -218,8 +217,7 @@ class OnionBot(object):
         
         self.hob_setpoint = value
         
-        # val = float(val) 
-        # send command to hob to set         
+        # TODO: Implement servo control from API      
         
         return "success"
 
@@ -232,8 +230,6 @@ class OnionBot(object):
         return "success"
 
 
-    # PARAMETERS STORED IN TEXT FILES (retrieve hard copies)
-
     def get_all_labels(self):
         """Returns available image labels for training"""
 
@@ -245,7 +241,7 @@ class OnionBot(object):
     def get_all_models(self):
         """Returns available models for prediction"""
         
-        data = '[{"ID":"0","label":"test_model"}]'
+        data = '[{"ID":"0","label":"tflite_water_boiling_1"}]'
         
         return data
     
