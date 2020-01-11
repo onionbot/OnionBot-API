@@ -85,7 +85,8 @@ class OnionBot(object):
                     camera_prediction = self.camera_classifier.classify_image(camera_filepath)
                     thermal_prediction = self.thermal_classifier.classify_image(thermal_filepath)
                 else:
-                    camera_prediction, thermal_prediction = "_"
+                    camera_prediction = "_"
+                    thermal_prediction = "_"
 
                 # Generate metadata
    
