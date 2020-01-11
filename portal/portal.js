@@ -72,6 +72,32 @@ $(document).ready(function() {
 
     $("#stop").hide();
 
+    $('#start').on('click', function() {
+
+        set('start', $('#session-id').val());
+
+        set('set_chosen_labels', $('#select-labels').val());
+
+        $("#start").hide();
+        $("#stop").show();
+
+        // Refresh page
+        setInterval(update, update_interval);
+    });
+
+    $('#stop').on('click', function() {
+
+        get("stop", function(foo) {
+            console.log("Stopping")
+
+            $("#stop").hide();
+            $("#start").show();
+            clearInterval(update)
+
+        });
+
+    });
+
     get("get_all_labels", function(data) {
         // data is a js object 
 
@@ -93,20 +119,6 @@ $(document).ready(function() {
 
 
     });
-
-    $('#start').on('click', function() {
-
-        set('start', $('#session-id').val());
-
-        set('set_chosen_labels', $('#select-labels').val());
-
-        $("#start").hide();
-        $("#stop").show();
-
-        // Refresh page
-        setInterval(update, update_interval);
-    });
-
 
     get("get_all_models", function(data) {
         // data is a js object 
@@ -144,22 +156,10 @@ $(document).ready(function() {
 
     $('#select-model-button').on('click', function() {
 
-        set('set_chosen_model', $('#select-model').val());
+        set('set_active_model', $('#select-model').val());
 
     });
 
-    $('#stop').on('click', function() {
-
-        get("stop", function(foo) {
-            console.log("Stopping")
-
-            $("#stop").hide();
-            $("#start").show();
-            clearInterval(update)
-
-        });
-
-    });
 
     $('#hob-setpoint-button').on('click', function() {
         console.log("test")
