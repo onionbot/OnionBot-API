@@ -14,7 +14,9 @@ import json
 cloud = CLOUD()
 thermal = THERMAL_CAMERA(visualise_on=False)
 camera = CAMERA()
-
+classifier = CLASSIFY(\
+                labels="tflite-boiling_water_1_20200111094256-2020-01-11T11_51_24.886Z_dict.txt", \
+                model="tflite-boiling_water_1_20200111094256-2020-01-11T11_51_24.886Z_model.tflite")
 
 
 INITIAL_META = {
@@ -244,5 +246,3 @@ class ONIONBOT(object):
         
         return data
     
-#local = LOCAL()
-#local.start('test')
