@@ -1,7 +1,3 @@
-# Local 
-
-
-
 import logging
 import threading
 import time
@@ -41,7 +37,7 @@ INITIAL_META = {
                
 
 
-class LOCAL(object):
+class ONIONAPI(object):
 
     def __init__(self):
         
@@ -178,18 +174,7 @@ class LOCAL(object):
     def get_chosen_labels(self):
         """Returns options for labels selected from `all_labels` in new session process"""
         
-#         chosen_labels = self.chosen_labels
-#         label_list = str(list(chosen_labels.split(",")))
-#         custom_json = 
-#         
-#         output = ""
-#         for n in length(label_list):
-#             label = F'{"ID:"{n}","label":{label_list[0]"'
-#             output = output + label
-#         
-#         {"ID":"0","label":"discard,water_boiling,water_not_boiling"}
-
-
+        # (Placeholder) TODO: Update to return list of labels that adapts to selected dropdown
         return '[{"ID":"0","label":"discard"},{"ID":"1","label":"water_boiling"},{"ID":"2","label":"water_not_boiling"}]'
 
     
