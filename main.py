@@ -6,6 +6,7 @@ from time import sleep
 from thermal_camera import THERMAL_CAMERA
 from camera import CAMERA
 from cloud import CLOUD
+from inference import CLASSIFY
 
 import datetime
 import json
