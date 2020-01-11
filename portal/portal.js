@@ -135,6 +135,7 @@ $(document).ready(function() {
 
     set('set_chosen_labels', $('#select-labels').val());
 
+
     $("#start").hide();
     $("#stop").show();
 
@@ -150,7 +151,6 @@ $(document).ready(function() {
       $("#stop").hide();
       $("#start").show();
       clearInterval(update)
-      update()
 
     });
 
