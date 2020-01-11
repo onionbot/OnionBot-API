@@ -83,7 +83,8 @@ class ONIONBOT(object):
 
                 # Make prediction based on specified deep learning model
                 
-                camera_prediction = str(camera_classifier.classify_image(camera_filepath))
+                camera_prediction = camera_classifier.classify_image(camera_filepath)
+                camera_prediction = F"{camera_prediction[0],camera_prediction[1]}"
                 print (camera_prediction)
                 camera_prediction = "aaa"
                 thermal_prediction = "_aaaa"
