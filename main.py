@@ -38,7 +38,7 @@ INITIAL_META = {
                
 
 
-class ONIONAPI(object):
+class ONIONBOT(object):
 
     def __init__(self):
         
