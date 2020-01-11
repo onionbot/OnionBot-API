@@ -72,10 +72,11 @@ class Classify(object):
         
         result = [(self.labels[i], output[i]) for i in ordered[:top_k]][0] # Only returns single result, assumes top_k = 1
         
+        label = result[0]
+        probability =  float(result[1])
+
         
-        return F"{result[0]}_{"{:.2f}".format(result[1])}" 
-
-
+        return label + "_" + "{:.2f}".format(probability)
 
 
 
