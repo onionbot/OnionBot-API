@@ -32,7 +32,7 @@ class CLASSIFY(object):
 
     def __init__(self, labels, model):
 
-        labels = self.load_labels(labels)
+        self.labels = self.load_labels(labels)
 
         interpreter = Interpreter(model)
         interpreter.allocate_tensors()
@@ -69,9 +69,10 @@ class CLASSIFY(object):
             output = scale * (output - zero_point)
 
         ordered = np.argpartition(-output, top_k)
-        #return [(i, output[i]) for i in ordered[:top_k]]
-
-        return ordered[0] # Only returns single result, assumes top_k = 1
+        
+        result = [(self.labels[i], output[i]) for i in ordered[:top_k]]
+        
+        return result[0] # Only returns single result, assumes top_k = 1
 
 
 
