@@ -7,6 +7,7 @@ from thermal_camera import ThermalCamera
 from camera import Camera
 from cloud import Cloud
 from inference import Classify
+from actuation import Servo
 
 import datetime
 import json
@@ -14,7 +15,7 @@ import json
 cloud = Cloud()
 thermal = ThermalCamera(visualise_on=False)
 camera = Camera()
-
+servo = Servo()
 
 
 INITIAL_META = {
@@ -218,9 +219,8 @@ class OnionBot(object):
     def set_hob_setpoint(self, value):
         """Command to change current temperature setpoint"""
         
+        servo.move(value)
         self.hob_setpoint = value
-        
-        # TODO: Implement servo control from API      
         
         return "success"
 
