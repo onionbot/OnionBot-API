@@ -1,13 +1,12 @@
 ![alt text](https://github.com/bencobley/onionbot/blob/master/img/portal.png)
 
-# onionbot
+# onionbot DE4 SOLO and SIOT PROJECTs
 
 <p float="left">
-    <img src="https://github.com/bencobley/onionbot/blob/master/img/rpi.png" height="150"/>
-    <img src="https://github.com/bencobley/onionbot/blob/master/img/automl.png" height="150"/>
+    <img src="https://www.raspberrypi.org/wp-content/uploads/2011/10/Raspi-PGB001.png" height="100"/>
+    <img src="https://github.com/bencobley/onionbot/blob/master/img/automl.png" height="100"/>
 </p>
 
-BEN COBLEY - DE4 SOLO and SIOT PROJECTs
 
 ### To start the API 
 Script will run on boot. Otherwise SSH into Pi 
@@ -20,3 +19,9 @@ Script will run on boot. Otherwise SSH into Pi
 2. In your browser, navigate to `0.0.0.0:5000/portal`
 3. Start collecting data! 
 
+### Dependencies
+1. `pip3 install pillow`
+2. `pip3 install adafruit-circuitpython-mlx90640`
+3. `pip install Adafruit-Blinka`
+4. <a src="https://www.tensorflow.org/lite/models/image_classification/overview">Tensorflow install guide</a>
+5. <a src="http://parallax.com/product/900-00008">Servo driver install</a>
