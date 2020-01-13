@@ -1,6 +1,8 @@
 ![alt text](https://github.com/bencobley/onionbot/blob/master/img/portal.png)
 
-# onionbot DE4 SOLO and SIOT PROJECTs
+# onionbot | DE4 SOLO and SIOT projects
+A streamlined data collection, labelling and training platform for cooking data. Built with Raspberry Pi. 
+[See it in action](https://youtu.be/WfYJahKLy5Q)
 
 <p float="left">
     <img src="https://www.raspberrypi.org/wp-content/uploads/2011/10/Raspi-PGB001.png" height="100"/>
