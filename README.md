@@ -1,4 +1,8 @@
 # onionbot
+
+![alt text](https://github.com/bencobley/onionbot/blob/master/img/rpi.png)
+![alt text](https://github.com/bencobley/onionbot/blob/master/img/automl.png)
+
 BEN COBLEY - DE4 SOLO and SIOT PROJECTs
 
 ![alt text](https://github.com/bencobley/onionbot/blob/master/img/portal.png)
