@@ -1,7 +1,8 @@
 # onionbot
 
-![alt text](https://github.com/bencobley/onionbot/blob/master/img/rpi.png)
-![alt text](https://github.com/bencobley/onionbot/blob/master/img/automl.png)
+<img src="https://github.com/bencobley/onionbot/blob/master/img/rpi.png" height="150"/>
+<img src="https://github.com/bencobley/onionbot/blob/master/img/automl.png" height="150"/>
+
 
 BEN COBLEY - DE4 SOLO and SIOT PROJECTs
 
