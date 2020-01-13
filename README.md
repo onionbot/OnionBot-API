@@ -1,12 +1,16 @@
 # onionbot
-BEN COBLEY - DE4 SOLO PROJECT 
+BEN COBLEY - DE4 SOLO and SIOT PROJECTs
 
-### Running camera plus thermal feed 
-Update csv
-1. `cd ~/onionbot/mlx90640-library/examples`
-2. `./thermalcam`
+![alt text](https://github.com/bencobley/onionbot/img/portal.png)
 
-Start visualisation
-1. `cd ~/onionbot/mlx90640-library/python/`
-2. `workon cv`
-3. `LD_PRELOAD=/usr/lib/arm-linux-gnueabihf/libatomic.so.1.2.0 python thermalcam.py`
+### To start the API 
+Script will run on boot. Otherwise SSH into Pi 
+1. `ssh pi@onionpi`
+2. `cd onionbot`
+3. `python3 API.py`
+
+### To use the web portal
+1. Start a MAMP <mamp.info> local server environment
+2. In your browser, navigate to `0.0.0.0:5000/portal`
+3. Start collecting data! 
+
