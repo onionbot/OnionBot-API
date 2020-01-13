@@ -15,10 +15,6 @@ CORS(app)
 def index():
     """Index is run automatically on init by flask"""
     
-    # if request.form['action'] == 'set_hob':
-    #     return bot.set_hob(request.form['temp'])
-    # # return request.args.get('action')
-
     if request.form['action'] == 'start':
         return bot.start(request.form['value'])
 
