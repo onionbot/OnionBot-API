@@ -29,4 +29,5 @@ Script will run on boot. Otherwise SSH into Pi
 4. [Tensorflow install guide](https://www.tensorflow.org/lite/models/image_classification/overview)
 5. [Servo driver install](http://parallax.com/product/900-00008)
 
+### Implementation
 ![alt text](https://github.com/bencobley/onionbot/blob/master/img/hardware.jpg)
