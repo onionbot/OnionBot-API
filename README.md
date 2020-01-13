@@ -23,5 +23,5 @@ Script will run on boot. Otherwise SSH into Pi
 1. `pip3 install pillow`
 2. `pip3 install adafruit-circuitpython-mlx90640`
 3. `pip install Adafruit-Blinka`
-4. <a src="https://www.tensorflow.org/lite/models/image_classification/overview">Tensorflow install guide</a>
-5. <a src="http://parallax.com/product/900-00008">Servo driver install</a>
+4. [Tensorflow install guide](https://www.tensorflow.org/lite/models/image_classification/overview)
+5. [Servo driver install](http://parallax.com/product/900-00008)
