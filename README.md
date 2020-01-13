@@ -1,7 +1,7 @@
 # onionbot
 BEN COBLEY - DE4 SOLO and SIOT PROJECTs
 
-![alt text](https://github.com/bencobley/onionbot/img/portal.png)
+![alt text](https://github.com/bencobley/onionbot/blob/master/img/portal.png)
 
 ### To start the API 
 Script will run on boot. Otherwise SSH into Pi 
