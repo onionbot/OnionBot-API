@@ -1,21 +1,23 @@
 import pigpio
-from parallax_feedback_360 import lib_motion # Manufacturer provided servo contro module
 import time
+import lib_para_360_servo
+import statistics
+
+
+MIN_SAFE_ANGLE = 20
+MAX_SAFE_ANGLE = 310
+
+MIN_SET_POINT_ANGLE = 50
+MAX_SET_POINT_ANGLE = 310
+
 
 class Servo (object):
     """ Wrapper for servo module to control hob temperature setting """
-    def __init__(self):
-
-        pi = pigpio.pi()
-
-        self.servo = lib_motion.control(pi)
-
 
     def __init__(
         self, 
-        pi, 
         unitsFC = 360,
-        dcMin = 30.94, 
+        dcMin = 31.85, 
         dcMax = 956.41,
         wheel_gpio = 14,
         servo_gpio = 18, 
@@ -30,6 +32,8 @@ class Servo (object):
         Kp_s = 0.4,
         Ki_s = 0,
         Kd_s = 0):
+        
+        pi = pigpio.pi()
         
         self.pi = pi
         self.unitsFC = unitsFC
@@ -69,8 +73,9 @@ class Servo (object):
         return angle
 
 
-
     def rotate(self, target_angle):
+        
+        target_angle = float(360 - target_angle)
 
         #initial values sum_error_*
         sum_error_p = 0
@@ -99,100 +104,109 @@ class Servo (object):
 
             angle = self.get_angle()
 
-            #try needed, because:
-            #- first iteration of the while loop prev_angle_* is missing
+            ## Position Control
+            #Er = SP - PV
+            error_p = target_angle - angle
 
+            #Deadband-Filter to remove ocillating forwards and backwards after reaching set-point
+            if error_p <= 5 and error_p >= -5:
+                error_p = 0
+
+            #I-Part
+            sum_error_p += error_p
+            #try needed, because Ki_p can be zero
             try:
-                #### cascade control
-
-                ## Position Control
-                #Er = SP - PV
-                error_p = target_angle - angle
-
-                #Deadband-Filter to remove ocillating forwards and backwards after reaching set-point
-                if error_p <= 5 and error_p >= -5:
-                    error_p = 0
-
-                #I-Part
-                sum_error_p += error_p
                 #limit I-Part to -1 and 1 
-                #try needed, because Ki_p can be zero
-                try:
-                    sum_error_p = max(min(1/self.Ki_p, sum_error_p), -1/self.Ki_p)
-                except ZeroDivisionError:
-                    pass
-
-                #POSITION PID-Controller
-                output_p = self.Kp_p * error_p + self.Ki_p * self.sampling_time * sum_error_p + self.Kd_p / self.sampling_time * (error_p - error_p_old)
-                #limit output of position control to speed range
-                output_p = max(min(1, output_p), -1)
-
-                error_p_old = error_p
-
-                ## Speed Control
-                #convert range output_p from -1 to 1 to ticks/s
-                #full speed of a wheel forward and backward = +-650 ticks/s
-                output_p_con = 650 * output_p
-                #ticks per second (ticks/s), calculated from a moving median window with 5 values
-                ticks = (angle - prev_angle) / self.sampling_time
-                list_ticks.append(ticks)
-                list_ticks = list_ticks[-5:]
-                ticks = statistics.median(list_ticks)
-                
-                #Er = SP - PV
-                error_s = output_p_con - ticks
-
-                #I-Part
-                sum_error_s += error_s
-                #limit I-Part to -1 and 1
-                #try needed, because Ki_s can be zero
-                try:
-                    sum_error_s = max(min(650/self.Ki_s, sum_error_s), -650/self.Ki_s)
-                except ZeroDivisionError:
-                    pass
-
-                #SPEED PID-Controller
-                output_s = self.Kp_s * error_s + self.Ki_s * self.sampling_time * sum_error_s + self.Kd_s / self.sampling_time * (error_s - error_s_old)
-
-                error_s_old = error_s
-
-                #convert range output_s fom ticks/s to -1 to 1
-                output_s_con = output_s / 650
-
-                self.set_speed(output_s_con)
-
-
-            except NameError:
+                sum_error_p = max(min(1/self.Ki_p, sum_error_p), -1/self.Ki_p)
+            except ZeroDivisionError:
                 pass
+
+            #POSITION PID-Controller
+            output_p = self.Kp_p * error_p + self.Ki_p * self.sampling_time * sum_error_p + self.Kd_p / self.sampling_time * (error_p - error_p_old)
+            #limit output of position control to speed range
+            output_p = max(min(1, output_p), -1)
+
+            error_p_old = error_p
+
+            ## Speed Control
+            #full speed of a wheel forward and backward = +-650 ticks/s
+            output_p_con = 650 * output_p
+            
+            try:
+                #convert range output_p from -1 to 1 to ticks/s
+                ticks = (angle - prev_angle) / self.sampling_time
+            except NameError:
+                prev_angle = angle
+                continue
+            
+            #ticks per second (ticks/s), calculated from a moving median window with 5 values
+            list_ticks.append(ticks)
+            list_ticks = list_ticks[-5:]
+            ticks = statistics.median(list_ticks)
+            
+            #Er = SP - PV
+            error_s = output_p_con - ticks
+
+            #I-Part
+            sum_error_s += error_s
+            #limit I-Part to -1 and 1
+            
+            #try needed, because Ki_s can be zero
+            try:
+                sum_error_s = max(min(650/self.Ki_s, sum_error_s), -650/self.Ki_s)
+            except ZeroDivisionError:
+                pass
+
+            #SPEED PID-Controller
+            output_s = self.Kp_s * error_s + self.Ki_s * self.sampling_time * sum_error_s + self.Kd_s / self.sampling_time * (error_s - error_s_old)
+
+            error_s_old = error_s
+
+            #convert range output_s fom ticks/s to -1 to 1
+            output_s_con = output_s / 650
+
+            self.set_speed(output_s_con)
 
             prev_angle = angle
+            
+            if error_p == 0:
+                reached_sp_counter += 1
 
-            #try needed, because first iteration of the while loop prev_angle_* is
-            #missing and the method self.get_total_angle() will throw an exception,
-            #and therefore no total_angle_* gets calculated
-
-            try:
-                if error_p == 0:
-                    reached_sp_counter += 1
-
-                    if reached_sp_counter >= wait_after_reach_sp:
-                        self.set_speed(0.0)
-                        position_reached = True
-                        print("Position reached!")
-                else:
-                    pass
-            except NameError:
-                pass
-
+                if reached_sp_counter >= wait_after_reach_sp:
+                    self.set_speed(0.0)
+                    position_reached = True
+                    print("Position reached!")
 
             #Pause control loop for chosen sample time
-            #https://stackoverflow.com/questions/474528/what-is-the-best-way-to-repeatedly-execute-a-function-every-x-seconds-in-python/25251804#25251804
             time.sleep(self.sampling_time - ((time.time() - start_time) % self.sampling_time))
+            
+            #print('{:.20f}'.format((time.time() - start_time_each_loop)))
         
         return None
 
 
-
-
+    def safe_rotate(self, target_angle):
+        
+        target_angle = float(target_angle)
+        
+        safe_target = max(min(target_angle, MAX_SAFE_ANGLE), MIN_SAFE_ANGLE)
+        
+        return self.rotate(safe_target)
+    
+    
+    def update_setpoint(self, target_setpoint):
+        
+        target_setpoint = max(min(target_setpoint, 100), 0) * .01
+        
+        angle_range = MAX_SET_POINT_ANGLE - MIN_SET_POINT_ANGLE
+        
+        setpoint_angle = (target_setpoint * angle_range) + MIN_SET_POINT_ANGLE
+        
+        self.safe_rotate(setpoint_angle)
+        
+        return 1
+        
+        
+        
 
 
