@@ -28,6 +28,7 @@ INITIAL_META = {
                     "measurement_id": "Initialising...",
                     "time_stamp": "Initialising...",
                     "temperature": "Initialising...",
+                    "temperature_window": [],
                     "camera_filepath": "Initialising...",
                     "thermal_filepath": "Initialising...",
                     "hob_setpoint": "Initialising...",
@@ -213,6 +214,15 @@ class OnionBot(object):
 
         servo.update_setpoint(value)
         self.hob_setpoint = value
+
+        return "success"
+
+
+    def set_hob_off(self):
+        """Command to turn hob off"""
+
+        servo.hob_off()
+        self.hob_setpoint = "OFF"
 
         return "success"
 

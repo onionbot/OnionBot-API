@@ -55,6 +55,10 @@ def index():
         return bot.set_hob_setpoint(request.form['value'])
 
 
+    if request.form['action'] == 'set_hob_off':
+        return bot.set_hob_off()
+
+
     if request.form['action'] == 'set_camera_sleep':
         return bot.set_camera_sleep(request.form['value'])
 

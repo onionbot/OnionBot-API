@@ -5,6 +5,7 @@ import board
 import busio
 from PIL import Image
 import sys
+from collections import deque
 
 import adafruit_mlx90640
 
@@ -53,6 +54,8 @@ class ThermalCamera(object):
         print("Refresh rate: ", pow(2, (mlx.refresh_rate-1)), "Hz")
 
         self.mlx = mlx
+
+        self.temperature_window = deque([0] * 10)
         
         if visualise_on == True:
             
@@ -134,12 +137,23 @@ class ThermalCamera(object):
         
         if frame == None:
             raise ValueError("Run capture function first")
-
-        if frame != None:
+        elif frame != None:
             h = 12
             w = 16        
             t = self._latest_frame[h*32 + w]
-            return "{:.1f}".format(t) 
+
+            self.temperature_window.extend(t)
+            self.temperature_window.popleft(t)
+
+            print (self.temperature_window)
+
+            return "{:.1f}".format(t)
+
+
+
+    def get_temperature_window(self):
+
+        return self.temperature_window
 
 
     def save_latest_jpg(self, file_path):
