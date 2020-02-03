@@ -53,6 +53,8 @@ class OnionBot(object):
         self.camera_sleep = "0"
         self.hob_setpoint = "0"
 
+        self.temperature_window = "_"
+
 
     def start(self, session_name):
         """Start logging"""
