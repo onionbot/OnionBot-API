@@ -28,7 +28,6 @@ INITIAL_META = {
                     "measurement_id": "Initialising...",
                     "time_stamp": "Initialising...",
                     "temperature": "Initialising...",
-                    "temperature_window": [],
                     "camera_filepath": "Initialising...",
                     "thermal_filepath": "Initialising...",
                     "hob_setpoint": "Initialising...",
@@ -75,6 +74,7 @@ class OnionBot(object):
                 thermal.capture_frame()
                 thermal_filepath = thermal.save_latest_jpg(cloud.get_path(self.session_name, "thermal", "jpg", time_stamp, measurement_id, self.active_label))
                 temperature = thermal.get_latest_temperature()
+                self.temperature_window = thermal.get_temperature_window()
 
                 # Upload to cloud
                 cloud.upload_from_filename(camera_filepath)
@@ -168,6 +168,12 @@ class OnionBot(object):
         """Returns cloud filepath of latest meta.json - includes path location of images"""
 
         return self.latest_meta
+
+
+    def get_temperature_window(self):
+        """Returns last 300 temperature readings"""
+
+        return self.temperature_window
 
 
     def get_chosen_labels(self):

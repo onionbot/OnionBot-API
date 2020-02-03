@@ -141,19 +141,17 @@ class ThermalCamera(object):
             h = 12
             w = 16        
             t = self._latest_frame[h*32 + w]
+            temperature = "{:.1f}".format(t)
 
-            self.temperature_window.append(t)
+            self.temperature_window.append(temperature)
             self.temperature_window.popleft()
 
-            print (self.temperature_window)
-
-            return "{:.1f}".format(t)
-
+            return temperature
 
 
     def get_temperature_window(self):
 
-        return self.temperature_window
+        return list(self.temperature_window)
 
 
     def save_latest_jpg(self, file_path):
