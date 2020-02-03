@@ -6,6 +6,7 @@ import busio
 from PIL import Image
 import sys
 from collections import deque
+import json
 
 import adafruit_mlx90640
 
@@ -151,7 +152,7 @@ class ThermalCamera(object):
 
     def get_temperature_window(self):
 
-        return list(self.temperature_window)
+        return json.dumps(self.temperature_window)
 
 
     def save_latest_jpg(self, file_path):
