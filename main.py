@@ -52,7 +52,7 @@ class OnionBot(object):
         self.active_model = "_"
         
         self.camera_sleep = "0"
-        self.hob_setpoint = " 100"
+        self.hob_setpoint = "0"
 
 
     def start(self, session_name):
