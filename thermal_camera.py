@@ -142,8 +142,8 @@ class ThermalCamera(object):
             w = 16        
             t = self._latest_frame[h*32 + w]
 
-            self.temperature_window.extend(t)
-            self.temperature_window.popleft(t)
+            self.temperature_window.append(t)
+            self.temperature_window.popleft()
 
             print (self.temperature_window)
 
