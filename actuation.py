@@ -20,8 +20,8 @@ class Servo (object):
         unitsFC = 360,
         dcMin = 31.85,
         dcMax = 956.41,
-        wheel_gpio = 14,
-        servo_gpio = 18,
+        wheel_gpio = 5,
+        servo_gpio = 13,
         min_pw = 1210,
         max_pw = 1750,
         min_speed = -1,
@@ -176,6 +176,10 @@ class Servo (object):
                     self.set_speed(0.0)
                     position_reached = True
                     print("Position reached!")
+                elif time.time() - start_time >= 5:
+                    self.set_speed(0.0)
+                    position_reached = True
+                    print("Timed out, position not reached")
 
             #  Pause control loop for chosen sample time
             time.sleep(self.sampling_time - ((time.time() - start_time) % self.sampling_time))
@@ -195,7 +199,6 @@ class Servo (object):
 
 
     def update_setpoint(self, target_setpoint):
-
         target_setpoint = float(target_setpoint)
 
         target_setpoint = max(min(target_setpoint, 100), 0) * .01
