@@ -3,54 +3,24 @@
     <head>
         <meta charset="utf-8">
         <title>Onion Portal</title>
+        <!-- Load jQuery v3.3.1 -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <!-- Load BootStrap resources -->
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
-        
-        <!-- Temporary CSS -->
         <style type="text/css">
-        h2{padding-top: 25px; padding-bottom: 15px;}
-        h4{color: grey; }
-        label{width:100%}
-        a{overflow-wrap: break-word; word-wrap: break-word; -ms-word-break: break-all;word-break: break-word;}
+            h2{padding-top: 25px; padding-bottom: 15px;}
+            label{width:100%}
+            a{overflow-wrap: break-word; word-wrap: break-word; -ms-word-break: break-all;word-break: break-word;}
         </style>
-        <!--  -->
     </head>
     <body style="padding: 100px">
         
         <div class="container">
             <div class="row">
-                <h1>Onionbot Portal Version 0.2</h1>
+                <h1>Onionbot Portal Version 0.1</h1>
             </div>
             <div class="row">
-                <h2>Real-time Control</h2>
-            </div>
-            <div class="row">
-                <h3>Temperature</h3>
-            </div>
-            <div class="row" style="margin: 0px">
-                <div class="col-5" style="padding-right: 30px">
-                    <div class="row">
-                        <label for="temperature">Measured temperature at centre</label>
-                        <h4><span id="temperature">_</span> degrees</h4>
-                    </div>
-                    <div class="row">
-                        <label style="padding-top: 15px;">Hob setpoint</span></label>
-                        <div class="btn-group" role="group" style="width: 100%">
-                            <input type="text" class="form-control" id="hob-setpoint" placeholder="_" style="width: 50%">
-                            <button id="hob-setpoint-button" type="button" class="btn btn-primary" style="width: 25%">Update</button>
-                            <button id="hob-off-button" type="button" class="btn btn-secondary" style="width: 25%">Off</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-5" style="padding-right: 30px">
-                    <canvas id="myChart" style="width: 100%"></canvas>
-                </div>
-            </div>
-            <div class="row">
-                <h2>Data Logging</h2>
-            </div>
-            <div class="row">
-                <h3>Session</h3>
+                <h2>Session</h2>
             </div>
             <div class="row">
                 <div class="col-5">
@@ -61,75 +31,87 @@
                 </div>
                 <div class="col-5">
                     <label for="select-labels">Labels</label>
-                <select id="select-labels" class="custom-select"></select>
+                    <select id="select-labels" class="custom-select"></select>
+                </div>
+                <div class = 'col-2'>
+                    <label for="start">Start session</label>
+                    <button id="start" type="button" class="btn btn-primary" style="width: 100%">Start</button>
+                    <button id="stop" type="button" class="btn btn-danger" style="width: 100%">Stop</button>
+                </div>
             </div>
-            <div class = 'col-2'>
-                <label for="start">Start session</label>
-                <button id="start" type="button" class="btn btn-primary" style="width: 100%">Start</button>
-                <button id="stop" type="button" class="btn btn-danger" style="width: 100%">Stop</button>
-            </div>
-        </div>
-        <div class="row">
-            <h3>Live labelling</h3>
-        </div>
-        <div class="row" style="margin: 0px">
-            <div class="col-5" style="padding-right: 30px">
+            <div>
+
                 <div class="row">
-                    <label>Set live label</label>
-                    <h4 id="active-label">_</h4>
-                    <div id="#label-button-group" class="btn-group" role="group" style="width: 100%">
-                        <button id="label-button1" type="button" class="btn btn-secondary">discard</button>
-                        <button id="label-button2" type="button" class="btn btn-secondary">boiling</button>
-                        <button id="label-button3" type="button" class="btn btn-secondary">not_boiling</button>
+                    <h2>Live control and labelling</h2>
+                </div>
+                <div class="row" style="margin: 0px">
+                    <div class="col-5" style="padding-right: 30px">
+                        <div class="row">
+                            <label>Set live label</label>
+                            <h4 id="active-label">_</h4>
+                            <div id="#label-button-group" class="btn-group" role="group" style="width: 100%">
+                                 <button id="label-button1" type="button" class="btn btn-secondary">discard</button>
+                                <button id="label-button2" type="button" class="btn btn-secondary">boiling</button>
+                                <button id="label-button3" type="button" class="btn btn-secondary">not_boiling</button>
+
+                            </div>
+                        </div>
+                        <div class="row">
+                            <label for="temperature" style="padding-top: 15px">Measured temperature at centre</label>
+                            <h4><span id="temperature">_</span> degrees</h4>
+                        </div>
+                        <div class="row">
+                            <label style="padding-top: 15px;">Hob setpoint</span></label>
+                            <div class="btn-group" role="group" style="width: 100%">
+                                <input type="text" class="form-control" id="hob-setpoint" placeholder="_" style="width: 75%">
+                                <button id="hob-setpoint-button" type="button" class="btn btn-secondary" style="width: 25%">Update</button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <label style="padding-top: 15px;">Onionbot sensor sleep period (seconds)</label>
+                            <div class="btn-group" role="group" style="width: 100%">
+                                <input id="camera-sleep" type="text" class="form-control" id="frame-rate" placeholder="_" style="width: 75%">
+                                <button id="camera-sleep-button" type="button" class="btn btn-secondary" style="width: 25%">Update</button>
+                            </div>
+                        </div> 
+                    </div>
+                    <div class="col">
+                        <label for="camera-image">Camera view</label>
+                        <img id="camera-image" src="placeholder.png" style="width: 100%">
+                        <a id="camera-filepath" href="#">_</a>
+                    </div>
+                    <div class="col">
+                        <label for="thermal-image">Thermal imaging view</label>
+                        <img id="thermal-image" src="placeholder.png" style="width: 100%">
+                        <a id="thermal-filepath" href="#">_</a>
                     </div>
                 </div>
                 <div class="row">
-                    <label style="padding-top: 15px;">Onionbot sensor sleep period (seconds)</label>
-                    <div class="btn-group" role="group" style="width: 100%">
-                        <input id="camera-sleep" type="text" class="form-control" id="frame-rate" placeholder="_" style="width: 75%">
-                        <button id="camera-sleep-button" type="button" class="btn btn-secondary" style="width: 25%">Update</button>
+                    <h2>Live prediction</h2>
+                </div>
+                <div class="row">
+                    <div class="col-5">
+                        <label for="select-model">Select pre-trained deep learning model</label>
+                        <div class="btn-group" role="group" style="width: 100%">
+                            <select id="select-model" class="custom-select"></select>
+                            <button id="select-model-button" type="button" class="btn btn-secondary" style="width: 25%">Update</button>
+                        </div>
+                        <h4 id="active-model">_</h4>
+                    </div>
+                    <div class="col">
+                        <label for="camera-prediction">Camera image prediction result:</label>
+                        <h4 id="camera-prediction">_</h4>
+                    </div>
+                    <div class="col">
+                        <label for="thermal-prediction">Thermal image prediction result:</label>
+                        <h4 id="thermal-prediction">_</h4>
                     </div>
                 </div>
             </div>
-            <div class="col">
-                <label for="camera-image">Camera view</label>
-                <img id="camera-image" src="placeholder.png" style="width: 100%">
-                <a id="camera-filepath" href="#">_</a>
-            </div>
-            <div class="col">
-                <label for="thermal-image">Thermal imaging view</label>
-                <img id="thermal-image" src="placeholder.png" style="width: 100%">
-                <a id="thermal-filepath" href="#">_</a>
-            </div>
         </div>
-        <div class="row">
-            <h3>Live prediction</h3>
-        </div>
-        <div class="row">
-            <div class="col-5">
-                <label for="select-model">Select pre-trained deep learning model</label>
-                <div class="btn-group" role="group" style="width: 100%">
-                <select id="select-model" class="custom-select"></select>
-                <button id="select-model-button" type="button" class="btn btn-secondary" style="width: 25%">Update</button>
-            </div>
-            <h4 id="active-model">_</h4>
-        </div>
-        <div class="col">
-            <label for="camera-prediction">Camera image prediction result:</label>
-            <h4 id="camera-prediction">_</h4>
-        </div>
-        <div class="col">
-            <label for="thermal-prediction">Thermal image prediction result:</label>
-            <h4 id="thermal-prediction">_</h4>
-        </div>
-    </div>
-</div>
-</div>
-</div>
-<script src="portal.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
-<script src="charts/charts.js"></script>
-</body>
+        
+        <script src="portal.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+    </body>
 </html>

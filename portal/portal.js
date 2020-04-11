@@ -4,7 +4,7 @@
 /*******************************************************/
 /*************** Application variables *****************/
 
-var endpoint_url = 'http://192.168.0.70:5000/';
+var endpoint_url = 'http://192.168.0.73:5000/';
 var update_interval = 500;
 /*******************************************************/
 
@@ -61,11 +61,6 @@ function update() {
         $('#thermal-image').attr("src", data.attributes.thermal_filepath);
         $('#hob-setpoint').attr("placeholder", data.attributes.hob_setpoint);
         $('#camera-sleep').attr("placeholder", data.attributes.camera_sleep);
-    });
-
-    get("get_temperature_window", function(data) {
-        console.log(data)
-        chart.update();
     });
 
 }
@@ -160,18 +155,20 @@ $(document).ready(function() {
     });
 
     $('#select-model-button').on('click', function() {
+
         set('set_active_model', $('#select-model').val());
+
     });
 
+
     $('#hob-setpoint-button').on('click', function() {
+        console.log("test")
         set('set_hob_setpoint', $('#hob-setpoint').val());
     });
 
-    $('#hob-off-button').on('click', function() {
-        set('set_hob_off', "_");
-    });
 
     $('#camera-sleep-button').on('click', function() {
+        console.log("test")
         set('set_camera_sleep', $('#camera-sleep').val());
     });
 
