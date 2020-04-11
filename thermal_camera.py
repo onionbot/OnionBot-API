@@ -46,7 +46,7 @@ class ThermalCamera(object):
         if i2c is None:
             # MUST et I2C freq to 1MHz in /boot/config.txt
             i2c = busio.I2C(board.SCL, board.SDA)
-        
+
         #initialize the sensor
         mlx = adafruit_mlx90640.MLX90640(i2c)
         print("MLX addr detected on I2C, Serial #", [hex(i) for i in mlx.serial_number])
@@ -57,11 +57,11 @@ class ThermalCamera(object):
         self.mlx = mlx
 
         self.temperature_window = deque([0] * 10)
-        
+
         if visualise_on == True:
-            
+
             import pygame
-            
+
             # set up display
             os.environ['SDL_FBDEV'] = "/dev/fb0"
             os.environ['SDL_VIDEODRIVER'] = "fbcon"
@@ -75,7 +75,7 @@ class ThermalCamera(object):
             screen.fill((0, 0, 0))
             pygame.display.update()
             sensorout = pygame.Surface((32, 24))
-            
+
             self.screen = screen
             self.sensorout = sensorout
 
@@ -104,16 +104,16 @@ class ThermalCamera(object):
 
 
     def _visualise(self, img):
-        
+
         stamp = self._latest_stamp
         screen = self.screen
-        
+
         img_surface = pygame.image.fromstring(img.tobytes(), img.size, img.mode)
         pygame.transform.scale(img_surface.convert(),screen.get_size(), screen)
         pygame.display.update()
         print("Completed 2 frames in %0.2f s (%d FPS)" %
               (time.monotonic()-stamp, 1.0 / (time.monotonic()-stamp)))
-        
+
         time.sleep(10)
 
 
@@ -133,18 +133,18 @@ class ThermalCamera(object):
 
 
     def get_latest_temperature(self):
-        
+
         frame = self._latest_frame
-        
+
         if frame == None:
             raise ValueError("Run capture function first")
         elif frame != None:
             h = 12
-            w = 16        
+            w = 16
             t = self._latest_frame[h*32 + w]
             temperature = "{:.1f}".format(t)
 
-            self.temperature_window.append(temperature)
+            self.temperature_window.append(t)
             self.temperature_window.popleft()
 
             return temperature
@@ -152,17 +152,17 @@ class ThermalCamera(object):
 
     def get_temperature_window(self):
 
-        return json.dumps(self.temperature_window)
+        return json.dumps(list(self.temperature_window))
 
 
     def save_latest_jpg(self, file_path):
 
-        frame = self._latest_frame 
+        frame = self._latest_frame
         file_name = str(self._latest_stamp)
-        
+
         if frame == None:
             raise ValueError("Run capture function first")
-        
+
         for i in range(COLORDEPTH):
             colormap[i] = self._gradient(i, COLORDEPTH, heatmap)
 
@@ -181,20 +181,20 @@ class ThermalCamera(object):
         img = Image.new('RGB', (32, 24))
         img.putdata(pixels)
         img = img.resize((24*INTERPOLATE, 24*INTERPOLATE), Image.BICUBIC)
-        
+
         img = img.transpose(method=Image.ROTATE_90)
         img = img.transpose(method=Image.FLIP_LEFT_RIGHT)
         img.save(file_path)
 
         if self.visualise_on==True:
             self._visualise(img)
-            
+
         return file_path
 
 
     def save_latest_csv(self, file_path):
 
-        frame = self._latest_frame 
+        frame = self._latest_frame
         file_name = str(self._latest_stamp)
 
         if frame == None:
@@ -207,12 +207,10 @@ class ThermalCamera(object):
                 t = self._latest_frame[h*32 + w]
                 data_string = data_string + "{:.1f}".format(t) + ","
             file.write(data_string.strip(',') + "\n")
-            
+
         file.close()
 
         return file_path
 
 
 
-
-    
