@@ -3,3 +3,4 @@
 __pycache__/
 logs/
 *.iso
+portal/charts/index.html
