@@ -6,6 +6,8 @@ class Camera(object):
     
     def __init__(self):
         
+        print ("Initialising camera...")
+
         camera = PiCamera()
         camera.rotation = 180
         camera.zoom = (0.05, 0.0, 0.75, 0.95)
@@ -14,7 +16,8 @@ class Camera(object):
         
         #camera.start_preview()
         self.camera=camera
-        sleep(2)
+        sleep(1)
+
     
     def capture(self, file_path):
 

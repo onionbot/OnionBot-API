@@ -37,6 +37,7 @@ colormap = [0] * COLORDEPTH
 class ThermalCamera(object):
     """Save image to file"""
 
+    print ("Initialising thermal camera...")
 
     def __init__(self, i2c=None, visualise_on=False):
 
@@ -51,7 +52,7 @@ class ThermalCamera(object):
         mlx = adafruit_mlx90640.MLX90640(i2c)
         print("MLX addr detected on I2C, Serial #", [hex(i) for i in mlx.serial_number])
         mlx.refresh_rate = adafruit_mlx90640.RefreshRate.REFRESH_32_HZ
-        print(mlx.refresh_rate)
+        # print(mlx.refresh_rate)
         print("Refresh rate: ", pow(2, (mlx.refresh_rate-1)), "Hz")
 
         self.mlx = mlx
@@ -78,6 +79,7 @@ class ThermalCamera(object):
 
             self.screen = screen
             self.sensorout = sensorout
+
 
 
     def _constrain(self, val, min_val, max_val):

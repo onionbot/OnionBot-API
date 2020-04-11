@@ -32,6 +32,8 @@ class Classify(object):
 
     def __init__(self, labels, model):
 
+        print ("Initialising Tensorflow interpreter...")
+
         self.labels = self.load_labels(labels)
 
         interpreter = Interpreter(model)
@@ -40,7 +42,7 @@ class Classify(object):
 
         _, self.height, self.width, _ = interpreter.get_input_details()[0]['shape']
 
-    
+
     def load_labels(self, path):
         with open(path, 'r') as f:
             return {i: line.strip() for i, line in enumerate(f.readlines())}

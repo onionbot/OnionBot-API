@@ -34,6 +34,8 @@ class Servo (object):
         Ki_s = 0,
         Kd_s = 0):
 
+        print ("Initialising servo motor...")
+
         pi = pigpio.pi()
 
         self.pi = pi
@@ -51,7 +53,7 @@ class Servo (object):
         self.wheel = lib_para_360_servo.read_pwm(pi = self.pi, gpio = wheel_gpio)
         self.servo = lib_para_360_servo.write_pwm(pi = self.pi, gpio = servo_gpio, min_pw = min_pw, max_pw = max_pw, min_speed = min_speed, max_speed = max_speed)
 
-        #  needed time for initializing the four instances
+        #  needed time for initializing the instances
         time.sleep(1)
 
 

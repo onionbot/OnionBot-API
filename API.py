@@ -7,6 +7,7 @@ from flask import request
 from flask import send_file
 
 from flask_cors import CORS
+print("Initialising web server...")
 app = Flask(__name__)
 CORS(app)
 
