@@ -16,7 +16,6 @@ class Camera(object):
         
         #camera.start_preview()
         self.camera=camera
-        sleep(1)
 
     
     def capture(self, file_path):

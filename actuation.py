@@ -54,7 +54,7 @@ class Servo (object):
         self.servo = lib_para_360_servo.write_pwm(pi = self.pi, gpio = servo_gpio, min_pw = min_pw, max_pw = max_pw, min_speed = min_speed, max_speed = max_speed)
 
         #  needed time for initializing the instances
-        time.sleep(1)
+        # time.sleep(1)
 
 
     def set_speed(self, speed):
