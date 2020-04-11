@@ -10,6 +10,9 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)
 
+import logging
+log = logging.getLogger('werkzeug')
+log.setLevel(logging.ERROR)
 
 @app.route('/', methods=['GET','POST'])
 def index():
