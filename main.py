@@ -42,7 +42,6 @@ class OnionBot(object):
 
     def __init__(self):
 
-
         self.latest_meta = json.dumps(INITIAL_META)
         self.stop_flag = False
 

@@ -50,10 +50,10 @@ class ThermalCamera(object):
 
         #initialize the sensor
         mlx = adafruit_mlx90640.MLX90640(i2c)
-        print("MLX addr detected on I2C, Serial #", [hex(i) for i in mlx.serial_number])
+        print("  * MLX addr detected on I2C, Serial #", [hex(i) for i in mlx.serial_number])
         mlx.refresh_rate = adafruit_mlx90640.RefreshRate.REFRESH_32_HZ
         # print(mlx.refresh_rate)
-        print("Refresh rate: ", pow(2, (mlx.refresh_rate-1)), "Hz")
+        print("  * Refresh rate: ", pow(2, (mlx.refresh_rate-1)), "Hz")
 
         self.mlx = mlx
 
