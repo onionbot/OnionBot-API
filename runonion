@@ -6,7 +6,6 @@ echo "_/    _/  _/    _/_/    _/    _/    _/  _/    _/_/  _/    _/  _/    _/    
 echo " _/_/    _/      _/  _/_/_/    _/_/    _/      _/  _/_/_/      _/_/        _/         "
 echo " "
 echo "COPYRIGHT BEN COBLEY 2020" 
-echo " "
 echo "Starting ONIONBOT System Version 0.2."
 echo " "
 python3 API.py 
