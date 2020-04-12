@@ -42,7 +42,7 @@ class Camera(object):
         # p.join()
 
     def join(self):
-        self.p.is_alive()
+        print(self.p.is_alive())
         logging.debug("Calling join...")
 
         # logging.debug("Calling file join...")
@@ -51,5 +51,5 @@ class Camera(object):
         # file_queue.close()
         # logging.debug("Queue closed")
         self.p.join()
-        self.p.is_alive()
+        print(self.p.is_alive())
         return "test.jpg"
