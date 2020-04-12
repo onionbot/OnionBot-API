@@ -12,6 +12,12 @@ from picamera import PiCamera
 class Camera(object):
     def __init__(self):  # , *args, **kwargs
 
+        pass
+
+    def _worker(self, file_path):
+        logging.debug("Capture process started")
+        logging.debug(file_path)
+        
         logging.info("Initialising camera...")
 
         camera = PiCamera()
@@ -20,12 +26,10 @@ class Camera(object):
         camera.resolution = (1024, 768)
 
         # camera.start_preview()
-        self.camera = camera
+        # self.camera = camera
 
-    def _worker(self, file_path):
-        logging.debug("Capture process started")
-        logging.debug(file_path)
-        self.camera.capture(test.jpg) #, resize=(240, 240)
+        logging.debug("Taking picture")
+        camera.capture("test.jpg") #, resize=(240, 240)
         logging.debug("Capture process ended")
 
         # logging.debug("Captured, putting file path in queue")
