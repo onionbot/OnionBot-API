@@ -1,3 +1,6 @@
+import logging
+logging.basicConfig(level=logging.DEBUG)
+
 import multiprocessing as mp
 
 from time import sleep
@@ -7,7 +10,7 @@ from picamera import PiCamera
 class Camera(object):
     def __init__(self):  # , *args, **kwargs
 
-        print("Initialising camera...")
+        logging.info("Initialising camera...")
 
         camera = PiCamera()
         camera.rotation = 180
@@ -18,14 +21,18 @@ class Camera(object):
         self.camera = camera
 
     def _worker(self):
-        print("Taking picture!")
+        logging.debug('Capture process started')
         self.camera.capture(self.file_path, resize=(240, 240))
 
     def start(self, file_path):
+        logging.debug('Start called')
         self.file_path = file_path
         self.p = mp.Process(target=self._worker)
         self.p.start()
 
+
     def join(self):
+        logging.debug('Join called')
         self.p.join()
+        logging.debug('Joined')
         return self.file_path
