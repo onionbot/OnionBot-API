@@ -25,7 +25,7 @@ class Camera(object):
     def _worker(self, file_path):
         logging.debug("Capture process started")
         logging.debug(file_path)
-        #self.camera.capture(file_path, resize=(240, 240))
+        self.camera.capture(test.jpg) #, resize=(240, 240)
         logging.debug("Capture process ended")
 
         # logging.debug("Captured, putting file path in queue")
@@ -52,4 +52,4 @@ class Camera(object):
         # logging.debug("Queue closed")
         self.p.join()
         self.p.is_alive()
-        return "18089.336756502.jpg"
+        return "test.jpg"
