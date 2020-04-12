@@ -1,0 +1,27 @@
+h2  {
+  padding-top: 25px;
+  padding-bottom: 15px;
+}
+
+h4  {
+  color: grey;
+}
+
+label {
+  width:100%
+}
+
+a  {
+  overflow-wrap: break-word; 
+  word-wrap: break-word; 
+  -ms-word-break: break-all;
+  word-break: break-word;
+}
+
+.connection-monitor  {
+  height: 25px;
+  width: 25px;
+  background-color: red;
+  border-radius: 50%;
+  display: inline-block;
+}
