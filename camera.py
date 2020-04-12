@@ -1,7 +1,9 @@
 import logging
+
 logging.basicConfig(level=logging.DEBUG)
 
 import multiprocessing as mp
+from multiprocessing import JoinableQueue
 
 from time import sleep
 from picamera import PiCamera
@@ -20,19 +22,25 @@ class Camera(object):
         # camera.start_preview()
         self.camera = camera
 
-    def _worker(self):
-        logging.debug('Capture process started')
-        self.camera.capture(self.file_path, resize=(240, 240))
+    def _worker(self, file_path):
+        logging.debug("Capture process started")
+        self.camera.capture(file_path, resize=(240, 240))
+        logging.debug("Captured, putting file path in queue")
+        self.file_queue.put(file_path)
 
     def start(self, file_path):
-        logging.debug('Start called')
-        self.file_path = file_path
-        self.p = mp.Process(target=self._worker)
-        self.p.start()
+        logging.debug("Start called")
 
+        self.file_queue = JoinableQueue()
+
+        p = mp.Process(target=self._worker, args(file_path, ))
+        p.start()
+        p.join()
 
     def join(self):
-        logging.debug('Join called')
-        self.p.join()
-        logging.debug('Joined')
-        return self.file_path
+        logging.debug("Calling file join...")
+        file_path = self.file_queue.join()
+        logging.debug("File joined")
+        file_queue.close()
+        logging.debug("Queue closed")
+        return file_path
