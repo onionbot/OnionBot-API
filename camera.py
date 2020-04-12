@@ -20,6 +20,8 @@ class Camera(object):
         
         logging.info("Initialising camera...")
 
+        start_time = time.time()
+
         camera = PiCamera()
         camera.rotation = 180
         camera.zoom = (0.05, 0.0, 0.75, 0.95)
@@ -31,6 +33,9 @@ class Camera(object):
         logging.debug("Taking picture")
         camera.capture("test.jpg") #, resize=(240, 240)
         logging.debug("Capture process ended")
+
+        camera.close()
+        print("--- %s seconds ---" % (time.time() - start_time))
 
         # logging.debug("Captured, putting file path in queue")
         # self.file_queue.put(file_path)
