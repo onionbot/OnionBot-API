@@ -24,6 +24,7 @@ class Camera(object):
 
     def _worker(self, file_path):
         logging.debug("Capture process started")
+        logging.debug(file_path)
         self.camera.capture(file_path, resize=(240, 240))
         logging.debug("Captured, putting file path in queue")
         self.file_queue.put(file_path)
@@ -33,7 +34,7 @@ class Camera(object):
 
         self.file_queue = JoinableQueue()
 
-        p = mp.Process(target=self._worker, args(file_path, ))
+        p = mp.Process(target=self._worker, args=(file_path, ))
         p.start()
         p.join()
 
