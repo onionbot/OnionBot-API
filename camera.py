@@ -25,23 +25,31 @@ class Camera(object):
     def _worker(self, file_path):
         logging.debug("Capture process started")
         logging.debug(file_path)
-        self.camera.capture(file_path, resize=(240, 240))
-        logging.debug("Captured, putting file path in queue")
-        self.file_queue.put(file_path)
+        #self.camera.capture(file_path, resize=(240, 240))
+        logging.debug("Capture process ended")
+
+        # logging.debug("Captured, putting file path in queue")
+        # self.file_queue.put(file_path)
 
     def start(self, file_path):
         logging.debug("Start called")
 
-        self.file_queue = JoinableQueue()
+        # self.file_queue = JoinableQueue()
 
         p = mp.Process(target=self._worker, args=(file_path, ))
         p.start()
-        p.join()
+        self.p = p
+        # p.join()
 
     def join(self):
-        logging.debug("Calling file join...")
-        file_path = self.file_queue.join()
-        logging.debug("File joined")
-        file_queue.close()
-        logging.debug("Queue closed")
-        return file_path
+        self.p.is_alive()
+        logging.debug("Calling join...")
+
+        # logging.debug("Calling file join...")
+        # file_path = self.file_queue.join()
+        # logging.debug("File joined")
+        # file_queue.close()
+        # logging.debug("Queue closed")
+        self.p.join()
+        self.p.is_alive()
+        return "18089.336756502.jpg"
