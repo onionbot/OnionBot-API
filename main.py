@@ -76,7 +76,7 @@ class OnionBot(object):
                     self.active_label,
                 )
 
-                camera.start()
+                camera.start(camera_filepath)
                 camera.join()
 
                 thermal.capture_frame()
