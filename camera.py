@@ -1,5 +1,4 @@
 import multiprocessing as mp
-from multiprocessing import JoinableQueue
 
 from time import sleep
 from picamera import PiCamera
@@ -18,23 +17,15 @@ class Camera(object):
         # camera.start_preview()
         self.camera = camera
 
-    def capture(self, file_path):
-        self.intray.put(file_path)
-        
+    def _worker(self):
+        print("Taking picture!")
+        self.camera.capture(self.file_path, resize=(240, 240))
 
-    def thread(self):
-        while True:
-            file_path = self.intray.get(block=True)
-            self.camera.capture(file_path, resize=(240, 240))
+    def start(self, file_path):
+        self.file_path = file_path
+        self.p = mp.Process(target=self._worker)
+        self.p.start()
 
-    def run(self):
-
-        self.intray = JoinableQueue(2)
-
-        p = mp.Process(target=self.thread)
-        p.start()
-
-
-if __name__ == "__main__":
-    a = A()
-    a.run()
+    def join(self):
+        self.p.join()
+        return self.file_path
