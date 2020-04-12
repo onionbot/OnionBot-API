@@ -128,26 +128,18 @@ class OnionBot(object):
             while self.stop_flag == False:
 
                 measurement_id += 1
-
                 print (F"Capturing measurement {measurement_id} with label {self.active_label}")
-
                 self.latest_meta = capture(measurement_id)
 
                 sleep(float(self.camera_sleep))
 
-            # logging.info("Thread %s: finishing", name)
+        # Start logging thread 
+        self.stop_flag = False
+        logging_thread = threading.Thread(target=thread_function, args=(1,))
+        logging_thread.start()
 
-        format = "%(asctime)s: %(message)s"
-        logging.basicConfig(format=format, level=logging.INFO,
-                            datefmt="%H:%M:%S")
-
-        logging.info("Main    : before creating thread")
-        my_thread = threading.Thread(target=thread_function, args=(1,))
-        logging.info("Main    : before running thread")
-        my_thread.start()
-        logging.info("Main    : wait for the thread to finish")
-        my_thread.join()
-        logging.info("Main    : all done")
+        # Waiting for the thread to finish
+        logging_thread.join()
 
         return "success"
 
