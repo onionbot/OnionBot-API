@@ -66,7 +66,7 @@ class OnionBot(object):
                 time_stamp = datetime.datetime.now()
 
                 # Capture sensor data
-                camera_filepath = camera.capture(
+                camera.start(
                     cloud.get_path(
                         self.session_name,
                         "camera",
@@ -76,6 +76,8 @@ class OnionBot(object):
                         self.active_label,
                     )
                 )
+                camera_filepath = camera.join()
+                
                 thermal.capture_frame()
                 thermal_filepath = thermal.save_latest_jpg(
                     cloud.get_path(
