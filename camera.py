@@ -16,6 +16,7 @@ class Camera(object):
 
         sleep(1)
 
+        self.file_queue = JoinableQueue(1)
         self._launch()
 
     def _worker(self):
@@ -27,11 +28,12 @@ class Camera(object):
         camera.zoom = (0.05, 0.0, 0.75, 0.95)
         camera.resolution = (1024, 768)
 
-        self.file_queue = JoinableQueue(1)
+        
+
+        logging.debug("Waiting for start command...")
+
 
         while True:
-            
-            logging.debug("Waiting for start command...")
             self.file_queue.get(block=True)
 
             logging.debug("Capture process started")
@@ -54,4 +56,3 @@ class Camera(object):
         logging.debug("Launch called")
         p = mp.Process(target=self._worker)
         p.start()
-        p.join()
