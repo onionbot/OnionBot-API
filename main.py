@@ -28,8 +28,8 @@ INITIAL_META = {
                     "measurement_id": "Initialising...",
                     "time_stamp": "Initialising...",
                     "temperature": "Initialising...",
-                    "camera_filepath": "Initialising...",
-                    "thermal_filepath": "Initialising...",
+                    "camera_filepath": "placeholder.png",
+                    "thermal_filepath": "placeholder.png",
                     "hob_setpoint": "Initialising...",
                     "camera_sleep": "Initialising...",
                 },
@@ -120,7 +120,7 @@ class OnionBot(object):
 
                 return json.dumps(data)
 
-            logging.info("Thread %s: starting", name)
+            # logging.info("Thread %s: starting", name)
             measurement_id = 0
 
             # WHILE LOOP
@@ -135,7 +135,7 @@ class OnionBot(object):
 
                 sleep(float(self.camera_sleep))
 
-            logging.info("Thread %s: finishing", name)
+            # logging.info("Thread %s: finishing", name)
 
         format = "%(asctime)s: %(message)s"
         logging.basicConfig(format=format, level=logging.INFO,
