@@ -1,15 +1,13 @@
-'use strict';
 
-
-/*******************************************************/
-/*************** Application variables *****************/
+// -------------------------------------------------------
+// ---------------- APPLICATION VARIABLES ----------------
 
 var endpoint_url = 'http://192.168.0.70:5000/';
 var update_interval = 500;
-/*******************************************************/
 
 
-// INTERFACE WITH API
+
+// ------------------ INTERFACE WITH API ----------------
 
 function set(function_name, argument) {
     $.ajax({
@@ -31,18 +29,35 @@ function get(function_name, callback) {
         data: {
             action: function_name,
         },
-        success: callback
+        success: callback,
+        error: connection_failed,
     });
+
 }
 
 
-// ASYNC UPDATE PAGE
+function connection_success() {
+    $('#connection-monitor').css("background-color", "green");
+}
+
+
+function connection_failed() {
+    $('#connection-monitor').css("background-color", "yellow");
+}
+
+
+
+
+// ------------- ASYCHRONOUS UPDATE PAGE -------------
 
 function update() {
+
+    console.log("Update page called")
 
     get("get_latest_meta", function(data) {
         // data is a js object 
 
+        connection_success()
         data = JSON.parse(data);
 
         $('#session-name').html(data.attributes.session_name);
@@ -63,19 +78,24 @@ function update() {
         $('#camera-sleep').attr("placeholder", data.attributes.camera_sleep);
     });
 
-    get("get_temperature_window", function(data) {
-        console.log(data)
-        chart.update();
-    });
+    // get("get_temperature_window", function(data) {
+    //     console.log(data)
+    //     // chart.update();
+    // });
 
 }
 
 
-// EVENT LISTENERS FOR PAGE INTERACTION
+
+
+// -------- EVENT LISTENERS FOR PAGE INTERACTION ---------
 
 $(document).ready(function() {
 
     $("#stop").hide();
+
+    // Refresh page
+    setInterval(update, update_interval);
 
     $('#start').on('click', function() {
 
@@ -86,8 +106,6 @@ $(document).ready(function() {
         $("#start").hide();
         $("#stop").show();
 
-        // Refresh page
-        setInterval(update, update_interval);
     });
 
     $('#stop').on('click', function() {
@@ -97,7 +115,6 @@ $(document).ready(function() {
 
             $("#stop").hide();
             $("#start").show();
-            clearInterval(update)
 
         });
 

@@ -6,22 +6,19 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
         <link rel="icon" href="ico.png" type="image/png" sizes="16x16">
-
-        
-        <!-- Temporary CSS -->
-        <style type="text/css">
-        h2{padding-top: 25px; padding-bottom: 15px;}
-        h4{color: grey; }
-        label{width:100%}
-        a{overflow-wrap: break-word; word-wrap: break-word; -ms-word-break: break-all;word-break: break-word;}
+        <link rel="stylesheet" type="text/css" href="main.css">
         </style>
-        <!--  -->
     </head>
     <body style="padding: 100px">
         
         <div class="container">
             <div class="row">
-                <h1>Onionbot Portal Version 0.2</h1>
+                <div class="col-10">
+                    <h1>Onionbot Portal Version 0.2</h1>
+                </div>
+                <div class="col-2">
+                    <span class="connection-monitor" id="connection-monitor"></span>
+                </div>
             </div>
             <div class="row">
                 <h2>Real-time Control</h2>
