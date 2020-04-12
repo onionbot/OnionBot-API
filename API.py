@@ -15,11 +15,9 @@ import logging
 log = logging.getLogger('werkzeug')
 log.setLevel(logging.ERROR)
 
-@app.route('/', methods=['GET','POST'])
-
 print("\n Web server ready to connect. \n")
 
-
+@app.route('/', methods=['GET','POST'])
 def index():
     """Index is run automatically on init by flask"""
     
