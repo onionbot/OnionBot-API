@@ -86,6 +86,7 @@ class OnionBot(object):
                 )
 
                 camera.start(camera_filepath)
+                thermal.start(thermal_filepath)
 
                 temperature, self.temperature_window = thermal.join()
 
