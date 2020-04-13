@@ -152,7 +152,7 @@ class OnionBot(object):
 
             # WHILE LOOP
 
-            while self.stop_flag == False:
+            while self.stop_flag is False:
 
                 measurement_id += 1
                 print(

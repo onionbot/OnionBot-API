@@ -12,29 +12,30 @@ MIN_SET_POINT_ANGLE = 50
 MAX_SET_POINT_ANGLE = 310
 
 
-class Servo (object):
+class Servo(object):
     """ Wrapper for servo module to control hob temperature setting """
 
     def __init__(
         self,
-        unitsFC = 360,
-        dcMin = 31.85,
-        dcMax = 956.41,
-        wheel_gpio = 5,
-        servo_gpio = 13,
-        min_pw = 1210,
-        max_pw = 1750,
-        min_speed = -1,
-        max_speed = 1,
-        sampling_time = 0.01,
-        Kp_p = 0.1, #  not too big values, otherwise output of position control would slow down too abrupt
-        Ki_p = 0.1,
-        Kd_p = 0,
-        Kp_s = 0.4,
-        Ki_s = 0,
-        Kd_s = 0):
+        unitsFC=360,
+        dcMin=31.85,
+        dcMax=956.41,
+        wheel_gpio=5,
+        servo_gpio=13,
+        min_pw=1210,
+        max_pw=1750,
+        min_speed=-1,
+        max_speed=1,
+        sampling_time=0.01,
+        Kp_p=0.1,  # not too big values, otherwise output of position control would slow down too abrupt
+        Ki_p=0.1,
+        Kd_p=0,
+        Kp_s=0.4,
+        Ki_s=0,
+        Kd_s=0,
+    ):
 
-        print ("Initialising servo motor...")
+        print("Initialising servo motor...")
 
         pi = pigpio.pi()
 
@@ -50,12 +51,18 @@ class Servo (object):
         self.Ki_s = Ki_s
         self.Kd_s = Kd_s
 
-        self.wheel = lib_para_360_servo.read_pwm(pi = self.pi, gpio = wheel_gpio)
-        self.servo = lib_para_360_servo.write_pwm(pi = self.pi, gpio = servo_gpio, min_pw = min_pw, max_pw = max_pw, min_speed = min_speed, max_speed = max_speed)
+        self.wheel = lib_para_360_servo.read_pwm(pi=self.pi, gpio=wheel_gpio)
+        self.servo = lib_para_360_servo.write_pwm(
+            pi=self.pi,
+            gpio=servo_gpio,
+            min_pw=min_pw,
+            max_pw=max_pw,
+            min_speed=min_speed,
+            max_speed=max_speed,
+        )
 
         #  needed time for initializing the instances
         # time.sleep(1)
-
 
     def set_speed(self, speed):
 
@@ -63,18 +70,18 @@ class Servo (object):
 
         return None
 
-
     #  angular position in units full circle
     def get_angle(self):
 
         #  driving forward will increase the angle
 
-        angle = (self.wheel.read() - self.dcMin) * self.unitsFC / (self.dcMax - self.dcMin + 1)
+        angle = (
+            (self.wheel.read() - self.dcMin) * self.unitsFC / (self.dcMax - self.dcMin + 1)
+        )
 
         angle = max(min((self.unitsFC - 1), angle), 0)
 
         return angle
-
 
     def rotate(self, target_angle):
 
@@ -92,7 +99,7 @@ class Servo (object):
         reached_sp_counter = 0
         #  position must be reached for one second to allow
         #  overshoots/oscillations before stopping control loop
-        wait_after_reach_sp = 1/self.sampling_time
+        wait_after_reach_sp = 1 / self.sampling_time
 
         #  start time of the control loop
         start_time = time.time()
@@ -120,12 +127,14 @@ class Servo (object):
             #  try needed, because Ki_p can be zero
             try:
                 #  limit I-Part to -1 and 1
-                sum_error_p = max(min(1/self.Ki_p, sum_error_p), -1/self.Ki_p)
+                sum_error_p = max(min(1 / self.Ki_p, sum_error_p), -1 / self.Ki_p)
             except ZeroDivisionError:
                 pass
 
             #  POSITION PID-Controller
-            output_p = self.Kp_p * error_p + self.Ki_p * self.sampling_time * sum_error_p + self.Kd_p / self.sampling_time * (error_p - error_p_old)
+            output_p = (
+                self.Kp_p * error_p + self.Ki_p * self.sampling_time * sum_error_p + self.Kd_p / self.sampling_time * (error_p - error_p_old)
+            )
             #  limit output of position control to speed range
             output_p = max(min(1, output_p), -1)
 
@@ -156,12 +165,14 @@ class Servo (object):
 
             #  try needed, because Ki_s can be zero
             try:
-                sum_error_s = max(min(650/self.Ki_s, sum_error_s), -650/self.Ki_s)
+                sum_error_s = max(min(650 / self.Ki_s, sum_error_s), -650 / self.Ki_s)
             except ZeroDivisionError:
                 pass
 
             #  SPEED PID-Controller
-            output_s = self.Kp_s * error_s + self.Ki_s * self.sampling_time * sum_error_s + self.Kd_s / self.sampling_time * (error_s - error_s_old)
+            output_s = (
+                self.Kp_s * error_s + self.Ki_s * self.sampling_time * sum_error_s + self.Kd_s / self.sampling_time * (error_s - error_s_old)
+            )
 
             error_s_old = error_s
 
@@ -184,12 +195,13 @@ class Servo (object):
                     print("Timed out, position not reached")
 
             #  Pause control loop for chosen sample time
-            time.sleep(self.sampling_time - ((time.time() - start_time) % self.sampling_time))
+            time.sleep(
+                self.sampling_time - ((time.time() - start_time) % self.sampling_time)
+            )
 
             #  print('{:.20f}'.format((time.time() - start_time_each_loop)))
 
         return None
-
 
     def safe_rotate(self, target_angle):
 
@@ -199,18 +211,16 @@ class Servo (object):
 
         return self.rotate(safe_target)
 
-
     def update_setpoint(self, target_setpoint):
         target_setpoint = float(target_setpoint)
 
-        target_setpoint = max(min(target_setpoint, 100), 0) * .01
+        target_setpoint = max(min(target_setpoint, 100), 0) * 0.01
 
         angle_range = MAX_SET_POINT_ANGLE - MIN_SET_POINT_ANGLE
 
         setpoint_angle = (target_setpoint * angle_range) + MIN_SET_POINT_ANGLE
 
         return self.safe_rotate(setpoint_angle)
-
 
     def hob_off(self):
 
