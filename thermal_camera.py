@@ -59,6 +59,7 @@ class ThermalCamera(object):
         self.mlx = mlx
 
         self.file_queue = JoinableQueue(1)
+        self.file_queue2 = JoinableQueue(1)
         self._launch()
 
     def _constrain(self, val, min_val, max_val):
@@ -147,6 +148,7 @@ class ThermalCamera(object):
             temperature, temperature_window = _value(frame, temperature_window)
             _image(frame, file_path)
 
+            self.file_queue2.put(temperature)
             self.file_queue.task_done()
 
     def start(self, file_path):
@@ -156,6 +158,7 @@ class ThermalCamera(object):
     def join(self):
         logging.debug("Calling join")
         self.file_queue.join()
+        print(self.file_queue2.get_nowait())
 
         return 5, 65
 
