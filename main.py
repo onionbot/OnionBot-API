@@ -123,8 +123,6 @@ class OnionBot(object):
                 cloud.start(camera_filepath)
                 cloud.start(thermal_filepath)
 
-                cloud.join()
-
                 # Make prediction based on specified deep learning model
 
                 if self.active_model != "_":
@@ -162,7 +160,9 @@ class OnionBot(object):
                     json.dump(data, write_file)
 
                 # Upload to cloud
-                cloud.upload_from_filename(json_filepath)
+                cloud.start(json_filepath)
+
+                cloud.join()
 
                 return json.dumps(data)
 
