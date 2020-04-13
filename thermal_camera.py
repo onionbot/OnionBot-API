@@ -97,7 +97,7 @@ class ThermalCamera(object):
         return r, g, b
 
     def _worker(self):
-        def _value(self, frame, temperature_window):
+        def _value(frame, temperature_window):
 
             logging.debug("Proccessing numerical data")
 
@@ -109,11 +109,11 @@ class ThermalCamera(object):
             temperature_window.append(t)
             temperature_window.popleft()
 
-            temperature_window = json.dumps(list(self.temperature_window))
+            temperature_window = json.dumps(list(temperature_window))
 
             return temperature, temperature_window
 
-        def _image(self, frame, file_path):
+        def _image(frame, file_path):
 
             logging.debug("Proccessing image data")
 
@@ -162,3 +162,5 @@ class ThermalCamera(object):
         logging.debug("Initialising worker")
         p = mp.Process(target=self._worker)
         p.start()
+
+
