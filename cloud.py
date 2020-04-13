@@ -1,16 +1,11 @@
 import os
+from google.cloud import storage
+import logging
+import multiprocessing as mp
 
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/home/pi/onionbot-819a387e4e79.json"
 
-import datetime
-from google.cloud import storage
-
-client = storage.Client()
-# GOTO: https://console.cloud.google.com/storage/browser/[bucket-id]/
-
 bucket_name = "onionbucket"
-
-bucket = client.get_bucket(bucket_name)
 
 
 class Cloud(object):
@@ -19,12 +14,25 @@ class Cloud(object):
     def __init__(self):
         pass
 
-    def upload_from_filename(self, path):
+    def _worker(self, path):
+
+        logging.info("Initialising upload worker")
+
+        client = storage.Client()
+        bucket = client.get_bucket(bucket_name)
+
         blob = bucket.blob(path)
         blob.upload_from_filename(path)
         blob.make_public()
         # print("Uploaded to cloud:", path)
         # print("Blob is publicly accessible at ", blob.public_url)
+
+    def upload_from_filename(self, path):
+
+        logging.debug("Calling start")
+
+        p = mp.Process(target=self._worker, args=(path,))
+        p.start()
 
     def get_path(self, session_name, sensor, file_type, time, measurement_id, label):
 
