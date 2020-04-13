@@ -3,6 +3,8 @@ import time
 import lib_para_360_servo
 import statistics
 
+import logging
+
 
 MIN_SAFE_ANGLE = 20
 MAX_SAFE_ANGLE = 310
