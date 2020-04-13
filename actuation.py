@@ -35,7 +35,7 @@ class Servo(object):
         Kd_s=0,
     ):
 
-        print("Initialising servo motor...")
+        logging.info("Initialising servo motor")
 
         pi = pigpio.pi()
 

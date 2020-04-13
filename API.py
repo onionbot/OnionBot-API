@@ -10,14 +10,15 @@ import logging
 
 bot = OnionBot()
 
-print("Initialising web server...")
+logging.info("Initialising web server")
 app = Flask(__name__)
 CORS(app)
 
 log = logging.getLogger("werkzeug")
 log.setLevel(logging.ERROR)
 
-print("\n Web server ready to connect. \n")
+
+logging.info("Web server ready. Go to 0.0.0.0:8888/portal to connect")
 
 
 @app.route("/", methods=["GET", "POST"])
