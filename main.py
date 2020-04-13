@@ -46,6 +46,8 @@ class OnionBot(object):
         # Launch multiprocessing threads
         camera.launch()
         thermal.launch()
+        cloud.start("portal/placeholder.png")
+        self.buffa = INITIAL_META
 
         self.latest_meta = json.dumps(INITIAL_META)
         self.stop_flag = False
@@ -114,6 +116,8 @@ class OnionBot(object):
                 camera.start(camera_filepath)
                 thermal.start(thermal_filepath, thermal_history_filepath)
 
+                cloud.join()
+
                 thermal.join()
                 camera.join()
 
@@ -162,9 +166,10 @@ class OnionBot(object):
                 # Upload to cloud
                 cloud.start(json_filepath)
 
-                cloud.join()
+                output = self.buffa
+                self.buffa = json.dumps(data)
 
-                return json.dumps(data)
+                return output
 
             # logging.info("Thread %s: starting", name)
             measurement_id = 0
