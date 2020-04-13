@@ -6,6 +6,7 @@ import math
 import time
 import board
 import busio
+import json
 from PIL import Image
 from collections import deque
 import json
@@ -97,21 +98,22 @@ class ThermalCamera(object):
         return r, g, b
 
     def _worker(self):
-        def _value(frame, temperature_window):
+        def _value(frame, history_file_path, temperature_window):
 
             logging.debug("Proccessing numerical data")
 
             h = 12
             w = 16
             t = frame[h * 32 + w]
-            temperature = "{:.1f}".format(t)
+            # temperature = "{:.1f}".format(t)
 
             temperature_window.append(t)
             temperature_window.popleft()
 
-            temperature_window = json.dumps(list(temperature_window))
+            temperature_window = list(temperature_window)
 
-            return temperature, temperature_window
+            with open(history_file_path, "w") as write_file:
+                    json.dump(temperature_window, write_file)
 
         def _image(frame, file_path):
 
@@ -137,7 +139,9 @@ class ThermalCamera(object):
         temperature_window = deque([0] * 10)
 
         while True:
-            file_path = self.file_queue.get(block=True)
+            paths = self.file_queue.get(block=True)
+
+            [file_path, history_file_path] = paths
 
             logging.debug("Capturing frame")
             frame = [0] * 768
@@ -145,22 +149,18 @@ class ThermalCamera(object):
             self.mlx.getFrame(frame)
             logging.debug("Read 2 frames in %0.3f s" % (time.monotonic() - stamp))
 
-            temperature, temperature_window = _value(frame, temperature_window)
+            temperature, temperature_window = _value(frame, history_file_path, temperature_window)
             _image(frame, file_path)
 
-            self.file_queue2.put(temperature)
             self.file_queue.task_done()
 
-    def start(self, file_path):
+    def start(self, file_path, history_file_path):
         logging.debug("Calling start")
-        self.file_queue.put(file_path, block=True)
+        self.file_queue.put([file_path, history_file_path], block=True)
 
     def join(self):
         logging.debug("Calling join")
         self.file_queue.join()
-        print(self.file_queue2.get_nowait())
-
-        return 5, 65
 
     def _launch(self):
         logging.debug("Initialising worker")

@@ -65,7 +65,7 @@ class OnionBot(object):
                 # Start timer
                 time_stamp = datetime.datetime.now()
 
-                # Capture sensor data
+                # Generate filepaths for logs
 
                 camera_filepath = cloud.get_path(
                     self.session_name,
@@ -85,12 +85,31 @@ class OnionBot(object):
                     self.active_label,
                 )
 
+                thermal_history_filepath = cloud.get_path(
+                    self.session_name,
+                    "thermal_history",
+                    "json",
+                    time_stamp,
+                    measurement_id,
+                    self.active_label,
+                )
+
+                json_filepath = cloud.get_path(
+                    self.session_name,
+                    "meta",
+                    "json",
+                    time_stamp,
+                    measurement_id,
+                    self.active_label,
+                )
+
                 camera.start(camera_filepath)
-                thermal.start(thermal_filepath)
+                thermal.start(thermal_filepath, thermal_history_filepath)
 
-                temperature, self.temperature_window = thermal.join()
-
+                thermal.join()
                 camera.join()
+
+                temperature = 69
 
                 # Upload to cloud
                 cloud.upload_from_filename(camera_filepath)
@@ -129,15 +148,6 @@ class OnionBot(object):
                         "camera_sleep": self.camera_sleep,
                     },
                 }
-
-                json_filepath = cloud.get_path(
-                    self.session_name,
-                    "meta",
-                    "json",
-                    time_stamp,
-                    measurement_id,
-                    self.active_label,
-                )
                 with open(json_filepath, "w") as write_file:
                     json.dump(data, write_file)
 
