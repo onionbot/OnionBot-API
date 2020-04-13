@@ -13,7 +13,7 @@ import adafruit_mlx90640
 
 import logging
 
-FORMAT = "%(name)s: %(message)s"
+FORMAT = "%(asctime)s %(name)-12s %(levelname)-8s %(message)s'"
 logging.basicConfig(format=FORMAT, level=logging.DEBUG)
 
 INTERPOLATE = 10
