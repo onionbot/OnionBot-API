@@ -1,3 +1,6 @@
+import multiprocessing as mp
+from multiprocessing import JoinableQueue
+
 import math
 import time
 import board
@@ -7,6 +10,10 @@ from collections import deque
 import json
 
 import adafruit_mlx90640
+
+import logging
+
+logging.basicConfig(level=logging.DEBUG)
 
 INTERPOLATE = 10
 
@@ -37,25 +44,22 @@ class ThermalCamera(object):
 
     def __init__(self, i2c=None, visualise_on=False):
 
-        print("Initialising thermal camera...")
-
-        self._latest_frame = None
-        self.visualise_on = visualise_on
+        logging.info("Initialising thermal camera...")
 
         if i2c is None:
             i2c = busio.I2C(board.SCL, board.SDA)
 
         mlx = adafruit_mlx90640.MLX90640(i2c)
-        print(
-            "  * MLX addr detected on I2C, Serial #",
-            [hex(i) for i in mlx.serial_number],
-        )
+        logging.debug("MLX detected on I2C", [hex(i) for i in mlx.serial_number])
         mlx.refresh_rate = adafruit_mlx90640.RefreshRate.REFRESH_32_HZ
-        print("  * Refresh rate: ", pow(2, (mlx.refresh_rate - 1)), "Hz")
+        logging.debug("Refresh rate: ", pow(2, (mlx.refresh_rate - 1)), "Hz")
 
         self.mlx = mlx
 
         self.temperature_window = deque([0] * 10)
+
+        self.file_queue = JoinableQueue(1)
+        self._launch()
 
     def _constrain(self, val, min_val, max_val):
         return min(max_val, max(min_val, val))
@@ -91,70 +95,67 @@ class ThermalCamera(object):
         b = int(self._constrain(b * 255, 0, 255))
         return r, g, b
 
-    def capture_frame(self):
+    def _worker(self):
+        def _value(self, frame):
 
-        frame = [0] * 768
-        stamp = time.monotonic()
-        try:
-            self.mlx.getFrame(frame)
-        except ValueError:
-            print("ValueError: Retrying...")
+            logging.debug("Proccessing numerical data")
 
-        print("Read 2 frames in %0.3f s" % (time.monotonic() - stamp))
-
-        self._latest_frame = frame
-        self._latest_stamp = stamp
-
-    def get_latest_temperature(self):
-
-        frame = self._latest_frame
-
-        if frame == None:
-            raise ValueError("Run capture function first")
-        elif frame != None:
             h = 12
             w = 16
-            t = self._latest_frame[h * 32 + w]
-            temperature = "{:.1f}".format(t)
+            t = frame[h * 32 + w]
+            self.temperature = "{:.1f}".format(t)
 
             self.temperature_window.append(t)
             self.temperature_window.popleft()
 
-            return temperature
+            self.temperature_window = json.dumps(list(self.temperature_window))
 
-    def get_temperature_window(self):
+        def _image(self, frame, file_path):
 
-        return json.dumps(list(self.temperature_window))
+            logging.debug("Proccessing image data")
 
-    def save_latest_jpg(self, file_path):
+            for i in range(COLORDEPTH):
+                colormap[i] = self._gradient(i, COLORDEPTH, heatmap)
 
-        frame = self._latest_frame
-        file_name = str(self._latest_stamp)
+            pixels = [0] * 768
+            for i, pixel in enumerate(frame):
+                coloridx = self._map_value(pixel, MINTEMP, MAXTEMP, 0, COLORDEPTH - 1)
+                coloridx = int(self._constrain(coloridx, 0, COLORDEPTH - 1))
+                pixels[i] = colormap[coloridx]
 
-        if frame == None:
-            raise ValueError("Run capture function first")
+            img = Image.new("RGB", (32, 24))
+            img.putdata(pixels)
+            img = img.resize((24 * INTERPOLATE, 24 * INTERPOLATE), Image.BICUBIC)
 
-        for i in range(COLORDEPTH):
-            colormap[i] = self._gradient(i, COLORDEPTH, heatmap)
+            img = img.transpose(method=Image.ROTATE_90)
+            img = img.transpose(method=Image.FLIP_LEFT_RIGHT)
+            img.save(file_path)
 
-        pixels = [0] * 768
-        for i, pixel in enumerate(frame):
-            coloridx = self._map_value(pixel, MINTEMP, MAXTEMP, 0, COLORDEPTH - 1)
-            coloridx = int(self._constrain(coloridx, 0, COLORDEPTH - 1))
-            pixels[i] = colormap[coloridx]
+        while True:
+            file_path = self.file_queue.get(block=True)
 
-        for h in range(24):
-            for w in range(32):
-                pixel = pixels[h * 32 + w]
-                if self.visualise_on == True:
-                    self.sensorout.set_at((w, h), pixel)
+            logging.debug("Capturing frame")
+            frame = [0] * 768
+            stamp = time.monotonic()
+            self.mlx.getFrame(frame)
+            logging.debug("Read 2 frames in %0.3f s" % (time.monotonic() - stamp))
 
-        img = Image.new("RGB", (32, 24))
-        img.putdata(pixels)
-        img = img.resize((24 * INTERPOLATE, 24 * INTERPOLATE), Image.BICUBIC)
+            _value(frame)
+            _image(frame, file_path)
 
-        img = img.transpose(method=Image.ROTATE_90)
-        img = img.transpose(method=Image.FLIP_LEFT_RIGHT)
-        img.save(file_path)
+            self.file_queue.task_done()
 
-        return file_path
+    def start(self, file_path):
+        logging.debug("Calling start")
+        self.file_queue.put(file_path, block=True)
+
+    def join(self):
+        logging.debug("Calling join")
+        self.file_queue.join()
+
+        return self.temperature, self.temperature_window, self.file_path
+
+    def _launch(self):
+        logging.debug("Initialising worker")
+        p = mp.Process(target=self._worker)
+        p.start()
