@@ -151,7 +151,7 @@ class ThermalCamera(object):
             temperature, temperature_window = _value(frame, temperature_window)
             _image(frame, file_path)
 
-            self.out_tray.put((temperature, temperature_window))
+            self.out_tray.put([temperature, temperature_window])
 
     def start(self, file_path):
         logging.debug("Calling start")
@@ -160,9 +160,9 @@ class ThermalCamera(object):
 
     def join(self):
         logging.debug("Calling join")
-        (temperature, temperature_window) = self.out_tray.get(block=True)
+        out = self.out_tray.get(block=True)
         logging.debug("Joined")
-        return temperature, temperature_window
+        return out[0], out[1]
 
     def _launch(self):
         logging.debug("Initialising worker")
