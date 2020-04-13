@@ -1,10 +1,8 @@
-import os
 import math
 import time
 import board
 import busio
 from PIL import Image
-import sys
 from collections import deque
 import json
 
@@ -37,51 +35,27 @@ colormap = [0] * COLORDEPTH
 class ThermalCamera(object):
     """Save image to file"""
 
-    print("Initialising thermal camera...")
-
     def __init__(self, i2c=None, visualise_on=False):
+
+        print("Initialising thermal camera...")
 
         self._latest_frame = None
         self.visualise_on = visualise_on
 
         if i2c is None:
-            # MUST et I2C freq to 1MHz in /boot/config.txt
             i2c = busio.I2C(board.SCL, board.SDA)
 
-        # initialize the sensor
         mlx = adafruit_mlx90640.MLX90640(i2c)
         print(
             "  * MLX addr detected on I2C, Serial #",
             [hex(i) for i in mlx.serial_number],
         )
         mlx.refresh_rate = adafruit_mlx90640.RefreshRate.REFRESH_32_HZ
-        # print(mlx.refresh_rate)
         print("  * Refresh rate: ", pow(2, (mlx.refresh_rate - 1)), "Hz")
 
         self.mlx = mlx
 
         self.temperature_window = deque([0] * 10)
-
-        if visualise_on == True:
-
-            import pygame
-
-            # set up display
-            os.environ["SDL_FBDEV"] = "/dev/fb0"
-            os.environ["SDL_VIDEODRIVER"] = "fbcon"
-            pygame.init()
-            screen = pygame.display.set_mode((24 * SCALE, 32 * SCALE))
-            print(pygame.display.Info())
-
-            pygame.mouse.set_visible(False)
-            screen.fill((255, 0, 0))
-            pygame.display.update()
-            screen.fill((0, 0, 0))
-            pygame.display.update()
-            sensorout = pygame.Surface((32, 24))
-
-            self.screen = screen
-            self.sensorout = sensorout
 
     def _constrain(self, val, min_val, max_val):
         return min(max_val, max(min_val, val))
@@ -117,21 +91,6 @@ class ThermalCamera(object):
         b = int(self._constrain(b * 255, 0, 255))
         return r, g, b
 
-    def _visualise(self, img):
-
-        stamp = self._latest_stamp
-        screen = self.screen
-
-        img_surface = pygame.image.fromstring(img.tobytes(), img.size, img.mode)
-        pygame.transform.scale(img_surface.convert(), screen.get_size(), screen)
-        pygame.display.update()
-        print(
-            "Completed 2 frames in %0.2f s (%d FPS)"
-            % (time.monotonic() - stamp, 1.0 / (time.monotonic() - stamp))
-        )
-
-        time.sleep(10)
-
     def capture_frame(self):
 
         frame = [0] * 768
@@ -141,7 +100,7 @@ class ThermalCamera(object):
         except ValueError:
             print("ValueError: Retrying...")
 
-        # print("Read 2 frames in %0.2f s" % (time.monotonic()-stamp))
+        print("Read 2 frames in %0.3f s" % (time.monotonic() - stamp))
 
         self._latest_frame = frame
         self._latest_stamp = stamp
@@ -197,28 +156,5 @@ class ThermalCamera(object):
         img = img.transpose(method=Image.ROTATE_90)
         img = img.transpose(method=Image.FLIP_LEFT_RIGHT)
         img.save(file_path)
-
-        if self.visualise_on == True:
-            self._visualise(img)
-
-        return file_path
-
-    def save_latest_csv(self, file_path):
-
-        frame = self._latest_frame
-        file_name = str(self._latest_stamp)
-
-        if frame == None:
-            raise ValueError("Run capture function first")
-
-        file = open(file_path, "w")
-        for h in range(24):
-            data_string = ""
-            for w in range(32):
-                t = self._latest_frame[h * 32 + w]
-                data_string = data_string + "{:.1f}".format(t) + ","
-            file.write(data_string.strip(",") + "\n")
-
-        file.close()
 
         return file_path
