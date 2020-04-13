@@ -1,4 +1,5 @@
 import multiprocessing as mp
+from multiprocessing import JoinableQueue
 from queue import Queue
 
 import math
@@ -57,7 +58,7 @@ class ThermalCamera(object):
 
         self.mlx = mlx
 
-        self.in_tray = Queue(1)
+        self.file_queue = JoinableQueue(1)
         self.out_tray = Queue(1)
         self._launch()
 
@@ -96,9 +97,6 @@ class ThermalCamera(object):
         return r, g, b
 
     def _worker(self):
-
-        logging.debug("Worker started")
-
         def _value(frame, temperature_window):
 
             logging.debug("Proccessing numerical data")
@@ -139,8 +137,7 @@ class ThermalCamera(object):
         temperature_window = deque([0] * 10)
 
         while True:
-            logging.debug("Waiting for in tray ")
-            file_path = self.in_tray.get(block=True)
+            file_path = self.file_queue.get(block=True)
 
             logging.debug("Capturing frame")
             frame = [0] * 768
@@ -151,18 +148,19 @@ class ThermalCamera(object):
             temperature, temperature_window = _value(frame, temperature_window)
             _image(frame, file_path)
 
-            self.out_tray.put([temperature, temperature_window])
+            self.out_tray.put(temperature, temperature_window)
+            self.file_queue.task_done()
 
     def start(self, file_path):
         logging.debug("Calling start")
-        self.in_tray.put(file_path, block=True)
-        logging.debug("Started")
+        self.file_queue.put(file_path, block=True)
 
     def join(self):
         logging.debug("Calling join")
-        out = self.out_tray.get(block=True)
-        logging.debug("Joined")
-        return out[0], out[1]
+        self.file_queue.join()
+        temperature, temperature_window = self.out_tray.get()
+
+        return temperature, temperature_window
 
     def _launch(self):
         logging.debug("Initialising worker")
