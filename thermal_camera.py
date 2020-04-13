@@ -50,9 +50,9 @@ class ThermalCamera(object):
             i2c = busio.I2C(board.SCL, board.SDA)
 
         mlx = adafruit_mlx90640.MLX90640(i2c)
-        logging.debug("MLX detected on I2C", [hex(i) for i in mlx.serial_number])
+        # logging.debug("MLX detected on I2C", [hex(i) for i in mlx.serial_number])
         mlx.refresh_rate = adafruit_mlx90640.RefreshRate.REFRESH_32_HZ
-        logging.debug("Refresh rate: ", pow(2, (mlx.refresh_rate - 1)), "Hz")
+        # logging.debug("Refresh rate: ", pow(2, (mlx.refresh_rate - 1)), "Hz")
 
         self.mlx = mlx
 
