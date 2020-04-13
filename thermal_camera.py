@@ -110,10 +110,10 @@ class ThermalCamera(object):
             temperature_window.append(t)
             temperature_window.popleft()
 
-            temperature_window = list(temperature_window)
-
             with open(history_file_path, "w") as write_file:
-                    json.dump(temperature_window, write_file)
+                    json.dump(list(temperature_window), write_file)
+
+            return temperature_window
 
         def _image(frame, file_path):
 
@@ -149,7 +149,7 @@ class ThermalCamera(object):
             self.mlx.getFrame(frame)
             logging.debug("Read 2 frames in %0.3f s" % (time.monotonic() - stamp))
 
-            temperature, temperature_window = _value(frame, history_file_path, temperature_window)
+            temperature_window = _value(frame, history_file_path, temperature_window)
             _image(frame, file_path)
 
             self.file_queue.task_done()
