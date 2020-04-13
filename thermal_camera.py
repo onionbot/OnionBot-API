@@ -153,7 +153,7 @@ class ThermalCamera(object):
         logging.debug("Calling join")
         self.file_queue.join()
 
-        return self.temperature, self.temperature_window, self.file_path
+        return self.temperature, self.temperature_window
 
     def _launch(self):
         logging.debug("Initialising worker")
