@@ -12,7 +12,7 @@ class Cloud(object):
     """Save image to file"""
 
     def __init__(self):
-        pass
+        self.processes = []
 
     def _worker(self, path):
 
@@ -27,12 +27,19 @@ class Cloud(object):
         # print("Uploaded to cloud:", path)
         # print("Blob is publicly accessible at ", blob.public_url)
 
-    def upload_from_filename(self, path):
+    def start(self, path):
 
         logging.debug("Calling start")
 
-        p = mp.Process(target=self._worker, args=(path,))
-        p.start()
+        process = mp.Process(target=self._worker, args=(path,))
+        process.start()
+
+        self.processes.append(process)
+
+    def join(self):
+
+        [p.join() for p in self.processes]
+        self.processes = []
 
     def get_path(self, session_name, sensor, file_type, time, measurement_id, label):
 

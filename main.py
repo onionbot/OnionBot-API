@@ -120,8 +120,10 @@ class OnionBot(object):
                 temperature = 69
 
                 # Upload to cloud
-                cloud.upload_from_filename(camera_filepath)
-                cloud.upload_from_filename(thermal_filepath)
+                cloud.start(camera_filepath)
+                cloud.start(thermal_filepath)
+
+                cloud.join()
 
                 # Make prediction based on specified deep learning model
 
