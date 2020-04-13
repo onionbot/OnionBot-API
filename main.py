@@ -1,4 +1,3 @@
-import logging
 import threading
 from time import sleep
 
@@ -10,6 +9,11 @@ from actuation import Servo
 
 import datetime
 import json
+
+import logging
+
+FORMAT = "%(relativeCreated)6d %(levelname)-8s %(module)s %(process)d %(message)s"
+logging.basicConfig(format=FORMAT, level=logging.DEBUG)
 
 cloud = Cloud()
 thermal = ThermalCamera(visualise_on=False)
@@ -38,6 +42,10 @@ INITIAL_META = {
 
 class OnionBot(object):
     def __init__(self):
+
+        # Launch multiprocessing threads
+        camera.launch()
+        thermal.launch()
 
         self.latest_meta = json.dumps(INITIAL_META)
         self.stop_flag = False

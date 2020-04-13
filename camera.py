@@ -10,7 +10,6 @@ logging.basicConfig(level=logging.DEBUG)
 class Camera(object):
     def __init__(self):
         self.file_queue = JoinableQueue(1)
-        self._launch()
 
     def _worker(self):
 
@@ -37,7 +36,7 @@ class Camera(object):
         logging.debug("Calling join")
         self.file_queue.join()
 
-    def _launch(self):
+    def launch(self):
         logging.debug("Initialising worker")
         p = mp.Process(target=self._worker)
         p.start()

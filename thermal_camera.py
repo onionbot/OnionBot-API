@@ -12,11 +12,7 @@ from collections import deque
 import json
 
 import adafruit_mlx90640
-
 import logging
-
-FORMAT = "%(relativeCreated)6d %(levelname)-8s %(module)s %(threadName)s %(message)s"
-logging.basicConfig(format=FORMAT, level=logging.DEBUG)
 
 INTERPOLATE = 10
 
@@ -53,15 +49,11 @@ class ThermalCamera(object):
             i2c = busio.I2C(board.SCL, board.SDA)
 
         mlx = adafruit_mlx90640.MLX90640(i2c)
-        # logging.debug("MLX detected on I2C", [hex(i) for i in mlx.serial_number])
         mlx.refresh_rate = adafruit_mlx90640.RefreshRate.REFRESH_32_HZ
-        # logging.debug("Refresh rate: ", pow(2, (mlx.refresh_rate - 1)), "Hz")
 
         self.mlx = mlx
 
         self.file_queue = JoinableQueue(1)
-        self.file_queue2 = JoinableQueue(1)
-        self._launch()
 
     def _constrain(self, val, min_val, max_val):
         return min(max_val, max(min_val, val))
@@ -150,7 +142,9 @@ class ThermalCamera(object):
             logging.debug("Read 2 frames in %0.3f s" % (time.monotonic() - stamp))
 
             temperature_window = _value(frame, history_file_path, temperature_window)
-            _image(frame, file_path)
+
+            if file_path: # Only create image if file_path given
+                _image(frame, file_path)
 
             self.file_queue.task_done()
 
@@ -162,7 +156,7 @@ class ThermalCamera(object):
         logging.debug("Calling join")
         self.file_queue.join()
 
-    def _launch(self):
+    def launch(self):
         logging.debug("Initialising worker")
         p = mp.Process(target=self._worker)
         p.start()
