@@ -96,6 +96,9 @@ class ThermalCamera(object):
         return r, g, b
 
     def _worker(self):
+
+        logging.debug("Worker started")
+
         def _value(frame, temperature_window):
 
             logging.debug("Proccessing numerical data")
@@ -136,6 +139,7 @@ class ThermalCamera(object):
         temperature_window = deque([0] * 10)
 
         while True:
+            logging.debug("Waiting for in tray ")
             file_path = self.in_tray.get(block=True)
 
             logging.debug("Capturing frame")
@@ -152,10 +156,12 @@ class ThermalCamera(object):
     def start(self, file_path):
         logging.debug("Calling start")
         self.in_tray.put(file_path, block=True)
+        logging.debug("Started")
 
     def join(self):
         logging.debug("Calling join")
         (temperature, temperature_window) = self.out_tray.get(block=True)
+        logging.debug("Joined")
         return temperature, temperature_window
 
     def _launch(self):
