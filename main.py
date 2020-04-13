@@ -76,22 +76,20 @@ class OnionBot(object):
                     self.active_label,
                 )
 
-                camera.start(camera_filepath)
-                camera.join()
-
-                thermal.capture_frame()
-                thermal_filepath = thermal.save_latest_jpg(
-                    cloud.get_path(
-                        self.session_name,
-                        "thermal",
-                        "jpg",
-                        time_stamp,
-                        measurement_id,
-                        self.active_label,
-                    )
+                thermal_filepath = cloud.get_path(
+                    self.session_name,
+                    "thermal",
+                    "jpg",
+                    time_stamp,
+                    measurement_id,
+                    self.active_label,
                 )
-                temperature = thermal.get_latest_temperature()
-                self.temperature_window = thermal.get_temperature_window()
+
+                camera.start(camera_filepath)
+
+                temperature, self.temperature_window = thermal.join()
+
+                camera.join()
 
                 # Upload to cloud
                 cloud.upload_from_filename(camera_filepath)
