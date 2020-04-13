@@ -96,19 +96,21 @@ class ThermalCamera(object):
         return r, g, b
 
     def _worker(self):
-        def _value(self, frame):
+        def _value(self, frame, temperature_window):
 
             logging.debug("Proccessing numerical data")
 
             h = 12
             w = 16
             t = frame[h * 32 + w]
-            self.temperature = "{:.1f}".format(t)
+            temperature = "{:.1f}".format(t)
 
-            self.temperature_window.append(t)
-            self.temperature_window.popleft()
+            temperature_window.append(t)
+            temperature_window.popleft()
 
-            self.temperature_window = json.dumps(list(self.temperature_window))
+            temperature_window = json.dumps(list(self.temperature_window))
+
+            return temperature, temperature_window
 
         def _image(self, frame, file_path):
 
@@ -140,7 +142,7 @@ class ThermalCamera(object):
             self.mlx.getFrame(frame)
             logging.debug("Read 2 frames in %0.3f s" % (time.monotonic() - stamp))
 
-            _value(frame)
+            self.temperature, self.temperature_window = _value(frame, self.temperature_window)
             _image(frame, file_path)
 
             self.file_queue.task_done()
