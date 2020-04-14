@@ -63,6 +63,7 @@ class OnionBot(object):
                     cloud.start(camera_filepath)
                     cloud.start(thermal_filepath)
                 except NameError:
+                    logging.info("First time exception")
                     previous_meta = self.latest_meta
 
                 # If data saving active, save measurement ID
@@ -127,6 +128,10 @@ class OnionBot(object):
 
     def get_latest_meta(self):
         """Returns cloud filepath of latest meta.json - includes path location of images"""
+
+        print("_______________________")
+        print(self.latest_meta)
+        print("_______________________")
 
         return self.latest_meta
 
