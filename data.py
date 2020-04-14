@@ -57,7 +57,9 @@ class Data:
             self.thermal_history_filepath,
         )
 
-    def generate_meta(self, session_name, time_stamp, measurement_id, active_label, hob_setpoint):
+    def generate_meta(
+        self, session_name, time_stamp, measurement_id, active_label, hob_setpoint
+    ):
 
         data = {
             "type": "meta",
@@ -69,7 +71,9 @@ class Data:
                 "time_stamp": str(time_stamp),
                 "camera_filepath": cloud.get_public_path(self.camera_filepath),
                 "thermal_filepath": cloud.get_public_path(self.thermal_filepath),
-                "thermal_history_filepath": cloud.get_public_path(self.thermal_history_filepath),
+                "thermal_history_filepath": cloud.get_public_path(
+                    self.thermal_history_filepath
+                ),
                 "hob_setpoint": hob_setpoint,
             },
         }
@@ -79,7 +83,7 @@ class Data:
         cleaned_data = {
             key: value for key, value in attributes.items() if value is not None
         }
-        data.pop("attributes")
+        cleaned_data = {"attributes": {cleaned_data}}
         data.update(cleaned_data)
 
         if self.meta_filepath:
