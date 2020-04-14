@@ -97,16 +97,14 @@ class OnionBot(object):
                     self.hob_setpoint,
                 )
 
-                print("!!!!!!!!", metadata)
-                print("$$$$$$$$", json.dumps(metadata))
                 # Wait for all processes to finish
                 cloud.join()
                 thermal.join()
                 camera.join()
 
                 # Shuffle metas
-                self.latest_meta = json.dumps(metadata)
-                print("AAAAAAAA", self.latest_meta)
+                self.latest_meta = previous_meta
+                previous_meta = json.dumps(metadata)
 
 
                 sleep(float(self.camera_sleep))
@@ -132,10 +130,6 @@ class OnionBot(object):
 
     def get_latest_meta(self):
         """Returns cloud filepath of latest meta.json - includes path location of images"""
-
-        print("_______________________")
-        print(self.latest_meta)
-        print("_______________________")
 
         return self.latest_meta
 
