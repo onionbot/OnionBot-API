@@ -4,8 +4,6 @@ from multiprocessing import JoinableQueue
 from picamera import PiCamera
 
 import logging
-logging.basicConfig(level=logging.DEBUG)
-
 
 class Camera(object):
     def __init__(self):
