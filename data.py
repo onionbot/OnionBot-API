@@ -85,7 +85,7 @@ class Data:
         cleaned_data = {
             key: value for key, value in attributes.items() if value is not None
         }
-        cleaned_data = {"attributes": {cleaned_data}}
+        cleaned_data = {"attributes": cleaned_data}
         data.update(cleaned_data)
 
         if self.meta_filepath:
