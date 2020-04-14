@@ -58,7 +58,7 @@ class Data:
             self.meta_filepath,
         )
 
-    def generate_meta(self, session_name, time_stamp, measurement_id, active_label):
+    def generate_meta(self, session_name, time_stamp, measurement_id, active_label, hob_setpoint):
 
         data = {
             "type": "meta",
