@@ -8,7 +8,6 @@ from main import OnionBot
 
 import logging
 
-
 # log = logging.getLogger("werkzeug")
 # log.setLevel(logging.ERROR)
 
@@ -36,6 +35,11 @@ def index():
 
     if request.form["action"] == "quit":
         return bot.quit()
+        quit = request.environ.get('werkzeug.server.shutdown')
+        if quit is None:
+            raise RuntimeError('Not running with the Werkzeug Server')
+        quit()
+        raise SystemExit
 
     if request.form["action"] == "get_latest_meta":
         return bot.get_latest_meta()

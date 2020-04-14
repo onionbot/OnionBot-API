@@ -16,7 +16,7 @@ class Cloud(object):
 
     def _worker(self, path):
 
-        logging.info("Initialising upload worker")
+        logging.debug("Initialising upload worker")
 
         client = storage.Client()
         bucket = client.get_bucket(bucket_name)

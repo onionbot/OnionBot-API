@@ -137,7 +137,8 @@ class OnionBot(object):
         camera.quit()
         thermal.quit()
         cloud.quit()
-        self.logging_thread.quit()
+        self.logging_thread.join()
+        
 
     def get_latest_meta(self):
         """Returns cloud filepath of latest meta.json - includes path location of images"""
