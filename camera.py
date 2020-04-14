@@ -40,5 +40,4 @@ class Camera(object):
         self.p.start()
 
     def quit(self):
-        self.camera.close()
         self.p.join(timeout=1)
