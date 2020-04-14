@@ -14,7 +14,7 @@ import json
 import logging
 
 FORMAT = "%(relativeCreated)6d %(levelname)-8s %(module)s %(process)d %(message)s"
-logging.basicConfig(format=FORMAT, level=logging.DEBUG)
+logging.basicConfig(format=FORMAT, level=logging.INFO)
 
 cloud = Cloud()
 thermal = ThermalCamera(visualise_on=False)
@@ -80,13 +80,7 @@ class OnionBot(object):
                 session_name = self.session_name
 
                 # Generate filepaths for logs
-                (
-                    camera_filepath,
-                    thermal_filepath,
-                    thermal_history_filepath,
-                ) = data.generate_filepaths(
-                    session_name, time_stamp, measurement_id, active_label
-                )
+                camera_filepath, thermal_filepath, thermal_history_filepath = data.generate_filepaths(session_name, time_stamp, measurement_id, active_label)
 
                 # Start sensor capture
                 camera.start(camera_filepath)

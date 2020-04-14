@@ -78,6 +78,8 @@ class Data:
             },
         }
 
+        print(1, data)
+
         # Remove dictionary elements with 'None' type
         attributes = data.get("attributes")
         cleaned_data = {
@@ -89,5 +91,6 @@ class Data:
         if self.meta_filepath:
             with open(self.meta_filepath, "w") as write_file:
                 json.dump(data, write_file)
+        print(2, data)
 
         return data

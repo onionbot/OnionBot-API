@@ -143,8 +143,7 @@ class ThermalCamera(object):
 
             temperature_window = _value(frame, history_file_path, temperature_window)
 
-            if file_path: # Only create image if file_path given
-                _image(frame, file_path)
+            _image(frame, file_path)
 
             self.file_queue.task_done()
 

@@ -52,7 +52,7 @@ function connection_failed() {
 
 function update() {
 
-    console.log("Update page called")
+    // console.log("Update page called")
 
     get("get_latest_meta", function(data) {
         // data is a js object 
