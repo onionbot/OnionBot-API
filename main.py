@@ -37,8 +37,14 @@ class OnionBot(object):
         self.active_label = None
         self.session_name = "NONAME"
 
-        self.latest_meta = data.generate_meta(
-            self.session_name, 0, self.measurement_id, self.active_label, self.hob_setpoint
+        self.latest_meta = json.dumps(
+            data.generate_meta(
+                self.session_name,
+                0,
+                self.measurement_id,
+                self.active_label,
+                self.hob_setpoint,
+            )
         )
 
     def run(self):
@@ -47,7 +53,7 @@ class OnionBot(object):
         def thread_function():
             """Threaded to run capture loop in background while allowing other processes to continue"""
 
-            while self.exit_flag is False:
+            while True:  # self.exit_flag is False
 
                 # Get time stamp
                 time_stamp = datetime.datetime.now()
@@ -88,7 +94,11 @@ class OnionBot(object):
 
                 # Generate metadata
                 metadata = data.generate_meta(
-                    session_name, time_stamp, measurement_id, active_label, self.hob_setpoint
+                    session_name,
+                    time_stamp,
+                    measurement_id,
+                    active_label,
+                    self.hob_setpoint,
                 )
 
                 # Wait for all processes to finish

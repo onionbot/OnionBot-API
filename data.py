@@ -55,7 +55,6 @@ class Data:
             self.camera_filepath,
             self.thermal_filepath,
             self.thermal_history_filepath,
-            self.meta_filepath,
         )
 
     def generate_meta(self, session_name, time_stamp, measurement_id, active_label, hob_setpoint):
@@ -80,9 +79,11 @@ class Data:
         cleaned_data = {
             key: value for key, value in attributes.items() if value is not None
         }
+        data.pop("attributes")
+        data.update(cleaned_data)
 
         if self.meta_filepath:
             with open(self.meta_filepath, "w") as write_file:
-                json.dump(cleaned_data, write_file)
+                json.dump(data, write_file)
 
-        return cleaned_data
+        return data
