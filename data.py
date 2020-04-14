@@ -81,7 +81,8 @@ class Data:
             key: value for key, value in attributes.items() if value is not None
         }
 
-        with open(self.meta_filepath, "w") as write_file:
-            json.dump(cleaned_data, write_file)
+        if self.meta_filepath:
+            with open(self.meta_filepath, "w") as write_file:
+                json.dump(cleaned_data, write_file)
 
         return cleaned_data
