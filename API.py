@@ -1,20 +1,19 @@
-import logging
-
-logging.info("Initialising web server")
-app = Flask(__name__)
-CORS(app)
-
-log = logging.getLogger("werkzeug")
-log.setLevel(logging.ERROR)
-
-from main import OnionBot
-
 
 from flask import Flask
 from flask import request
 
 from flask_cors import CORS
 
+import logging
+
+log = logging.getLogger("werkzeug")
+log.setLevel(logging.ERROR)
+
+from main import OnionBot
+
+logging.info("Initialising web server")
+app = Flask(__name__)
+CORS(app)
 
 bot = OnionBot()
 
