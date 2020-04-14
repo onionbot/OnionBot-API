@@ -1,4 +1,4 @@
-import threading
+import multiprocessing as mp
 from time import sleep
 
 from thermal_camera import ThermalCamera
@@ -6,6 +6,7 @@ from camera import Camera
 from cloud import Cloud
 from inference import Classify
 from actuation import Servo
+from data import Data
 
 import datetime
 import json
@@ -19,189 +20,100 @@ cloud = Cloud()
 thermal = ThermalCamera(visualise_on=False)
 camera = Camera()
 servo = Servo()
-
-
-INITIAL_META = {
-    "type": "meta",
-    "id": "pre_start",
-    "attributes": {
-        "session_name": "Initialising...",
-        "label": "Initialising...",
-        "camera_prediction": "Initialising...",
-        "thermal_prediction": "Initialising...",
-        "measurement_id": "Initialising...",
-        "time_stamp": "Initialising...",
-        "temperature": "Initialising...",
-        "camera_filepath": "placeholder.png",
-        "thermal_filepath": "placeholder.png",
-        "hob_setpoint": "Initialising...",
-        "camera_sleep": "Initialising...",
-    },
-}
+data = Data()
 
 
 class OnionBot(object):
     def __init__(self):
 
-        # Launch multiprocessing threads
+        # Launch multiprocessing threads and store!!!
         camera.launch()
         thermal.launch()
-        cloud.start("portal/placeholder.png")
-        self.buffa = INITIAL_META
-
-        self.latest_meta = json.dumps(INITIAL_META)
-        self.stop_flag = False
-
-        self.chosen_labels = "_"
-        self.active_label = "discard"
-        self.active_model = "_"
 
         self.camera_sleep = "0"
         self.hob_setpoint = "0"
 
-        self.temperature_window = "_"
+        self.measurement_id = None
 
-    def start(self, session_name):
+    def run(self):
         """Start logging"""
 
-        self.session_name = session_name
-
-        def thread_function(name):
+        def thread_function():
             """Threaded to run capture loop in background while allowing other processes to continue"""
 
-            def capture(measurement_id):
-                """Subfunction to capture sensor data"""
+            while self.exit_flag is False:
 
-                # Start timer
+                # Get time stamp
                 time_stamp = datetime.datetime.now()
 
+                # Start cloud upload of previous images, handle first run exception
+                try:
+                    cloud.start(camera_filepath)
+                    cloud.start(thermal_filepath)
+                except NameError:
+                    previous_meta = data.generate_meta(
+                        self.session_name,
+                        time_stamp,
+                        self.measurement_id,
+                        self.active_label,
+                    )
+
+                # If data saving active, save measurement ID
+                try:
+                    self.measurement_id += 1
+                    logging.info(
+                        "Capturing measurement %s with label %s"
+                        % (self.measurement_id, self.active_label)
+                    )
+                except TypeError:
+                    pass
+
+                measurement_id = self.measurement_id
+                active_label = self.active_label
+                session_name = self.session_name
+
                 # Generate filepaths for logs
-
-                camera_filepath = cloud.get_path(
-                    self.session_name,
-                    "camera",
-                    "jpg",
-                    time_stamp,
-                    measurement_id,
-                    self.active_label,
+                (
+                    camera_filepath,
+                    thermal_filepath,
+                    thermal_history_filepath,
+                ) = data.generate_filepaths(
+                    session_name, time_stamp, measurement_id, active_label
                 )
 
-                thermal_filepath = cloud.get_path(
-                    self.session_name,
-                    "thermal",
-                    "jpg",
-                    time_stamp,
-                    measurement_id,
-                    self.active_label,
-                )
-
-                thermal_history_filepath = cloud.get_path(
-                    self.session_name,
-                    "thermal_history",
-                    "json",
-                    time_stamp,
-                    measurement_id,
-                    self.active_label,
-                )
-
-                json_filepath = cloud.get_path(
-                    self.session_name,
-                    "meta",
-                    "json",
-                    time_stamp,
-                    measurement_id,
-                    self.active_label,
-                )
-
+                # Start sensor capture
                 camera.start(camera_filepath)
                 thermal.start(thermal_filepath, thermal_history_filepath)
 
-                cloud.join()
+                # Generate metadata
+                metadata = data.generate_meta(
+                    session_name, time_stamp, measurement_id, active_label
+                )
 
+                # Wait for all processes to finish
+                cloud.join()
                 thermal.join()
                 camera.join()
 
-                temperature = 69
-
-                # Upload to cloud
-                cloud.start(camera_filepath)
-                cloud.start(thermal_filepath)
-
-                # Make prediction based on specified deep learning model
-
-                if self.active_model != "_":
-                    camera_prediction = self.camera_classifier.classify_image(
-                        camera_filepath
-                    )
-                    thermal_prediction = self.thermal_classifier.classify_image(
-                        thermal_filepath
-                    )
-                else:
-                    camera_prediction = "_"
-                    thermal_prediction = "_"
-
-                # Generate metadata
-
-                data = {
-                    "type": "meta",
-                    "id": f"{session_name}_{measurement_id}_{str(time_stamp)}",
-                    "attributes": {
-                        "session_name": session_name,
-                        "active_label": self.active_label,
-                        "active_model": self.active_model,
-                        "camera_prediction": camera_prediction,
-                        "thermal_prediction": thermal_prediction,
-                        "measurement_id": measurement_id,
-                        "time_stamp": str(time_stamp),
-                        "temperature": str(temperature),
-                        "camera_filepath": cloud.get_public_path(camera_filepath),
-                        "thermal_filepath": cloud.get_public_path(thermal_filepath),
-                        "hob_setpoint": self.hob_setpoint,
-                        "camera_sleep": self.camera_sleep,
-                    },
-                }
-                with open(json_filepath, "w") as write_file:
-                    json.dump(data, write_file)
-
-                # Upload to cloud
-                cloud.start(json_filepath)
-
-                output = self.buffa
-                self.buffa = json.dumps(data)
-
-                return output
-
-            # logging.info("Thread %s: starting", name)
-            measurement_id = 0
-
-            # WHILE LOOP
-
-            while self.stop_flag is False:
-
-                measurement_id += 1
-                print(
-                    f"Capturing measurement {measurement_id} with label {self.active_label}"
-                )
-                self.latest_meta = capture(measurement_id)
+                # Shuffle metas
+                self.latest_meta = previous_meta
+                previous_meta = json.dumps(metadata)
 
                 sleep(float(self.camera_sleep))
 
         # Start logging thread
-        self.stop_flag = False
-        logging_thread = threading.Thread(target=thread_function, args=(1,))
+        logging_thread = mp.Process(target=thread_function)
         logging_thread.start()
 
-        # Waiting for the thread to finish
-        logging_thread.join()
+    def start(self, session_name):
 
-        return "success"
+        pass
 
     def stop(self):
         """Stop logging"""
 
         self.stop_flag = True
 
-        self.latest_meta = json.dumps(INITIAL_META)
         self.chosen_labels = "_"
         self.active_label = "_"
         self.active_model = "_"

@@ -20,6 +20,8 @@ log.setLevel(logging.ERROR)
 
 logging.info("Web server ready. Go to 0.0.0.0:8888/portal to connect")
 
+bot.run()
+
 
 @app.route("/", methods=["GET", "POST"])
 def index():
