@@ -1,14 +1,4 @@
-from main import OnionBot
-
-
-from flask import Flask
-from flask import request
-
-from flask_cors import CORS
-
 import logging
-
-bot = OnionBot()
 
 logging.info("Initialising web server")
 app = Flask(__name__)
@@ -17,6 +7,16 @@ CORS(app)
 log = logging.getLogger("werkzeug")
 log.setLevel(logging.ERROR)
 
+from main import OnionBot
+
+
+from flask import Flask
+from flask import request
+
+from flask_cors import CORS
+
+
+bot = OnionBot()
 
 logging.info("Web server ready. Go to 0.0.0.0:8888/portal to connect")
 

@@ -15,8 +15,8 @@ import json
 import logging
 
 FORMAT = "%(relativeCreated)6d %(levelname)-8s %(module)s %(process)d %(message)s"
-logging.basicConfig(format=FORMAT)
-logging.setLevel(logging.INFO)
+log = logging.basicConfig(format=FORMAT)
+log.setLevel(logging.INFO)
 
 cloud = Cloud()
 thermal = ThermalCamera(visualise_on=False)
