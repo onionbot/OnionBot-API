@@ -33,6 +33,9 @@ def index():
     if request.form["action"] == "stop":
         return bot.stop()
 
+    if request.form["action"] == "quit":
+        return bot.quit()
+
     if request.form["action"] == "get_latest_meta":
         return bot.get_latest_meta()
 

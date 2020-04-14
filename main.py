@@ -15,7 +15,8 @@ import json
 import logging
 
 FORMAT = "%(relativeCreated)6d %(levelname)-8s %(module)s %(process)d %(message)s"
-logging.basicConfig(format=FORMAT, level=logging.INFO)
+logging.basicConfig(format=FORMAT)
+logging.setLevel(logging.INFO)
 
 cloud = Cloud()
 thermal = ThermalCamera(visualise_on=False)
@@ -27,7 +28,7 @@ data = Data()
 class OnionBot(object):
     def __init__(self):
 
-        # Launch multiprocessing threads and store!!!
+        # Launch multiprocessing threads 
         camera.launch()
         thermal.launch()
 
@@ -71,7 +72,7 @@ class OnionBot(object):
                 try:
                     self.measurement_id += 1
                     logging.info(
-                        "Capturing measurement %s with label %s"
+                        "Measurement %s with label %s"
                         % (self.measurement_id, self.active_label)
                     )
                 except TypeError:
@@ -82,7 +83,13 @@ class OnionBot(object):
                 session_name = self.session_name
 
                 # Generate filepaths for logs
-                camera_filepath, thermal_filepath, thermal_history_filepath = data.generate_filepaths(session_name, time_stamp, measurement_id, active_label)
+                (
+                    camera_filepath,
+                    thermal_filepath,
+                    thermal_history_filepath,
+                ) = data.generate_filepaths(
+                    session_name, time_stamp, measurement_id, active_label
+                )
 
                 # Start sensor capture
                 camera.start(camera_filepath)
@@ -106,12 +113,11 @@ class OnionBot(object):
                 self.latest_meta = previous_meta
                 previous_meta = json.dumps(metadata)
 
-
                 sleep(float(self.camera_sleep))
 
         # Start logging thread
-        logging_thread = threading.Thread(target=thread_function)
-        logging_thread.start()
+        self.logging_thread = threading.Thread(target=thread_function)
+        self.logging_thread.start()
 
     def start(self, session_name):
 
@@ -127,6 +133,12 @@ class OnionBot(object):
         self.active_model = "_"
 
         return "success"
+
+    def quit(self):
+        camera.quit()
+        thermal.quit()
+        cloud.quit()
+        self.logging_thread.quit()
 
     def get_latest_meta(self):
         """Returns cloud filepath of latest meta.json - includes path location of images"""

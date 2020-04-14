@@ -122,6 +122,15 @@ $(document).ready(function() {
 
     });
 
+    $('#connection-monitor').on('click', function() {
+
+        get("quit", function(foo) {
+            console.log("Quitting")
+
+        });
+
+    });
+
     get("get_all_labels", function(data) {
         // data is a js object 
 

@@ -38,5 +38,8 @@ class Camera(object):
 
     def launch(self):
         logging.debug("Initialising worker")
-        p = mp.Process(target=self._worker)
-        p.start()
+        self.p = mp.Process(target=self._worker)
+        self.p.start()
+
+    def quit(self):
+        self.p.join(timeout=1)
