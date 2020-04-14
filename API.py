@@ -8,8 +8,12 @@ from main import OnionBot
 
 import logging
 
-log = logging.getLogger("werkzeug")
-log.setLevel(logging.ERROR)
+FORMAT = "%(relativeCreated)6d %(levelname)-8s %(module)s %(process)d %(message)s"
+logging.basicConfig(format=FORMAT, level=logging.INFO)
+
+
+# log = logging.getLogger("werkzeug")
+# log.setLevel(logging.ERROR)
 
 
 logging.info("Initialising web server")
