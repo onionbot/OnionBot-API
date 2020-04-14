@@ -60,14 +60,16 @@ function update() {
         connection_success()
         data = JSON.parse(data);
 
+        console.log(data)
+
         $('#session-name').html(data.attributes.session_name);
         $('#active-label').html(data.attributes.active_label);
-        $('#active-model').html(data.attributes.active_model);
-        $('#camera-prediction').html(data.attributes.camera_prediction);
-        $('#thermal-prediction').html(data.attributes.thermal_prediction);
+        // $('#active-model').html(data.attributes.active_model);
+        // $('#camera-prediction').html(data.attributes.camera_prediction);
+        // $('#thermal-prediction').html(data.attributes.thermal_prediction);
         $('#measurement-id').html(data.attributes.measurement_id);
         $('#time-stamp').html(data.attributes.time_stamp);
-        $('#temperature').html(data.attributes.temperature);
+        // $('#temperature').html(data.attributes.temperature);
         $('#camera-filepath').html(data.attributes.camera_filepath);
         $('#thermal-filepath').html(data.attributes.thermal_filepath);
         $('#camera-filepath').attr("href", data.attributes.camera_filepath);
@@ -75,7 +77,7 @@ function update() {
         $('#camera-image').attr("src", data.attributes.camera_filepath);
         $('#thermal-image').attr("src", data.attributes.thermal_filepath);
         $('#hob-setpoint').attr("placeholder", data.attributes.hob_setpoint);
-        $('#camera-sleep').attr("placeholder", data.attributes.camera_sleep);
+        // $('#camera-sleep').attr("placeholder", data.attributes.camera_sleep);
     });
 
     // get("get_temperature_window", function(data) {
