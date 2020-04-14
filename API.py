@@ -4,12 +4,13 @@ from flask import request
 
 from flask_cors import CORS
 
+from main import OnionBot
+
 import logging
 
 log = logging.getLogger("werkzeug")
 log.setLevel(logging.ERROR)
 
-from main import OnionBot
 
 logging.info("Initialising web server")
 app = Flask(__name__)
