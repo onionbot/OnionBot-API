@@ -119,7 +119,9 @@ class OnionBot(object):
 
     def start(self, session_name):
 
-        pass
+        self.session_name = session_name
+
+        return "success"
 
     def stop(self):
         """Stop logging"""
