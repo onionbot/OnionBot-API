@@ -7,6 +7,7 @@ from flask_cors import CORS
 from main import OnionBot
 
 import logging
+import os
 
 # log = logging.getLogger("werkzeug")
 # log.setLevel(logging.ERROR)
@@ -40,7 +41,8 @@ def index():
         if server_quit is None:
             raise RuntimeError('Not running with the Werkzeug Server')
         server_quit()
-        raise SystemExit
+        os.system('pkill -f API.py')
+        
 
     if request.form["action"] == "get_latest_meta":
         return bot.get_latest_meta()
