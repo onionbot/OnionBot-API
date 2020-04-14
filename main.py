@@ -1,4 +1,5 @@
 import multiprocessing as mp
+import threading
 from time import sleep
 
 from thermal_camera import ThermalCamera
@@ -96,19 +97,22 @@ class OnionBot(object):
                     self.hob_setpoint,
                 )
 
+                print("!!!!!!!!", metadata)
+                print("$$$$$$$$", json.dumps(metadata))
                 # Wait for all processes to finish
                 cloud.join()
                 thermal.join()
                 camera.join()
 
                 # Shuffle metas
-                self.latest_meta = previous_meta
-                previous_meta = json.dumps(metadata)
+                self.latest_meta = json.dumps(metadata)
+                print("AAAAAAAA", self.latest_meta)
+
 
                 sleep(float(self.camera_sleep))
 
         # Start logging thread
-        logging_thread = mp.Process(target=thread_function)
+        logging_thread = threading.Thread(target=thread_function)
         logging_thread.start()
 
     def start(self, session_name):
