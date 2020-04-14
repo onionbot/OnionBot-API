@@ -38,7 +38,7 @@ class OnionBot(object):
         self.session_name = "NONAME"
 
         self.latest_meta = data.generate_meta(
-            self.session_name, 0, self.measurement_id, self.active_label,
+            self.session_name, 0, self.measurement_id, self.active_label, self.hob_setpoint
         )
 
     def run(self):
@@ -88,7 +88,7 @@ class OnionBot(object):
 
                 # Generate metadata
                 metadata = data.generate_meta(
-                    session_name, time_stamp, measurement_id, active_label
+                    session_name, time_stamp, measurement_id, active_label, self.hob_setpoint
                 )
 
                 # Wait for all processes to finish

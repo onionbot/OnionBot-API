@@ -71,7 +71,7 @@ class Data:
                 "camera_filepath": cloud.get_public_path(self.camera_filepath),
                 "thermal_filepath": cloud.get_public_path(self.thermal_filepath),
                 "thermal_history_filepath": cloud.get_public_path(self.thermal_history_filepath),
-                "hob_setpoint": self.hob_setpoint,
+                "hob_setpoint": hob_setpoint,
             },
         }
 
