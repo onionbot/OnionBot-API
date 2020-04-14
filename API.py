@@ -9,8 +9,8 @@ from main import OnionBot
 import logging
 import os
 
-# log = logging.getLogger("werkzeug")
-# log.setLevel(logging.ERROR)
+log = logging.getLogger("werkzeug")
+log.setLevel(logging.ERROR)
 
 
 logging.info("Initialising web server")
@@ -41,8 +41,7 @@ def index():
         if server_quit is None:
             raise RuntimeError('Not running with the Werkzeug Server')
         server_quit()
-        os.system('pkill -f API.py')
-        
+        os.system('pkill -f API.py') # If all else fails...
 
     if request.form["action"] == "get_latest_meta":
         return bot.get_latest_meta()

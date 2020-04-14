@@ -35,7 +35,7 @@ class OnionBot(object):
         self.camera_sleep = "0"
         self.hob_setpoint = "0"
 
-        self.measurement_id = None
+        self.measurement_id = 0
         self.active_label = None
         self.session_name = "NONAME"
 
@@ -65,18 +65,14 @@ class OnionBot(object):
                     cloud.start(camera_filepath)
                     cloud.start(thermal_filepath)
                 except NameError:
-                    logging.info("First time exception")
+                    logging.debug("First time exception")
                     previous_meta = self.latest_meta
 
                 # If data saving active, save measurement ID
-                try:
-                    self.measurement_id += 1
-                    logging.info(
-                        "Measurement %s with label %s"
-                        % (self.measurement_id, self.active_label)
-                    )
-                except TypeError:
-                    pass
+
+                self.measurement_id += 1
+
+                logging.info("Measurement %s | Label %s" % (self.measurement_id, self.active_label))
 
                 measurement_id = self.measurement_id
                 active_label = self.active_label
@@ -116,7 +112,6 @@ class OnionBot(object):
                 sleep(float(self.camera_sleep))
 
             logging.info("Main thread exiting")
-
 
         # Start logging thread
         self.logging_thread = threading.Thread(target=thread_function)
