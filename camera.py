@@ -41,4 +41,5 @@ class Camera(object):
 
     def quit(self):
         logging.info("Quitting camera")
+        self.file_queue.close()
         self.p.join(timeout=1)

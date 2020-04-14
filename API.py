@@ -36,10 +36,10 @@ def index():
     if request.form["action"] == "quit":
         bot.quit()
         logging.info("Shutting down server")
-        quit = request.environ.get('werkzeug.server.shutdown')
-        if quit is None:
+        server_quit = request.environ.get('werkzeug.server.shutdown')
+        if server_quit is None:
             raise RuntimeError('Not running with the Werkzeug Server')
-        quit()
+        server_quit()
         raise SystemExit
 
     if request.form["action"] == "get_latest_meta":

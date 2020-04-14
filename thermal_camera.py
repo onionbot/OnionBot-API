@@ -162,5 +162,6 @@ class ThermalCamera(object):
 
     def quit(self):
         logging.info("Quitting thermal camera")
+        self.file_queue.close()
         self.p.join(timeout=1)
 
