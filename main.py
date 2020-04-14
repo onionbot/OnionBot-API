@@ -109,7 +109,7 @@ class OnionBot(object):
 
                 sleep(float(self.camera_sleep))
 
-                logging.info("Logging %s | Label %s | Interval %0.3f s" % (measurement_id, active_label, datetime.datetime.now() - time_stamp))
+                logging.info("Logging %s | Label %s | Interval %0.3f s" % (measurement_id, active_label, (datetime.datetime.now() - time_stamp).total_seconds()))
 
             logging.info("Main thread exiting")
 
