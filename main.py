@@ -34,6 +34,12 @@ class OnionBot(object):
         self.hob_setpoint = "0"
 
         self.measurement_id = None
+        self.active_label = None
+        self.session_name = "NONAME"
+
+        self.latest_meta = data.generate_meta(
+            self.session_name, 0, self.measurement_id, self.active_label,
+        )
 
     def run(self):
         """Start logging"""
@@ -51,12 +57,7 @@ class OnionBot(object):
                     cloud.start(camera_filepath)
                     cloud.start(thermal_filepath)
                 except NameError:
-                    previous_meta = data.generate_meta(
-                        self.session_name,
-                        time_stamp,
-                        self.measurement_id,
-                        self.active_label,
-                    )
+                    previous_meta = self.latest_meta
 
                 # If data saving active, save measurement ID
                 try:
