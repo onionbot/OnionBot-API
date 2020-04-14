@@ -41,7 +41,8 @@ def index():
         if server_quit is None:
             raise RuntimeError('Not running with the Werkzeug Server')
         server_quit()
-        os.system('pkill -f API.py') # If all else fails...
+        os.system('sleep 1 ; pkill -f API.py') # If all else fails...
+        return "success"
 
     if request.form["action"] == "get_latest_meta":
         return bot.get_latest_meta()

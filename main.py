@@ -72,8 +72,6 @@ class OnionBot(object):
 
                 self.measurement_id += 1
 
-                logging.info("Measurement %s | Label %s" % (self.measurement_id, self.active_label))
-
                 measurement_id = self.measurement_id
                 active_label = self.active_label
                 session_name = self.session_name
@@ -110,6 +108,8 @@ class OnionBot(object):
                 previous_meta = json.dumps(metadata)
 
                 sleep(float(self.camera_sleep))
+
+                logging.info("Logging %s | Label %s | Interval %0.3f s" % (measurement_id, active_label, datetime.datetime.now() - time_stamp))
 
             logging.info("Main thread exiting")
 
