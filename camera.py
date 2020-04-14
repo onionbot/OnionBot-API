@@ -40,4 +40,5 @@ class Camera(object):
         self.p.start()
 
     def quit(self):
+        logging.info("Quitting camera")
         self.p.join(timeout=1)

@@ -115,6 +115,9 @@ class OnionBot(object):
 
                 sleep(float(self.camera_sleep))
 
+            logging.info("Main thread exiting")
+
+
         # Start logging thread
         self.logging_thread = threading.Thread(target=thread_function)
         self.logging_thread.start()
@@ -126,8 +129,6 @@ class OnionBot(object):
     def stop(self):
         """Stop logging"""
 
-        self.stop_flag = True
-
         self.chosen_labels = "_"
         self.active_label = "_"
         self.active_model = "_"
@@ -135,12 +136,12 @@ class OnionBot(object):
         return "success"
 
     def quit(self):
+        logging.info("Raising exit flag")
+        self.exit_flag = True
         camera.quit()
         thermal.quit()
         cloud.quit()
-        self.exit_flag = True
         self.logging_thread.join(timeout=1)
-
 
     def get_latest_meta(self):
         """Returns cloud filepath of latest meta.json - includes path location of images"""

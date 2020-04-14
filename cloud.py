@@ -37,12 +37,13 @@ class Cloud(object):
         self.processes.append(process)
 
     def join(self):
-
-        
+        [p.join() for p in self.processes]
         self.processes = []
 
     def quit(self):
+        logging.debug("Quitting cloud")
         [p.join(timeout=1) for p in self.processes]
+
 
     def get_path(self, session_name, sensor, file_type, time, measurement_id, label):
 

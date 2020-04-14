@@ -161,5 +161,6 @@ class ThermalCamera(object):
         self.p.start()
 
     def quit(self):
+        logging.info("Quitting thermal camera")
         self.p.join(timeout=1)
 

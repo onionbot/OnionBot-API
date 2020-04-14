@@ -34,7 +34,8 @@ def index():
         return bot.stop()
 
     if request.form["action"] == "quit":
-        return bot.quit()
+        bot.quit()
+        logging.info("Shutting down server")
         quit = request.environ.get('werkzeug.server.shutdown')
         if quit is None:
             raise RuntimeError('Not running with the Werkzeug Server')
