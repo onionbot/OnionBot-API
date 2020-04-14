@@ -30,6 +30,7 @@ class OnionBot(object):
         # Launch multiprocessing threads 
         camera.launch()
         thermal.launch()
+        self.exit_flag = False
 
         self.camera_sleep = "0"
         self.hob_setpoint = "0"
@@ -54,7 +55,7 @@ class OnionBot(object):
         def thread_function():
             """Threaded to run capture loop in background while allowing other processes to continue"""
 
-            while True:  # self.exit_flag is False
+            while self.exit_flag is False:
 
                 # Get time stamp
                 time_stamp = datetime.datetime.now()
@@ -137,8 +138,9 @@ class OnionBot(object):
         camera.quit()
         thermal.quit()
         cloud.quit()
-        self.logging_thread.join()
-        
+        self.exit_flag = True
+        self.logging_thread.join(timeout=1)
+
 
     def get_latest_meta(self):
         """Returns cloud filepath of latest meta.json - includes path location of images"""
