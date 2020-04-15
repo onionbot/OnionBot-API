@@ -66,7 +66,7 @@ class Data:
             "id": f"{session_name}_{measurement_id}_{str(time_stamp)}",
             "attributes": {
                 "session_name": session_name,
-                "label": active_label,
+                "active_label": active_label,
                 "measurement_id": measurement_id,
                 "time_stamp": str(time_stamp),
                 "camera_filepath": cloud.get_public_path(self.camera_filepath),
@@ -74,7 +74,7 @@ class Data:
                 "thermal_history_filepath": cloud.get_public_path(
                     self.thermal_history_filepath
                 ),
-                "hob_setpoint": hob_setpoint,
+                "hob_setpoint": str(hob_setpoint),
             },
         }
 

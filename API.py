@@ -34,16 +34,6 @@ def index():
     if request.form["action"] == "stop":
         return bot.stop()
 
-    if request.form["action"] == "quit":
-        bot.quit()
-        logging.info("Shutting down server")
-        server_quit = request.environ.get('werkzeug.server.shutdown')
-        if server_quit is None:
-            raise RuntimeError('Not running with the Werkzeug Server')
-        server_quit()
-        os.system('sleep 1 ; pkill -f API.py') # If all else fails...
-        return "success"
-
     if request.form["action"] == "get_latest_meta":
         return bot.get_latest_meta()
 
@@ -82,6 +72,16 @@ def index():
 
     if request.form["action"] == "get_all_models":
         return bot.get_all_models()
+
+    if request.form["action"] == "quit":
+        bot.quit()
+        logging.info("Shutting down server")
+        server_quit = request.environ.get('werkzeug.server.shutdown')
+        if server_quit is None:
+            raise RuntimeError('Not running with the Werkzeug Server')
+        server_quit()
+        os.system('sleep 1 ; pkill -f API.py') # If all else fails...
+        return "success"
 
 
 if __name__ == "__main__":

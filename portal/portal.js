@@ -60,7 +60,9 @@ function update() {
         connection_success()
         data = JSON.parse(data);
 
-        console.log(data)
+        // console.log(data)
+
+        console.log(data.attributes)
 
         $('#session-name').html(data.attributes.session_name);
         $('#active-label').html(data.attributes.active_label);

@@ -32,12 +32,12 @@ class OnionBot(object):
         thermal.launch()
         self.exit_flag = False
 
-        self.camera_sleep = "0"
-        self.hob_setpoint = "0"
+        self.camera_sleep = 0
+        self.hob_setpoint = 0
 
         self.measurement_id = 0
         self.active_label = None
-        self.session_name = "NONAME"
+        self.session_name = None
 
         self.latest_meta = json.dumps(
             data.generate_meta(
@@ -126,19 +126,9 @@ class OnionBot(object):
     def stop(self):
         """Stop logging"""
 
-        self.chosen_labels = "_"
-        self.active_label = "_"
-        self.active_model = "_"
+        self.session_name = None
 
         return "success"
-
-    def quit(self):
-        logging.info("Raising exit flag")
-        self.exit_flag = True
-        camera.quit()
-        thermal.quit()
-        cloud.quit()
-        self.logging_thread.join(timeout=1)
 
     def get_latest_meta(self):
         """Returns cloud filepath of latest meta.json - includes path location of images"""
@@ -160,8 +150,6 @@ class OnionBot(object):
         """Returns options for labels selected from `all_labels` in new session process"""
 
         self.chosen_labels = string
-
-        self.active_label = str(list(string.split(","))[0])
         return "success"
 
     def set_active_label(self, string):
@@ -222,3 +210,11 @@ class OnionBot(object):
         data = '[{"ID":"0","label":"tflite_water_boiling_1"}]'
 
         return data
+
+    def quit(self):
+        logging.info("Raising exit flag")
+        self.exit_flag = True
+        camera.quit()
+        thermal.quit()
+        cloud.quit()
+        self.logging_thread.join(timeout=1)
