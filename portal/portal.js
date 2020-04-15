@@ -132,32 +132,31 @@ function get_all_labels() {
     get("get_all_labels", function(data) {
         // data is a js object 
 
-        var label_json
-        label_json = data //JSON.parse(data);
-
-        console.log(data)
-
         let dropdown = $('#select-labels');
 
         dropdown.empty();
         dropdown.append('<option selected="true" disabled>Select labels</option>');
         dropdown.prop('selectedIndex', 0);
 
-        // Populate dropdown with list of provinces
+        // Populate dropdown 
         var dataJSON = JSON.parse(data);
 
-        $.each(dataJSON, function(key, entry) {
-            dropdown.append($('<option></option>').attr('value', entry.label).text(entry.label));
+        $.each(dataJSON.attributes, function(key, entry) {
+            dropdown.append($('<option></option>').attr('value', key).text(key));
+            // dropdown.append($('<option></option>').attr('value', entry.label).text(entry.label));
         });
     });
 }
 
+$('#select-labels').change(function() {
+    console.log("hi")
+
+    console.log($(this).val())
+});
+
 function get_all_models() {
     get("get_all_models", function(data) {
         // data is a js object 
-
-        var label_json
-        label_json = data //JSON.parse(data);
 
         let dropdown = $('#select-model');
 
@@ -166,7 +165,7 @@ function get_all_models() {
         dropdown.append('<option selected="true" disabled>Select model</option>');
         dropdown.prop('selectedIndex', 0);
 
-        // Populate dropdown with list of provinces
+        // Populate dropdown
         var dataJSON = JSON.parse(data);
 
         $.each(dataJSON, function(key, entry) {

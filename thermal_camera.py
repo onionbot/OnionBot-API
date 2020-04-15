@@ -138,7 +138,13 @@ class ThermalCamera(object):
             logging.debug("Capturing frame")
             frame = [0] * 768
             stamp = time.monotonic()
-            self.mlx.getFrame(frame)
+            while True:
+                try:
+                    self.mlx.getFrame(frame)
+                    break
+                except ValueError:
+                    logging.info("Frame capture error, retrying")
+
             logging.debug("Read 2 frames in %0.3f s" % (time.monotonic() - stamp))
 
             temperature_window = _value(frame, history_file_path, temperature_window)
