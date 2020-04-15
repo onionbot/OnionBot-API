@@ -135,10 +135,10 @@ class OnionBot(object):
 
         return self.latest_meta
 
-    def get_temperature_window(self):
+    def get_thermal_history(self):
         """Returns last 300 temperature readings"""
 
-        return self.temperature_window
+        return self.thermal_history
 
     def get_chosen_labels(self):
         """Returns options for labels selected from `all_labels` in new session process"""

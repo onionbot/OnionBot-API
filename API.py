@@ -37,8 +37,8 @@ def index():
     if request.form["action"] == "get_latest_meta":
         return bot.get_latest_meta()
 
-    if request.form["action"] == "get_temperature_window":
-        return bot.get_temperature_window()
+    if request.form["action"] == "get_thermal_history":
+        return bot.get_thermal_history()
 
     if request.form["action"] == "get_chosen_labels":
         return bot.get_chosen_labels()

@@ -83,7 +83,7 @@ function update() {
         }
     });
 
-    // get("get_temperature_window", function(data) {
+    // get("get_thermal_history", function(data) {
     //     console.log(data)
     //     // chart.update();
     // });
@@ -148,23 +148,26 @@ function get_all_labels() {
 
         dropdown.change(function() {
 
+            let key = $(this).val();
 
-            let button_group = $("#label-button-group")
+            //console.log(dataJSON);
+            //console.log(dataJSON.attributes);
 
-            let key = $(this).val()
+            let label_buttons = $('#label-button-group');
+            label_buttons.empty();
 
-            console.log(dataJSON.attributes)
+            $.each(dataJSON.attributes[key], function(key, entry) {
+                console.log(entry);
 
-            debugger;
-
-            $.each(dataJSON.attributes.key, function(key, entry) {
-                console.log(entry)
+                label_buttons.append($('<button type="button" class="btn btn-secondary label-button"></button>').html(entry)); //.html(entry).attr('value', entry)
             });
-            // button_group.append($('<button></button>').attr('value', key).text(key));
+
+            $('.label-button').on('click', function() {
+                console.log($(this).text());
+                set('set_active_label', $(this).text());
+            });
 
         });
-
-
 
     });
 }
@@ -212,16 +215,6 @@ $(document).ready(function() {
         get("quit", function(foo) {
             console.log("Quitting")
         });
-    });
-
-    $('#label-button1').on('click', function() {
-        set('set_active_label', $('#label-button1').text());
-    });
-    $('#label-button2').on('click', function() {
-        set('set_active_label', $('#label-button2').text());
-    });
-    $('#label-button3').on('click', function() {
-        set('set_active_label', $('#label-button3').text());
     });
 
     $('#select-model-button').on('click', function() {

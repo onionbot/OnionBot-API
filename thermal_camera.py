@@ -90,22 +90,27 @@ class ThermalCamera(object):
         return r, g, b
 
     def _worker(self):
-        def _value(frame, history_file_path, temperature_window):
+        def _value(frame, history_file_path, thermal_history):
 
             logging.debug("Proccessing numerical data")
 
             h = 12
             w = 16
             t = frame[h * 32 + w]
-            # temperature = "{:.1f}".format(t)
+            t = "{:.1f}".format(t)
 
-            temperature_window.append(t)
-            temperature_window.popleft()
+            thermal_history.append(t)
+            thermal_history.popleft()
+
+            data = {
+                "type": "thermal_history",
+                "attributes": list(thermal_history),
+            }
 
             with open(history_file_path, "w") as write_file:
-                    json.dump(list(temperature_window), write_file)
+                    json.dump(data, write_file)
 
-            return temperature_window
+            return thermal_history
 
         def _image(frame, file_path):
 
@@ -128,7 +133,7 @@ class ThermalCamera(object):
             img = img.transpose(method=Image.FLIP_LEFT_RIGHT)
             img.save(file_path)
 
-        temperature_window = deque([0] * 10)
+        thermal_history = deque([0] * 10)
 
         while True:
             paths = self.file_queue.get(block=True)
@@ -147,7 +152,7 @@ class ThermalCamera(object):
 
             logging.debug("Read 2 frames in %0.3f s" % (time.monotonic() - stamp))
 
-            temperature_window = _value(frame, history_file_path, temperature_window)
+            thermal_history = _value(frame, history_file_path, thermal_history)
 
             _image(frame, file_path)
 
