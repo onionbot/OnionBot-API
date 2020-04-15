@@ -1,9 +1,15 @@
+// -------------------------------------------------------
+// PORTAL.JS COPYRIGHT BEN COBLEY 2020 
+
+
+
 
 // -------------------------------------------------------
 // ---------------- APPLICATION VARIABLES ----------------
 
 var endpoint_url = 'http://192.168.0.70:5000/';
-var update_interval = 500;
+var update_interval = 100;
+var connected = false;
 
 
 
@@ -36,22 +42,9 @@ function get(function_name, callback) {
 }
 
 
-function connection_success() {
-    $('#connection-monitor').css("background-color", "green");
-}
-
-
-function connection_failed() {
-    $('#connection-monitor').css("background-color", "yellow");
-}
-
-
-
-
-// ------------- ASYCHRONOUS UPDATE PAGE -------------
+// ------------- UPDATE FREQUENTLY -------------
 
 function update() {
-
     // console.log("Update page called")
 
     get("get_latest_meta", function(data) {
@@ -59,10 +52,6 @@ function update() {
 
         connection_success()
         data = JSON.parse(data);
-
-        // console.log(data)
-
-        console.log(data.attributes)
 
         $('#session-name').html(data.attributes.session_name);
         $('#active-label').html(data.attributes.active_label);
@@ -80,59 +69,66 @@ function update() {
         $('#thermal-image').attr("src", data.attributes.thermal_filepath);
         $('#hob-setpoint').attr("placeholder", data.attributes.hob_setpoint);
         // $('#camera-sleep').attr("placeholder", data.attributes.camera_sleep);
+
+        if(data.attributes.session_name == undefined){
+            $("#stop").hide();
+            $("#start").show();
+            $('#session-id').prop("disabled", false);
+            $('#session-id').attr("placeholder", "Enter session ID");
+        }   else {
+            $("#start").hide();
+            $("#stop").show();
+            $('#session-id').prop("disabled", true);
+            $('#session-id').attr("placeholder", data.attributes.session_name);
+        }
     });
 
     // get("get_temperature_window", function(data) {
     //     console.log(data)
     //     // chart.update();
     // });
+}
 
+
+// ------------- UPDATE ON CONNECTION SUCCESS -------------
+
+
+function connection_success() {
+    $('#connection-monitor').css("background-color", "green");
+    if(connected == false){
+    get_all_labels()
+    get_all_models()
+    connected = true
+
+    }
+}
+
+function connection_failed() {
+    $('#connection-monitor').css("background-color", "yellow");
+    connected = false
 }
 
 
 
+// ------------- UPDATE ON INITIAL PAGE LOAD -------------
 
-// -------- EVENT LISTENERS FOR PAGE INTERACTION ---------
 
 $(document).ready(function() {
 
+    $("#start").hide();
     $("#stop").hide();
+
+    get_all_labels()
+    get_all_models()
 
     // Refresh page
     setInterval(update, update_interval);
+});
 
-    $('#start').on('click', function() {
 
-        set('start', $('#session-id').val());
+// --------------------- FUNCTIONS  ----------------------
 
-        set('set_chosen_labels', $('#select-labels').val());
-
-        $("#start").hide();
-        $("#stop").show();
-
-    });
-
-    $('#stop').on('click', function() {
-
-        get("stop", function(foo) {
-            console.log("Stopping")
-
-            $("#stop").hide();
-            $("#start").show();
-
-        });
-
-    });
-
-    $('#connection-monitor').on('click', function() {
-
-        get("quit", function(foo) {
-            console.log("Quitting")
-
-        });
-
-    });
-
+function get_all_labels() {
     get("get_all_labels", function(data) {
         // data is a js object 
 
@@ -151,10 +147,10 @@ $(document).ready(function() {
         $.each(dataJSON, function(key, entry) {
             dropdown.append($('<option></option>').attr('value', entry.label).text(entry.label));
         });
-
-
     });
+}
 
+function get_all_models() {
     get("get_all_models", function(data) {
         // data is a js object 
 
@@ -174,10 +170,31 @@ $(document).ready(function() {
         $.each(dataJSON, function(key, entry) {
             dropdown.append($('<option></option>').attr('value', entry.label).text(entry.label));
         });
+    });
+}
 
 
+//---------- ASYNCHRONOUS EVENT PAGE LISTENERS  ----------
+
+$(document).ready(function() {
+
+    $('#start').on('click', function() {
+
+        set('start', $('#session-id').val());
+        set('set_chosen_labels', $('#select-labels').val());
     });
 
+    $('#stop').on('click', function() {
+        get("stop", function(foo) {
+            console.log("Stopping")
+        });
+    });
+
+    $('#connection-monitor').on('click', function() {
+        get("quit", function(foo) {
+            console.log("Quitting")
+        });
+    });
 
     $('#label-button1').on('click', function() {
         set('set_active_label', $('#label-button1').text());
@@ -204,6 +221,8 @@ $(document).ready(function() {
     $('#camera-sleep-button').on('click', function() {
         set('set_camera_sleep', $('#camera-sleep').val());
     });
-
-
 });
+
+
+
+

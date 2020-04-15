@@ -21,7 +21,7 @@ a  {
 .connection-monitor  {
   height: 25px;
   width: 25px;
-  background-color: red;
+  background-color: gray;
   border-radius: 50%;
   display: inline-block;
 }
