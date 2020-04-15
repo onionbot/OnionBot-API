@@ -103,9 +103,10 @@ class ThermalCamera(object):
             thermal_history.popleft()
 
             data = {
-                "type": "thermal_history",
+                "type": "meta",
                 "attributes": {
-                    "data": list(thermal_history)},
+                    "data": list(thermal_history),
+                },
             }
 
             with open(history_file_path, "w") as write_file:
