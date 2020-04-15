@@ -200,9 +200,10 @@ class OnionBot(object):
     def get_all_labels(self):
         """Returns available image labels for training"""
 
-        data = '[{"ID":"0","label":"discard,water_boiling,water_not_boiling"},{"ID":"1","label":"discard,onions_cooked,onions_not_cooked"}]'
+        # data = '[{"ID":"0","label":"discard,water_boiling,water_not_boiling"},{"ID":"1","label":"discard,onions_cooked,onions_not_cooked"}]'
+        labels = json.dumps(data.generate_labels())
 
-        return data
+        return labels
 
     def get_all_models(self):
         """Returns available models for prediction"""

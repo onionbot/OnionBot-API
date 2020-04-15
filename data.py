@@ -14,6 +14,7 @@ class Data:
     def generate_filepaths(
         self, session_name, time_stamp, measurement_id, active_label
     ):
+        """Generate filepaths for local and cloud storage for all file types"""
 
         self.camera_filepath = cloud.get_path(
             session_name=session_name,
@@ -60,6 +61,7 @@ class Data:
     def generate_meta(
         self, session_name, time_stamp, measurement_id, active_label, hob_setpoint
     ):
+        """Generate metadata to be parsed by portal / training process"""
 
         data = {
             "type": "meta",
@@ -91,3 +93,34 @@ class Data:
                 json.dump(data, write_file)
 
         return data
+
+    def generate_labels():
+        """Generate labels for live labelling functionality"""
+
+        data = {
+            "type": "labels",
+            "attributes": {
+                "Onion Cooking": {
+                    {"0": "Discard"},
+                    {"1": "Raw"},
+                    {"2": "Browning"},
+                    {"3": "Brown"},
+                    {"4": "Overcooked"},
+                },
+                "Water Boiling": {
+                    {"0": "Discard"},
+                    {"1": "Not boiling"},
+                    {"2": "Simmering"},
+                    {"3": "Boiling"},
+                },
+            },
+        }
+
+        return data
+
+
+
+
+
+
+

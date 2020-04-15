@@ -135,6 +135,8 @@ function get_all_labels() {
         var label_json
         label_json = data //JSON.parse(data);
 
+        console.log(data)
+
         let dropdown = $('#select-labels');
 
         dropdown.empty();
