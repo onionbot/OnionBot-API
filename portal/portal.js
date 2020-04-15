@@ -145,14 +145,31 @@ function get_all_labels() {
             dropdown.append($('<option></option>').attr('value', key).text(key));
             // dropdown.append($('<option></option>').attr('value', entry.label).text(entry.label));
         });
+
+        dropdown.change(function() {
+
+
+            let button_group = $("#label-button-group")
+
+            let key = $(this).val()
+
+            console.log(dataJSON.attributes)
+
+            debugger;
+
+            $.each(dataJSON.attributes.key, function(key, entry) {
+                console.log(entry)
+            });
+            // button_group.append($('<button></button>').attr('value', key).text(key));
+
+        });
+
+
+
     });
 }
 
-$('#select-labels').change(function() {
-    console.log("hi")
 
-    console.log($(this).val())
-});
 
 function get_all_models() {
     get("get_all_models", function(data) {

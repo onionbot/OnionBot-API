@@ -100,14 +100,14 @@ class Data:
         data = {
             "type": "labels",
             "attributes": {
-                "Onion Cooking": {
+                "Onion": {
                     "0": "Discard",
                     "1": "Raw",
                     "2": "Browning",
                     "3": "Brown",
                     "4": "Overcooked",
                 },
-                "Water Boiling": {
+                "Water": {
                     "0": "Discard",
                     "1": "Not boiling",
                     "2": "Simmering",
