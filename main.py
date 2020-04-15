@@ -64,6 +64,7 @@ class OnionBot(object):
                 try:
                     cloud.start(camera_filepath)
                     cloud.start(thermal_filepath)
+                    cloud.start(thermal_history_filepath)
                 except NameError:
                     logging.debug("First time exception")
                     previous_meta = self.latest_meta
