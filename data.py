@@ -94,24 +94,24 @@ class Data:
 
         return data
 
-    def generate_labels():
+    def generate_labels(self):
         """Generate labels for live labelling functionality"""
 
         data = {
             "type": "labels",
             "attributes": {
                 "Onion Cooking": {
-                    {"0": "Discard"},
-                    {"1": "Raw"},
-                    {"2": "Browning"},
-                    {"3": "Brown"},
-                    {"4": "Overcooked"},
+                    "0": "Discard",
+                    "1": "Raw",
+                    "2": "Browning",
+                    "3": "Brown",
+                    "4": "Overcooked",
                 },
                 "Water Boiling": {
-                    {"0": "Discard"},
-                    {"1": "Not boiling"},
-                    {"2": "Simmering"},
-                    {"3": "Boiling"},
+                    "0": "Discard",
+                    "1": "Not boiling",
+                    "2": "Simmering",
+                    "3": "Boiling",
                 },
             },
         }
