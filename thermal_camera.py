@@ -1,15 +1,14 @@
 import multiprocessing as mp
 from multiprocessing import JoinableQueue
-from queue import Queue
 
 import math
+from statistics import mode
 import time
 import board
 import busio
 import json
 from PIL import Image
 from collections import deque
-import json
 
 import adafruit_mlx90640
 import logging
@@ -148,6 +147,8 @@ class ThermalCamera(object):
             while True:
                 try:
                     self.mlx.getFrame(frame)
+                    print(frame)
+                    print(mode(frame))
                     break
                 except ValueError:
                     logging.info("Frame capture error, retrying")
