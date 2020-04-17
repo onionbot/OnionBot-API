@@ -2,7 +2,7 @@ import multiprocessing as mp
 from multiprocessing import JoinableQueue
 
 import math
-from statistics import mode
+from statistics import mode, StatisticsError
 import time
 import board
 import busio
@@ -147,10 +147,14 @@ class ThermalCamera(object):
             while True:
                 try:
                     self.mlx.getFrame(frame)
-                    print(frame)
-                    print(mode(frame))
+                    try:
+                        if mode(frame) == 0: # Handle chessboard error
+                            logging.info("Frame capture ZERO error, retrying")
+                            break
+                    except StatisticsError: # Handle more than one modal value
+                        break # Modes > 1 means that chessboard error must not have happened
                     break
-                except ValueError:
+                except ValueError: # Handle ValueError in module
                     logging.info("Frame capture error, retrying")
 
             logging.debug("Read 2 frames in %0.3f s" % (time.monotonic() - stamp))
