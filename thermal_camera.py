@@ -103,7 +103,7 @@ class ThermalCamera(object):
             thermal_history.popleft()
 
             data = {
-                "type": "meta",
+                "type": "thermal_history",
                 "attributes": {
                     "data": list(thermal_history),
                 },

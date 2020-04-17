@@ -10,6 +10,7 @@
 var endpoint_url = 'http://192.168.0.70:5000/';
 var update_interval = 100;
 var connected = false;
+var ctx = document.getElementById('myChart').getContext('2d');
 
 
 
@@ -81,6 +82,17 @@ function update() {
             $('#session-id').prop("disabled", true);
             $('#session-id').attr("placeholder", data.attributes.session_name);
         }
+        
+        // console.log(data.attributes.thermal_history_filepath);
+
+        $.getJSON(data.attributes.thermal_history_filepath, function(data) {
+            console.log(data);
+            // a = JSON.parse(data);
+            console.log(data.attributes.data.slice(-1)[0])
+            chart.data.datasets[0].data = data.attributes.data;
+            chart.update()
+        });
+
     });
 
     // get("get_thermal_history", function(data) {
@@ -172,7 +184,50 @@ function get_all_labels() {
     });
 }
 
-
+var chart = new Chart(ctx, {
+    // The type of chart we want to create
+    type: 'line',
+    // The data for our dataset
+    data: {
+        labels: new Array(120).fill(" "),
+        datasets: [{
+            label: 'My First dataset',
+            fill: false,
+            borderColor: 'rgb(255, 99, 132)',
+            data: new Array(120).fill(0),
+            lineTension: 0,
+        }]
+    },
+    // Configuration options go here
+    options: {
+        animation: {
+            duration: 0
+        },
+        scales: {
+            yAxes: [{
+                ticks: {
+                    min: 0, 
+                    // max: 250,
+                }
+            }],
+            xAxes: [{
+                ticks: {
+                    min: 0, 
+                    max: 250,
+                },
+                display: false
+            }]
+        },
+        legend: {
+            display: false
+        },
+        elements: {
+            point:{
+                radius: 0
+            }
+        },
+    }
+});
 
 function get_all_models() {
     get("get_all_models", function(data) {
