@@ -134,7 +134,7 @@ class ThermalCamera(object):
             img = img.transpose(method=Image.FLIP_LEFT_RIGHT)
             img.save(file_path)
 
-        thermal_history = deque([0] * 10)
+        thermal_history = deque([0] * 120)
 
         while True:
             paths = self.file_queue.get(block=True)
