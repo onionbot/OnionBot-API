@@ -146,11 +146,12 @@ class ThermalCamera(object):
             stamp = time.monotonic()
             while True:
                 try:
+                    print("Click")
                     self.mlx.getFrame(frame)
                     try:
                         if mode(frame) == 0: # Handle chessboard error
                             logging.info("Frame capture ZERO error, retrying")
-                            break
+                            raise ValueError
                     except StatisticsError: # Handle more than one modal value
                         break # Modes > 1 means that chessboard error must not have happened
                     break
