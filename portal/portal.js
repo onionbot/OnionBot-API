@@ -83,8 +83,6 @@ function update() {
             $('#session-id').attr("placeholder", data.attributes.session_name);
         }
         
-        // console.log(data.attributes.thermal_history_filepath);
-
         $.getJSON(data.attributes.thermal_history_filepath, function(data) {
             console.log(data);
             // a = JSON.parse(data);
@@ -94,11 +92,6 @@ function update() {
         });
 
     });
-
-    // get("get_thermal_history", function(data) {
-    //     console.log(data)
-    //     // chart.update();
-    // });
 }
 
 
@@ -193,7 +186,7 @@ var chart = new Chart(ctx, {
         datasets: [{
             label: 'My First dataset',
             fill: false,
-            borderColor: 'rgb(255, 99, 132)',
+            borderColor: 'rgb(0,123,255)',
             data: new Array(120).fill(0),
             lineTension: 0,
         }]
