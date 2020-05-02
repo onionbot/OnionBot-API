@@ -32,7 +32,6 @@ class OnionBot(object):
         self.exit_flag = False
 
         self.camera_sleep = 0
-        self.hob_setpoint = 0
 
         self.measurement_id = 0
         self.active_label = None
@@ -40,11 +39,11 @@ class OnionBot(object):
 
         self.latest_meta = json.dumps(
             data.generate_meta(
-                self.session_name,
-                0,
-                self.measurement_id,
-                self.active_label,
-                self.hob_setpoint,
+                session_name=self.session_name,
+                time_stamp=0,
+                measurement_ID=self.measurement_id,
+                active_label=self.active_label,
+                hob_setpoint=servo.get_setpoint(),
             )
         )
 
@@ -91,11 +90,11 @@ class OnionBot(object):
 
                 # Generate metadata
                 metadata = data.generate_meta(
-                    session_name,
-                    time_stamp,
-                    measurement_id,
-                    active_label,
-                    self.hob_setpoint,
+                    session_name=session_name,
+                    time_stamp=time_stamp,
+                    measurement_ID=measurement_id,
+                    active_label=active_label,
+                    hob_setpoint=servo.get_setpoint(),
                 )
 
                 # Wait for all processes to finish
