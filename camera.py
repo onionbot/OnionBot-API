@@ -5,6 +5,7 @@ from picamera import PiCamera
 
 import logging
 
+
 class Camera(object):
     def __init__(self):
         self.file_queue = JoinableQueue(1)

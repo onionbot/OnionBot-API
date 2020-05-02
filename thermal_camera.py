@@ -103,13 +103,11 @@ class ThermalCamera(object):
 
             data = {
                 "type": "thermal_history",
-                "attributes": {
-                    "data": list(thermal_history),
-                },
+                "attributes": {"data": list(thermal_history),},
             }
 
             with open(history_file_path, "w") as write_file:
-                    json.dump(data, write_file)
+                json.dump(data, write_file)
 
             return thermal_history
 
@@ -148,13 +146,13 @@ class ThermalCamera(object):
                 try:
                     self.mlx.getFrame(frame)
                     try:
-                        if mode(frame) == 0: # Handle chessboard error
+                        if mode(frame) == 0:  # Handle chessboard error
                             logging.info("Frame capture ZERO error, retrying")
                             break
-                    except StatisticsError: # Handle more than one modal value
-                        break # Modes > 1 means that chessboard error must not have happened
+                    except StatisticsError:  # Handle more than one modal value
+                        break  # Modes > 1 means that chessboard error must not have happened
                     break
-                except ValueError: # Handle ValueError in module
+                except ValueError:  # Handle ValueError in module
                     logging.info("Frame capture error, retrying")
 
             logging.debug("Read 2 frames in %0.3f s" % (time.monotonic() - stamp))
@@ -182,4 +180,3 @@ class ThermalCamera(object):
         logging.info("Quitting thermal camera")
         self.file_queue.close()
         self.p.join(timeout=1)
-
