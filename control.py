@@ -48,7 +48,7 @@ class Control(object):
         self.quit_event.set()
 
     def update_setpoint(self, target_setpoint):
-        logger.debug("Updating setpoint flag to" % (target_setpoint))
+        logger.debug("Updating setpoint flag to %s " % (target_setpoint))
 
         self.control_setpoint = target_setpoint
 
