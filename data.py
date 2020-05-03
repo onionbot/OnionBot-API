@@ -92,7 +92,7 @@ class Data:
             with open(self.meta_filepath, "w") as write_file:
                 json.dump(data, write_file)
 
-        return data
+        return json.dumps(data)
 
     def generate_labels(self):
         """Generate labels for live labelling functionality"""

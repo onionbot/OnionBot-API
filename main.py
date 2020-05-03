@@ -14,7 +14,7 @@ import json
 
 import logging
 
-# Fix logging faliure issue 
+# Fix logging faliure issue
 for handler in logging.root.handlers[:]:
     logging.root.removeHandler(handler)
 
@@ -42,19 +42,6 @@ class OnionBot(object):
         thermal.launch()
         control.launch()
 
-        self.active_label = None
-        self.session_name = None
-
-        self.latest_meta = json.dumps(
-            data.generate_meta(
-                session_name=self.session_name,
-                time_stamp=0,
-                measurement_id=self.measurement_id,
-                active_label=self.active_label,
-                hob_setpoint=control.get_actual(),
-            )
-        )
-
     def run(self):
         """Start logging"""
 
@@ -73,12 +60,17 @@ class OnionBot(object):
                     cloud.start(thermal_history_filepath)
                 except NameError:
                     logger.debug("First time exception")
-                    previous_meta = self.latest_meta
-
-                # If data saving active, save measurement ID
+                    previous_meta = data.generate_meta(
+                        session_name=None,
+                        time_stamp=0,
+                        measurement_id=0,
+                        active_label=None,
+                        hob_setpoint=control.get_actual(),
+                    )
+                    self.session_name = None
+                    self.active_label = None
 
                 self.measurement_id += 1
-
                 measurement_id = self.measurement_id
                 active_label = self.active_label
                 session_name = self.session_name
@@ -112,8 +104,9 @@ class OnionBot(object):
 
                 # Shuffle metas
                 self.latest_meta = previous_meta
-                previous_meta = json.dumps(metadata)
+                previous_meta = metadata
 
+                # Add delay until next reading
                 sleep(float(config.get_config("camera_sleep")))
 
                 logger.info(
@@ -126,6 +119,7 @@ class OnionBot(object):
                     )
                 )
 
+                # Check quit flag
                 if self.quit_event.is_set():
                     logger.debug("Quitting main thread...")
                     break
