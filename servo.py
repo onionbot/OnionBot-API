@@ -64,6 +64,8 @@ class Servo(object):
             max_speed=max_speed,
         )
 
+        self.target_setpoint = 0
+
     def set_speed(self, speed):
 
         self.servo.set_speed(speed)
