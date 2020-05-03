@@ -271,14 +271,10 @@ $(document).ready(function() {
 
     $('#hob-setpoint-button').on('click', function() {
         set('set_hob_setpoint', $('#hob-setpoint').val());
-        $('#hob-setpoint').attr("placeholder", "Updating...");
-        $('#hob-setpoint').val('');
     });
 
     $('#hob-off-button').on('click', function() {
         set('set_hob_off', "_");
-        $('#hob-setpoint').attr("placeholder", "Updating...");
-        $('#hob-setpoint').val('');
     });
 
     $('#camera-sleep-button').on('click', function() {
