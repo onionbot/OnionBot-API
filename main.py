@@ -129,12 +129,11 @@ class OnionBot(object):
                 )
 
                 if self.quit_event.is_set():
-                logger.debug("Quitting main thread...")
+                    logger.debug("Quitting main thread...")
                     break
 
-
-        # Start logging thread
-        self.thread = threading.Thread(target=_worker)
+        # Start thread
+        self.thread = Thread(target=_worker)
         self.thread.start()
 
     def start(self, session_name):
