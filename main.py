@@ -92,6 +92,7 @@ class OnionBot(object):
 
                     # Generate metadata
                     metadata = data.generate_meta(
+                        filepaths = filepaths,
                         session_name=session_name,
                         time_stamp=time_stamp,
                         measurement_id=measurement_id,
