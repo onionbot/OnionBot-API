@@ -10,7 +10,7 @@ import os
 
 import logging
 logger = logging.getLogger("werkzeug")
-logger.setLevel(logger.ERROR)
+logger.setLevel(logging.ERROR)
 
 
 logger.info("Initialising web server")
