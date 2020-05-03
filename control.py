@@ -41,11 +41,12 @@ class Control(object):
 
     def launch(self):
         logger.debug("Initialising worker")
-        t = Thread(target=self._worker)
-        t.start()
+        self.thread = Thread(target=self._worker)
+        self.thread.start()
 
     def quit(self):
         self.quit_event.set()
+        self.thread.join(timeout=1)
 
     def update_setpoint(self, target_setpoint):
         logger.debug("Updating setpoint flag to %s " % (target_setpoint))
@@ -65,4 +66,5 @@ class Control(object):
     def hob_off(self):
         logger.debug("hob_off called")
 
-        return servo.hob_off()
+        self.control_setpoint = 0
+

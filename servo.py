@@ -11,7 +11,7 @@ logger.setLevel(logging.DEBUG)
 MIN_SAFE_ANGLE = 20
 MAX_SAFE_ANGLE = 310
 
-OFF_ANGLE = 25
+# OFF_ANGLE = 25
 MIN_SET_POINT_ANGLE = 50
 MAX_SET_POINT_ANGLE = 310
 
@@ -247,8 +247,8 @@ class Servo(object):
 
         return 100 - round(normalised)
 
-    def hob_off(self):
+    # def hob_off(self):
 
-        self.target_setpoint = 0
+    #     self.target_setpoint = 0
 
-        return self.rotate(OFF_ANGLE)
+    #     return self.rotate(OFF_ANGLE)
