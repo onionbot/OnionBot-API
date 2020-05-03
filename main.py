@@ -74,7 +74,7 @@ class OnionBot(object):
                 )
 
                 queued_meta = data.generate_meta(
-                    filepaths=filepaths,
+                    filepaths=queued_filepaths,
                     session_name=session_name,
                     time_stamp=time_stamp,
                     measurement_id=measurement_id,
