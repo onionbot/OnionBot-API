@@ -2,7 +2,7 @@ import multiprocessing as mp
 from multiprocessing import JoinableQueue
 
 import math
-from statistics import mode, mean, StatisticsError, pvariance
+from statistics import mean, pvariance, StatisticsError
 import time
 import board
 import busio
@@ -14,6 +14,7 @@ import adafruit_mlx90640
 import logging
 logger = logging.getLogger(__name__)
 
+VARIANCE_THRESHOLD = 100
 
 INTERPOLATE = 10
 
@@ -151,13 +152,9 @@ class ThermalCamera(object):
             while True:
                 try:
                     self.mlx.getFrame(frame)
-                    print(pvariance(frame))
-                    try:
-                        if mode(frame) == 0:  # Handle chessboard error
-                            logger.info("Frame capture ZERO error, retrying")
-                            break
-                    except StatisticsError:  # Handle more than one modal value
-                        break  # Modes > 1 means that chessboard error must not have happened
+                    if pvariance(frame) >= VARIANCE_THRESHOLD:  # Handle chessboard error
+                        logger.info("Frame capture error, retrying (VARIANCE_THRESHOLD exceed)")
+                        continue
                     break
                 except ValueError:  # Handle ValueError in module
                     logger.info("Frame capture error, retrying")
