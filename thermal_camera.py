@@ -1,8 +1,8 @@
-import multiprocessing as mp
-from multiprocessing import JoinableQueue
+from threading import Thread
+from queue import Queue
 
 import math
-from statistics import mean, pvariance, StatisticsError
+from statistics import mean, pvariance
 import time
 import board
 import busio
@@ -55,7 +55,7 @@ class ThermalCamera(object):
 
         self.mlx = mlx
 
-        self.file_queue = JoinableQueue(1)
+        self.file_queue = Queue(1)
 
     def _constrain(self, val, min_val, max_val):
         return min(max_val, max(min_val, val))
@@ -177,10 +177,10 @@ class ThermalCamera(object):
 
     def launch(self):
         logger.debug("Initialising worker")
-        self.p = mp.Process(target=self._worker)
-        self.p.start()
+        self.thread = Thread(target=self._worker)
+        self.thread.start()
 
     def quit(self):
         logger.info("Quitting thermal camera")
         self.file_queue.close()
-        self.p.join(timeout=1)
+        self.thread.join(timeout=1)
