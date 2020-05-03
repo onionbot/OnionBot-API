@@ -1,6 +1,8 @@
 from threading import Thread, Event
 from servo import Servo
 from time import sleep
+from collections import deque
+
 
 import logging
 logger = logging.getLogger(__name__)
@@ -17,18 +19,15 @@ class Control(object):
 
         self.control_setpoint = 0
         self.servo_setpoint = 0
-        self.servo_actual = 0 
+        self.servo_actual = 0
+
+        self.setpoint_history = deque([0] * 120)
+        self.actual_history = deque([0] * 120)
 
     def _worker(self):
 
         while True:
             logger.debug("Getting data from servo module")
-
-            self.servo_setpoint = servo.get_setpoint()
-            logger.debug("Servo get_setpoint returned %s " % (self.servo_setpoint))
-
-            self.servo_actual = servo.get_actual()
-            logger.debug("Servo get_actual returned %s " % (self.servo_actual))
 
             logger.debug("Calling servo update_setpoint with %s " % (self.control_setpoint))
             servo.update_setpoint(self.control_setpoint)
@@ -54,14 +53,40 @@ class Control(object):
         self.control_setpoint = target_setpoint
 
     def get_setpoint(self):
-        logger.debug("get_setpoint called")
+        setpoint = servo.get_setpoint()
+        logger.debug("Servo get_setpoint returned %s " % (setpoint))
 
-        return self.servo_setpoint
+        history = self.setpoint_history
+        history.append(setpoint)
+        history.popleft(setpoint)
+        self.setpoint_history = history
+
+        return setpoint
+
+    def get_setpoint_history(self):
+        """NOTE: Relies on get_setpoint function only being called once per frame"""
+        logger.debug("get_setpoint_history called")
+
+        return self.setpoint_history
 
     def get_actual(self):
-        logger.debug("get_actual called")
 
-        return self.servo_actual
+        actual = servo.get_actual()
+        logger.debug("Servo get_actual returned %s " % (actual))
+
+        history = self.actual_history
+        history.append(actual)
+        history.popleft(actual)
+        self.actual_history = history
+
+        return actual
+
+    def get_actual_history(self):
+        """NOTE: Relies on get_actual function only being called once per frame"""
+
+        logger.debug("get_actual_history called")
+
+        return self.actual_history
 
     def hob_off(self):
         logger.debug("hob_off called")
