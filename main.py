@@ -58,7 +58,10 @@ class OnionBot(object):
             while True:
 
                 # Get time stamp
-                time_stamp = datetime.datetime.now()
+                timer = datetime.datetime.now()
+
+                time_stamp = time.strftime("%Y-%m-%d_%H-%M-%S-%f")
+
 
                 self.measurement_id += 1
                 measurement_id = self.measurement_id
@@ -113,7 +116,7 @@ class OnionBot(object):
                         measurement_id,
                         session_name,
                         active_label,
-                        (datetime.datetime.now() - time_stamp).total_seconds(),
+                        (datetime.datetime.now() - timer).total_seconds(),
                     )
                 )
 
