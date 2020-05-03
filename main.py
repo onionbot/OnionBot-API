@@ -1,4 +1,4 @@
-import threading
+from threading import Thread, Event
 from time import sleep
 
 from thermal_camera import ThermalCamera
@@ -32,6 +32,8 @@ data = Data()
 class OnionBot(object):
     def __init__(self):
 
+        self.quit_event = Event()
+
         # Launch multiprocessing threads
         logger.info("Launching worker threads")
         camera.launch()
@@ -58,10 +60,10 @@ class OnionBot(object):
     def run(self):
         """Start logging"""
 
-        def thread_function():
+        def _worker():
             """Threaded to run capture loop in background while allowing other processes to continue"""
 
-            while self.exit_flag is False:
+            while True:
 
                 # Get time stamp
                 time_stamp = datetime.datetime.now()
@@ -126,11 +128,14 @@ class OnionBot(object):
                     )
                 )
 
-            logger.info("Main thread exiting")
+                if self.quit_event.is_set():
+                logger.debug("Quitting main thread...")
+                    break
+
 
         # Start logging thread
-        self.logging_thread = threading.Thread(target=thread_function)
-        self.logging_thread.start()
+        self.thread = threading.Thread(target=_worker)
+        self.thread.start()
 
     def start(self, session_name):
 
@@ -229,8 +234,9 @@ class OnionBot(object):
 
     def quit(self):
         logger.info("Raising exit flag")
-        self.exit_flag = True
+        self.quit_event.set()
         camera.quit()
         thermal.quit()
         cloud.quit()
-        self.logging_thread.join(timeout=1)
+        control.quit()
+        self.thread.join(timeout=1)
