@@ -233,7 +233,7 @@ class Servo(object):
     def get_actual(self):
         angle_range = MAX_SET_POINT_ANGLE - MIN_SET_POINT_ANGLE
 
-        actual_angle = self._angle()
+        actual_angle = self.get_angle()
 
         normalised = (100 * (actual_angle - MIN_SET_POINT_ANGLE)) / angle_range
 
