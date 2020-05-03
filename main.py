@@ -5,7 +5,7 @@ from thermal_camera import ThermalCamera
 from camera import Camera
 from cloud import Cloud
 from inference import Classify
-from actuation import Servo
+from control import Control
 from data import Data
 
 import datetime
@@ -17,9 +17,9 @@ FORMAT = "%(relativeCreated)6d %(levelname)-8s %(module)s %(process)d %(message)
 logging.basicConfig(format=FORMAT, level=logging.INFO)
 
 cloud = Cloud()
-thermal = ThermalCamera(visualise_on=False)
+thermal = ThermalCamera()
 camera = Camera()
-servo = Servo()
+control = Control()
 data = Data()
 
 
@@ -43,7 +43,7 @@ class OnionBot(object):
                 time_stamp=0,
                 measurement_ID=self.measurement_id,
                 active_label=self.active_label,
-                hob_setpoint=servo.get_setpoint(),
+                hob_setpoint=control.get_setpoint(),
             )
         )
 
@@ -94,7 +94,7 @@ class OnionBot(object):
                     time_stamp=time_stamp,
                     measurement_ID=measurement_id,
                     active_label=active_label,
-                    hob_setpoint=servo.get_setpoint(),
+                    hob_setpoint=control.get_setpoint(),
                 )
 
                 # Wait for all processes to finish
@@ -184,7 +184,7 @@ class OnionBot(object):
     def set_hob_setpoint(self, value):
         """Command to change current temperature setpoint"""
 
-        servo.update_setpoint(value)
+        control.update_setpoint(value)
         self.hob_setpoint = value
 
         return "success"
@@ -192,7 +192,7 @@ class OnionBot(object):
     def set_hob_off(self):
         """Command to turn hob off"""
 
-        servo.hob_off()
+        control.hob_off()
         self.hob_setpoint = "OFF"
 
         return "success"
