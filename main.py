@@ -14,7 +14,7 @@ import json
 import logging
 
 FORMAT = "%(relativeCreated)6d %(levelname)-8s %(module)s %(process)d %(message)s"
-logging.basicConfig(format=FORMAT, level=logging.INFO)
+logging.basicConfig(format=FORMAT, level=logging.DEBUG)
 
 cloud = Cloud()
 thermal = ThermalCamera()
@@ -29,6 +29,7 @@ class OnionBot(object):
         # Launch multiprocessing threads
         camera.launch()
         thermal.launch()
+        control.launch()
         self.exit_flag = False
 
         self.camera_sleep = 0

@@ -31,7 +31,8 @@ class Control(object):
 
             sleep(0.1)
 
-    def start(self):
+    def launch(self):
+        logging.debug("Initialising worker")
         Thread(target=self._worker)
 
     def quit(self):
