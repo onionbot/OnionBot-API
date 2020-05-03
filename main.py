@@ -42,13 +42,7 @@ class OnionBot(object):
         thermal.launch()
         control.launch()
 
-        self.latest_meta = data.generate_meta(
-            session_name=None,
-            time_stamp=0,
-            measurement_id=0,
-            active_label=None,
-            hob_setpoint=control.get_actual(),
-        )
+        self.latest_meta = None
         self.measurement_id = 0
         self.session_name = None
         self.active_label = None
