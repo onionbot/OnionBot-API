@@ -1,7 +1,9 @@
 import os
 from google.cloud import storage
-import logging
 import multiprocessing as mp
+
+import logging
+logger = logging.getLogger(__name__)
 
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/home/pi/onionbot-819a387e4e79.json"
 
@@ -16,7 +18,7 @@ class Cloud(object):
 
     def _worker(self, path):
 
-        logging.debug("Initialising upload worker")
+        logger.debug("Initialising upload worker")
 
         client = storage.Client()
         bucket = client.get_bucket(bucket_name)
@@ -29,7 +31,7 @@ class Cloud(object):
 
     def start(self, path):
 
-        logging.debug("Calling start")
+        logger.debug("Calling start")
 
         process = mp.Process(target=self._worker, args=(path,))
         process.start()
@@ -41,7 +43,7 @@ class Cloud(object):
         self.processes = []
 
     def quit(self):
-        logging.debug("Quitting cloud")
+        logger.debug("Quitting cloud")
         [p.join(timeout=1) for p in self.processes]
 
     def get_path(self, session_name, sensor, file_type, time, measurement_id, label):

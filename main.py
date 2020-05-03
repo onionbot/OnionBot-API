@@ -17,8 +17,10 @@ import logging
 for handler in logging.root.handlers[:]:
     logging.root.removeHandler(handler)
 
-FORMAT = "%(relativeCreated)6d %(levelname)-8s %(module)s %(process)d %(message)s"
+FORMAT = "%(relativeCreated)6d %(levelname)-8s %(name)s %(process)d %(message)s"
 logging.basicConfig(format=FORMAT, level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 
 cloud = Cloud()
 thermal = ThermalCamera()
@@ -31,7 +33,7 @@ class OnionBot(object):
     def __init__(self):
 
         # Launch multiprocessing threads
-        logging.info("Launching worker threads")
+        logger.info("Launching worker threads")
         camera.launch()
         thermal.launch()
         control.launch()
@@ -70,7 +72,7 @@ class OnionBot(object):
                     cloud.start(thermal_filepath)
                     cloud.start(thermal_history_filepath)
                 except NameError:
-                    logging.debug("First time exception")
+                    logger.debug("First time exception")
                     previous_meta = self.latest_meta
 
                 # If data saving active, save measurement ID
@@ -114,7 +116,7 @@ class OnionBot(object):
 
                 sleep(float(self.camera_sleep))
 
-                logging.info(
+                logger.info(
                     "Logging %s | session_name %s | Label %s | Interval %0.3f s"
                     % (
                         measurement_id,
@@ -124,7 +126,7 @@ class OnionBot(object):
                     )
                 )
 
-            logging.info("Main thread exiting")
+            logger.info("Main thread exiting")
 
         # Start logging thread
         self.logging_thread = threading.Thread(target=thread_function)
@@ -226,7 +228,7 @@ class OnionBot(object):
         return data
 
     def quit(self):
-        logging.info("Raising exit flag")
+        logger.info("Raising exit flag")
         self.exit_flag = True
         camera.quit()
         thermal.quit()

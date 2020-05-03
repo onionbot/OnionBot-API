@@ -6,20 +6,20 @@ from flask_cors import CORS
 
 from main import OnionBot
 
-import logging
 import os
 
-log = logging.getLogger("werkzeug")
-log.setLevel(logging.ERROR)
+import logging
+logger = logging.getLogger("werkzeug")
+logger.setLevel(logger.ERROR)
 
 
-logging.info("Initialising web server")
+logger.info("Initialising web server")
 app = Flask(__name__)
 CORS(app)
 
 bot = OnionBot()
 
-logging.info("Web server ready. Go to 0.0.0.0:8888/portal to connect")
+logger.info("Web server ready. Go to 0.0.0.0:8888/portal to connect")
 
 bot.run()
 
@@ -75,7 +75,7 @@ def index():
 
     if request.form["action"] == "quit":
         bot.quit()
-        logging.info("Shutting down server")
+        logger.info("Shutting down server")
         server_quit = request.environ.get('werkzeug.server.shutdown')
         if server_quit is None:
             raise RuntimeError('Not running with the Werkzeug Server')

@@ -4,6 +4,7 @@ import lib_para_360_servo
 import statistics
 
 import logging
+logger = logging.getLogger(__name__)
 
 
 MIN_SAFE_ANGLE = 20
@@ -37,7 +38,7 @@ class Servo(object):
         Kd_s=0,
     ):
 
-        logging.info("Initialising servo motor")
+        logger.info("Initialising servo motor")
 
         pi = pigpio.pi()
 

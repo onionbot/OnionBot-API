@@ -4,6 +4,7 @@ from multiprocessing import JoinableQueue
 from picamera import PiCamera
 
 import logging
+logger = logging.getLogger(__name__)
 
 
 class Camera(object):
@@ -12,7 +13,7 @@ class Camera(object):
 
     def _worker(self):
 
-        logging.info("Initialising camera")
+        logger.info("Initialising camera")
 
         camera = PiCamera()
         camera.rotation = 180
@@ -22,25 +23,25 @@ class Camera(object):
         while True:
             file_path = self.file_queue.get(block=True)
 
-            logging.debug("Capturing image")
+            logger.debug("Capturing image")
             camera.capture(file_path, resize=(240, 240))
 
             self.file_queue.task_done()
 
     def start(self, file_path):
-        logging.debug("Calling start")
+        logger.debug("Calling start")
         self.file_queue.put(file_path, block=True)
 
     def join(self):
-        logging.debug("Calling join")
+        logger.debug("Calling join")
         self.file_queue.join()
 
     def launch(self):
-        logging.debug("Initialising worker")
+        logger.debug("Initialising worker")
         self.p = mp.Process(target=self._worker)
         self.p.start()
 
     def quit(self):
-        logging.info("Quitting camera")
+        logger.info("Quitting camera")
         self.file_queue.close()
         self.p.join(timeout=1)

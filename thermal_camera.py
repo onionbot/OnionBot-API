@@ -12,6 +12,8 @@ from collections import deque
 
 import adafruit_mlx90640
 import logging
+logger = logging.getLogger(__name__)
+
 
 INTERPOLATE = 10
 
@@ -42,7 +44,7 @@ class ThermalCamera(object):
 
     def __init__(self, i2c=None, visualise_on=False):
 
-        logging.info("Initialising thermal camera...")
+        logger.info("Initialising thermal camera...")
 
         if i2c is None:
             i2c = busio.I2C(board.SCL, board.SDA)
@@ -91,7 +93,7 @@ class ThermalCamera(object):
     def _worker(self):
         def _value(frame, history_file_path, thermal_history):
 
-            logging.debug("Proccessing numerical data")
+            logger.debug("Proccessing numerical data")
 
             h = 12
             w = 16
@@ -113,7 +115,7 @@ class ThermalCamera(object):
 
         def _image(frame, file_path):
 
-            logging.debug("Proccessing image data")
+            logger.debug("Proccessing image data")
 
             for i in range(COLORDEPTH):
                 colormap[i] = self._gradient(i, COLORDEPTH, heatmap)
@@ -139,7 +141,7 @@ class ThermalCamera(object):
 
             [file_path, history_file_path] = paths
 
-            logging.debug("Capturing frame")
+            logger.debug("Capturing frame")
             frame = [0] * 768
             stamp = time.monotonic()
             while True:
@@ -147,15 +149,15 @@ class ThermalCamera(object):
                     self.mlx.getFrame(frame)
                     try:
                         if mode(frame) == 0:  # Handle chessboard error
-                            logging.info("Frame capture ZERO error, retrying")
+                            logger.info("Frame capture ZERO error, retrying")
                             break
                     except StatisticsError:  # Handle more than one modal value
                         break  # Modes > 1 means that chessboard error must not have happened
                     break
                 except ValueError:  # Handle ValueError in module
-                    logging.info("Frame capture error, retrying")
+                    logger.info("Frame capture error, retrying")
 
-            logging.debug("Read 2 frames in %0.3f s" % (time.monotonic() - stamp))
+            logger.debug("Read 2 frames in %0.3f s" % (time.monotonic() - stamp))
 
             thermal_history = _value(frame, history_file_path, thermal_history)
 
@@ -164,19 +166,19 @@ class ThermalCamera(object):
             self.file_queue.task_done()
 
     def start(self, file_path, history_file_path):
-        logging.debug("Calling start")
+        logger.debug("Calling start")
         self.file_queue.put([file_path, history_file_path], block=True)
 
     def join(self):
-        logging.debug("Calling join")
+        logger.debug("Calling join")
         self.file_queue.join()
 
     def launch(self):
-        logging.debug("Initialising worker")
+        logger.debug("Initialising worker")
         self.p = mp.Process(target=self._worker)
         self.p.start()
 
     def quit(self):
-        logging.info("Quitting thermal camera")
+        logger.info("Quitting thermal camera")
         self.file_queue.close()
         self.p.join(timeout=1)
