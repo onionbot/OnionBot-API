@@ -39,7 +39,7 @@ class OnionBot(object):
         control.launch()
         self.exit_flag = False
 
-        self.camera_sleep = 5
+        self.camera_sleep = 0
 
         self.measurement_id = 0
         self.active_label = None
@@ -51,7 +51,7 @@ class OnionBot(object):
                 time_stamp=0,
                 measurement_id=self.measurement_id,
                 active_label=self.active_label,
-                hob_setpoint=control.get_setpoint(),
+                hob_setpoint=control.get_actual(),
             )
         )
 
@@ -102,7 +102,7 @@ class OnionBot(object):
                     time_stamp=time_stamp,
                     measurement_id=measurement_id,
                     active_label=active_label,
-                    hob_setpoint=control.get_setpoint(),
+                    hob_setpoint=control.get_actual(),
                 )
 
                 # Wait for all processes to finish
