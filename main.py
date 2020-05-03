@@ -75,7 +75,7 @@ class OnionBot(object):
 
                 # Start sensor capture
                 camera.start(camera_filepath)
-                thermal.start(thermal_filepath)
+                thermal.start(thermal_filepath, thermal_history_filepath)
 
                 # While taking a picture, see if there is previous data to process
                 if data_published:
