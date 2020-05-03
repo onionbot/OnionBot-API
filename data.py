@@ -46,8 +46,9 @@ class Data:
     ):
         """Generate metadata to be parsed by portal / training process"""
 
-        camera_filepath = filepaths["camera"]
-        thermal_filepath = filepaths["thermal"]
+        camera_filepath = cloud.get_public_path(filepaths["camera"])
+        thermal_filepath = cloud.get_public_path(filepaths["thermal"])
+        thermal_history_filepath = cloud.get_public_path(filepaths["thermal_history"])
 
         data = {
             "type": "meta",
@@ -59,9 +60,7 @@ class Data:
                 "time_stamp": str(time_stamp),
                 "thermal_filepath": camera_filepath,
                 "thermal_filepath": thermal_filepath,
-                "thermal_history_filepath": cloud.get_public_path(
-                    self.thermal_history_filepath
-                ),
+                "thermal_history_filepath": thermal_history_filepath,
                 "hob_setpoint": str(hob_setpoint),
             },
         }
