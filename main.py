@@ -59,19 +59,12 @@ class OnionBot(object):
         def _worker():
             """Threaded to run capture loop in background while allowing other processes to continue"""
 
+            data_published = False
+
             while True:
 
                 # Get time stamp
                 time_stamp = datetime.datetime.now()
-
-                # Start cloud upload of previous images, handle first run exception
-                try:
-                    cloud.start(camera_filepath)
-                    cloud.start(thermal_filepath)
-                    cloud.start(thermal_history_filepath)
-                except NameError:
-                    logger.debug("First time exception")
-                    previous_meta = self.get_latest_meta()
 
                 self.measurement_id += 1
                 measurement_id = self.measurement_id
@@ -91,6 +84,19 @@ class OnionBot(object):
                 camera.start(camera_filepath)
                 thermal.start(thermal_filepath, thermal_history_filepath)
 
+                # While taking a picture, see if there is previous data to process
+                if data_published:
+
+                    cloud.start(previous_camera_filepath)
+                    cloud.start(previous_thermal_filepath)
+                    cloud.start(previous_thermal_history_filepath)
+
+                    # inference.start(previous_meta)
+
+                    # Wait for all processes to finish
+                    cloud.join()
+                    # inference.join()
+
                 # Generate metadata
                 metadata = data.generate_meta(
                     session_name=session_name,
@@ -100,20 +106,15 @@ class OnionBot(object):
                     hob_setpoint=control.get_actual(),
                 )
 
-                # Wait for all processes to finish
-                cloud.join()
-                thermal.join()
-                camera.join()
+                self.latest_meta = metadata
 
-                # Shuffle metas
-                self.latest_meta = previous_meta
-                previous_meta = metadata
+                previous_camera_filepath = camera_filepath
+                previous_thermal_filepath = thermal_filepath
+                previous_thermal_history_filepath = thermal_history_filepath
 
-                # Add delay until next reading
-                sleep(float(config.get_config("camera_sleep")))
-
+                data_published = True
                 logger.info(
-                    "Logging %s | session_name %s | Label %s | Interval %0.3f s"
+                    "Logged %s | session_name %s | Label %s | Interval %0.3f s"
                     % (
                         measurement_id,
                         session_name,
@@ -121,6 +122,14 @@ class OnionBot(object):
                         (datetime.datetime.now() - time_stamp).total_seconds(),
                     )
                 )
+
+                # temp, thermal history = thermal.join()
+                thermal.join()
+                camera.join()
+                # Servo get values, history
+
+                # Add delay until next reading
+                sleep(float(config.get_config("camera_sleep")))
 
                 # Check quit flag
                 if self.quit_event.is_set():
