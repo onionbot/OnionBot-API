@@ -14,6 +14,8 @@ OFF_ANGLE = 25
 MIN_SET_POINT_ANGLE = 50
 MAX_SET_POINT_ANGLE = 310
 
+TIMEOUT_PERIOD = 2.5
+
 
 class Servo(object):
     """ Wrapper for servo module to control hob temperature setting """
@@ -197,7 +199,7 @@ class Servo(object):
                     self.set_speed(0.0)
                     position_reached = True
                     print("Position reached!")
-                elif time.time() - start_time >= 5:
+                elif time.time() - start_time >= TIMEOUT_PERIOD:
                     self.set_speed(0.0)
                     position_reached = True
                     print("Timed out, position not reached")
