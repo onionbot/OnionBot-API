@@ -41,7 +41,8 @@ class Control(object):
 
     def launch(self):
         logger.debug("Initialising worker")
-        Thread(target=self._worker)
+        t = Thread(target=self._worker)
+        t.start()
 
     def quit(self):
         self.quit_event.set()
