@@ -46,15 +46,6 @@ class Cloud(object):
         logger.debug("Quitting cloud")
         [p.join(timeout=1) for p in self.processes]
 
-    def get_path(self, session_name, sensor, file_type, time, measurement_id, label):
-
-        # Make local path with measurement ID 
-        time_data = time.strftime("%Y-%m-%d_%H-%M-%S-%f")
-        path = f"logs/{session_name}/{sensor}/{label}"
-        filename = f"{session_name}_{str(measurement_id).zfill(5)}_{time_data}_{sensor}_{label}.{file_type}"
-        os.makedirs(path, exist_ok=True)
-
-        return f"{path}/{filename}"
 
     def get_public_path(self, local_path):
 

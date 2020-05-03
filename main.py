@@ -72,17 +72,16 @@ class OnionBot(object):
                 session_name = self.session_name
 
                 # Generate filepaths for logs
-                (
-                    camera_filepath,
-                    thermal_filepath,
-                    thermal_history_filepath,
-                ) = data.generate_filepaths(
+                filepaths = data.generate_filepaths(
                     session_name, time_stamp, measurement_id, active_label
                 )
+                camera_filepath = filepaths["camera"]
+                thermal_filepath = filepaths["thermal"]
+                thermal_history_filepath = filepaths["thermal_history"]
 
                 # Start sensor capture
                 camera.start(camera_filepath)
-                thermal.start(thermal_filepath, thermal_history_filepath)
+                thermal.start(thermal_filepath)
 
                 # While taking a picture, see if there is previous data to process
                 if data_published:
@@ -97,16 +96,16 @@ class OnionBot(object):
                     cloud.join()
                     # inference.join()
 
-                # Generate metadata
-                metadata = data.generate_meta(
-                    session_name=session_name,
-                    time_stamp=time_stamp,
-                    measurement_id=measurement_id,
-                    active_label=active_label,
-                    hob_setpoint=control.get_actual(),
-                )
+                    # Generate metadata
+                    metadata = data.generate_meta(
+                        session_name=session_name,
+                        time_stamp=time_stamp,
+                        measurement_id=measurement_id,
+                        active_label=active_label,
+                        hob_setpoint=control.get_actual(),
+                    )
 
-                self.latest_meta = metadata
+                    self.latest_meta = metadata
 
                 previous_camera_filepath = camera_filepath
                 previous_thermal_filepath = thermal_filepath

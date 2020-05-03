@@ -1,5 +1,6 @@
 import json
 from cloud import Cloud
+import os
 
 cloud = Cloud()
 
@@ -16,52 +17,37 @@ class Data:
     ):
         """Generate filepaths for local and cloud storage for all file types"""
 
-        self.camera_filepath = cloud.get_path(
-            session_name=session_name,
-            sensor="camera",
-            file_type="jpg",
-            time=time_stamp,
-            measurement_id=measurement_id,
-            label=active_label,
-        )
+        filepaths = {}
 
-        self.thermal_filepath = cloud.get_path(
-            session_name=session_name,
-            sensor="thermal",
-            file_type="jpg",
-            time=time_stamp,
-            measurement_id=measurement_id,
-            label=active_label,
-        )
+        path = f"logs/{session_name}/camera/{active_label}"
+        os.makedirs(path, exist_ok=True)
+        filename = f"{session_name}_{str(measurement_id).zfill(5)}_{time_stamp}_camera_{active_label}.jpg"
+        filepaths["camera"] = f"{path}/{filename}"
 
-        self.thermal_history_filepath = cloud.get_path(
-            session_name=session_name,
-            sensor="thermal_history",
-            file_type="json",
-            time=time_stamp,
-            measurement_id=measurement_id,
-            label=active_label,
-        )
+        path = f"logs/{session_name}/thermal/{active_label}"
+        os.makedirs(path, exist_ok=True)
+        filename = f"{session_name}_{str(measurement_id).zfill(5)}_{time_stamp}_thermal_{active_label}.jpg"
+        filepaths["thermal"] = f"{path}/{filename}"
 
-        self.meta_filepath = cloud.get_path(
-            session_name=session_name,
-            sensor="meta",
-            file_type="json",
-            time=time_stamp,
-            measurement_id=measurement_id,
-            label=active_label,
-        )
+        path = f"logs/{session_name}/thermal_history/{active_label}"
+        os.makedirs(path, exist_ok=True)
+        filename = f"{session_name}_{str(measurement_id).zfill(5)}_{time_stamp}_thermal_history_{active_label}.json"
+        filepaths["thermal_history"] = f"{path}/{filename}"
 
-        return (
-            self.camera_filepath,
-            self.thermal_filepath,
-            self.thermal_history_filepath,
-        )
+        path = f"logs/{session_name}/meta/{active_label}"
+        os.makedirs(path, exist_ok=True)
+        filename = f"{session_name}_{str(measurement_id).zfill(5)}_{time_stamp}_meta_{active_label}.json"
+        filepaths["meta"] = f"{path}/{filename}"
+
+        return filepaths
 
     def generate_meta(
-        self, session_name, time_stamp, measurement_id, active_label, hob_setpoint
+        self, filepaths, session_name, time_stamp, measurement_id, active_label, hob_setpoint
     ):
         """Generate metadata to be parsed by portal / training process"""
+
+        camera_filepath = filepaths["camera"]
+        thermal_filepath = filepaths["thermal"]
 
         data = {
             "type": "meta",
@@ -71,8 +57,8 @@ class Data:
                 "active_label": active_label,
                 "measurement_id": measurement_id,
                 "time_stamp": str(time_stamp),
-                "camera_filepath": cloud.get_public_path(self.camera_filepath),
-                "thermal_filepath": cloud.get_public_path(self.thermal_filepath),
+                "thermal_filepath": camera_filepath,
+                "thermal_filepath": thermal_filepath,
                 "thermal_history_filepath": cloud.get_public_path(
                     self.thermal_history_filepath
                 ),
@@ -88,9 +74,8 @@ class Data:
         cleaned_data = {"attributes": cleaned_data}
         data.update(cleaned_data)
 
-        if self.meta_filepath:
-            with open(self.meta_filepath, "w") as write_file:
-                json.dump(data, write_file)
+        with open(filepaths["meta"], "w") as write_file:
+            json.dump(data, write_file)
 
         return json.dumps(data)
 
