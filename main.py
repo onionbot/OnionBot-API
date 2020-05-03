@@ -39,7 +39,7 @@ class OnionBot(object):
         control.launch()
         self.exit_flag = False
 
-        self.camera_sleep = 0
+        self.camera_sleep = 5
 
         self.measurement_id = 0
         self.active_label = None
