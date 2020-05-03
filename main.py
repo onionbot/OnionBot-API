@@ -42,7 +42,7 @@ class OnionBot(object):
         thermal.launch()
         control.launch()
 
-        self.latest_meta = None
+        self.latest_meta = "None"
         self.measurement_id = 0
         self.session_name = None
         self.active_label = None
