@@ -112,11 +112,14 @@ class Servo(object):
 
         list_ticks = []
 
-        #  control loop:
+        logger.debug("Starting while loop")
+
         while not position_reached:
             #  DEBUGGING OPTION:
             #  printing runtime of loop , see end of while true loop
             #  start_time_each_loop = time.time()
+
+            logger.debug("Position not reached...")
 
             angle = self.get_angle()
 
@@ -198,11 +201,11 @@ class Servo(object):
                 if reached_sp_counter >= wait_after_reach_sp:
                     self.set_speed(0.0)
                     position_reached = True
-                    print("Position reached!")
+                    logger.debug("At position")
                 elif time.time() - start_time >= TIMEOUT_PERIOD:
                     self.set_speed(0.0)
                     position_reached = True
-                    print("Timed out, position not reached")
+                    logger.debug("Timed out, position not reached")
 
             #  Pause control loop for chosen sample time
             time.sleep(
@@ -217,6 +220,8 @@ class Servo(object):
         target_angle = float(target_angle)
         safe_target = max(min(target_angle, MAX_SAFE_ANGLE), MIN_SAFE_ANGLE)
 
+        logger.debug("Calling rotate with target %s " % (safe_target))
+
         return self.rotate(safe_target)
 
     def update_setpoint(self, target_setpoint):
@@ -225,6 +230,8 @@ class Servo(object):
         self.target_setpoint = target_setpoint
         angle_range = MAX_SET_POINT_ANGLE - MIN_SET_POINT_ANGLE
         setpoint_angle = (target_setpoint * 0.01 * angle_range) + MIN_SET_POINT_ANGLE
+
+        logger.debug("Calling safe_rotate with angle %s " % (setpoint_angle))
 
         return self.safe_rotate(setpoint_angle)
 
