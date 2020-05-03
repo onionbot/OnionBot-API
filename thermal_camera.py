@@ -2,7 +2,7 @@ import multiprocessing as mp
 from multiprocessing import JoinableQueue
 
 import math
-from statistics import mode, StatisticsError, mean
+from statistics import mode, fmean, StatisticsError, pvariance
 import time
 import board
 import busio
@@ -102,7 +102,7 @@ class ThermalCamera(object):
             f = frame
             center_square = [f[72],f[73],f[74],f[75],f[88],f[89],f[90],f[91],f[104],f[105],f[106],f[107],f[120],f[121],f[122],f[123]]
 
-            temperature = "{:.1f}".format(mean(center_square))
+            temperature = "{:.1f}".format(fmean(center_square))
 
             thermal_history.append(temperature)
             thermal_history.popleft()
@@ -151,6 +151,7 @@ class ThermalCamera(object):
             while True:
                 try:
                     self.mlx.getFrame(frame)
+                    print(pvariance(frame))
                     try:
                         if mode(frame) == 0:  # Handle chessboard error
                             logger.info("Frame capture ZERO error, retrying")
