@@ -3,7 +3,9 @@ from google.cloud import storage
 import multiprocessing as mp
 
 import logging
+
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/home/pi/onionbot-819a387e4e79.json"
 
@@ -26,8 +28,8 @@ class Cloud(object):
         blob = bucket.blob(path)
         blob.upload_from_filename(path)
         blob.make_public()
-        # print("Uploaded to cloud:", path)
-        # print("Blob is publicly accessible at ", blob.public_url)
+        logging.debug("Uploaded to cloud: %s" % (path))
+        logging.debug("Blob is publicly accessible at " % (blob.public_url))
 
     def start(self, path):
 
@@ -45,7 +47,6 @@ class Cloud(object):
     def quit(self):
         logger.debug("Quitting cloud")
         [p.join(timeout=1) for p in self.processes]
-
 
     def get_public_path(self, local_path):
 
