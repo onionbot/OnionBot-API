@@ -42,7 +42,16 @@ class OnionBot(object):
         thermal.launch()
         control.launch()
 
-        sleep(1)
+        self.latest_meta = data.generate_meta(
+            session_name=None,
+            time_stamp=0,
+            measurement_id=0,
+            active_label=None,
+            hob_setpoint=control.get_actual(),
+        )
+        self.measurement_id = 0
+        self.session_name = None
+        self.active_label = None
 
     def run(self):
         """Start logging"""
@@ -62,16 +71,7 @@ class OnionBot(object):
                     cloud.start(thermal_history_filepath)
                 except NameError:
                     logger.debug("First time exception")
-                    previous_meta = data.generate_meta(
-                        session_name=None,
-                        time_stamp=0,
-                        measurement_id=0,
-                        active_label=None,
-                        hob_setpoint=control.get_actual(),
-                    )
-                    self.session_name = None
-                    self.active_label = None
-                    self.latest_meta = previous_meta
+                    previous_meta = self.get_latest_meta()
 
                 self.measurement_id += 1
                 measurement_id = self.measurement_id
