@@ -28,8 +28,8 @@ class Cloud(object):
         blob = bucket.blob(path)
         blob.upload_from_filename(path)
         blob.make_public()
-        logging.debug("Uploaded to cloud: %s" % (path))
-        logging.debug("Blob is publicly accessible at %s" % (blob.public_url))
+        logger.debug("Uploaded to cloud: %s" % (path))
+        logger.debug("Blob is publicly accessible at %s" % (blob.public_url))
 
     def start(self, path):
 
