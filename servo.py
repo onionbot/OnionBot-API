@@ -63,8 +63,6 @@ class Servo(object):
             max_speed=max_speed,
         )
 
-        # self.hob_off()
-
     def set_speed(self, speed):
 
         self.servo.set_speed(speed)
