@@ -41,7 +41,7 @@ class OnionBot(object):
             data.generate_meta(
                 session_name=self.session_name,
                 time_stamp=0,
-                measurement_ID=self.measurement_id,
+                measurement_id=self.measurement_id,
                 active_label=self.active_label,
                 hob_setpoint=control.get_setpoint(),
             )
@@ -92,7 +92,7 @@ class OnionBot(object):
                 metadata = data.generate_meta(
                     session_name=session_name,
                     time_stamp=time_stamp,
-                    measurement_ID=measurement_id,
+                    measurement_id=measurement_id,
                     active_label=active_label,
                     hob_setpoint=control.get_setpoint(),
                 )
