@@ -42,6 +42,8 @@ class OnionBot(object):
         thermal.launch()
         control.launch()
 
+        sleep(1)
+
     def run(self):
         """Start logging"""
 

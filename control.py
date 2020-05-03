@@ -58,7 +58,7 @@ class Control(object):
 
         history = self.setpoint_history
         history.append(setpoint)
-        history.popleft(setpoint)
+        history.popleft()
         self.setpoint_history = history
 
         return setpoint
@@ -76,7 +76,7 @@ class Control(object):
 
         history = self.actual_history
         history.append(actual)
-        history.popleft(actual)
+        history.popleft()
         self.actual_history = history
 
         return actual
