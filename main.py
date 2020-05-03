@@ -7,6 +7,7 @@ from cloud import Cloud
 from inference import Classify
 from control import Control
 from data import Data
+from config import Config
 
 import datetime
 import json
@@ -27,6 +28,7 @@ thermal = ThermalCamera()
 camera = Camera()
 control = Control()
 data = Data()
+config = Config()
 
 
 class OnionBot(object):
@@ -39,11 +41,7 @@ class OnionBot(object):
         camera.launch()
         thermal.launch()
         control.launch()
-        self.exit_flag = False
 
-        self.camera_sleep = 0
-
-        self.measurement_id = 0
         self.active_label = None
         self.session_name = None
 
@@ -116,7 +114,7 @@ class OnionBot(object):
                 self.latest_meta = previous_meta
                 previous_meta = json.dumps(metadata)
 
-                sleep(float(self.camera_sleep))
+                sleep(float(config.get_config("camera_sleep")))
 
                 logger.info(
                     "Logging %s | session_name %s | Label %s | Interval %0.3f s"
@@ -212,7 +210,7 @@ class OnionBot(object):
     def set_camera_sleep(self, value):
         """Command to change camera targe refresh rate"""
 
-        self.camera_sleep = value
+        config.set_config("camera_sleep", value)
 
         return "success"
 
