@@ -65,9 +65,9 @@ class Servo(object):
 
         # self.hob_off()
 
-    def _set_speed(self, speed):
+    def set_speed(self, speed):
 
-        self.servo._set_speed(speed)
+        self.servo.set_speed(speed)
 
         return None
 
@@ -185,7 +185,7 @@ class Servo(object):
 
             #  convert range output_s fom ticks/s to -1 to 1
             output_s_con = output_s / 650
-            self._set_speed(output_s_con)
+            self.set_speed(output_s_con)
 
             prev_angle = angle
 
@@ -193,11 +193,11 @@ class Servo(object):
                 reached_sp_counter += 1
 
                 if reached_sp_counter >= wait_after_reach_sp:
-                    self._set_speed(0.0)
+                    self.set_speed(0.0)
                     position_reached = True
                     print("Position reached!")
                 elif time.time() - start_time >= 5:
-                    self._set_speed(0.0)
+                    self.set_speed(0.0)
                     position_reached = True
                     print("Timed out, position not reached")
 
