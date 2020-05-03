@@ -3,9 +3,7 @@ from google.cloud import storage
 import multiprocessing as mp
 
 import logging
-
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
 
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/home/pi/onionbot-819a387e4e79.json"
 

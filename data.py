@@ -59,7 +59,7 @@ class Data:
                 "active_label": active_label,
                 "measurement_id": measurement_id,
                 "time_stamp": time_stamp,
-                "thermal_filepath": camera_filepath,
+                "camera_filepath": camera_filepath,
                 "thermal_filepath": thermal_filepath,
                 "thermal_history_filepath": thermal_history_filepath,
                 "hob_setpoint": str(hob_setpoint),
