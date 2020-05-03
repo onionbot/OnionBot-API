@@ -6,7 +6,7 @@ from time import sleep
 servo = Servo()
 
 
-class control(object):
+class Control(object):
 
     def __init__(self):
 
