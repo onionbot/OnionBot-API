@@ -13,6 +13,8 @@ class Control(object):
         self.quit_event = Event()
 
         self.control_setpoint = 0
+        self.servo_setpoint = 0
+        self.servo_actual = 0 
 
     def _worker(self):
 
