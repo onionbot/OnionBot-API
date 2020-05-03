@@ -1,6 +1,7 @@
 import json
 from cloud import Cloud
 import os
+import time
 
 cloud = Cloud()
 
@@ -16,6 +17,8 @@ class Data:
         self, session_name, time_stamp, measurement_id, active_label
     ):
         """Generate filepaths for local and cloud storage for all file types"""
+
+        time_stamp = time.strftime("%Y-%m-%d_%H-%M-%S-%f", time_stamp)
 
         filepaths = {}
 
@@ -57,7 +60,7 @@ class Data:
                 "session_name": session_name,
                 "active_label": active_label,
                 "measurement_id": measurement_id,
-                "time_stamp": str(time_stamp),
+                "time_stamp": time.strftime("%Y-%m-%d_%H-%M-%S-%f", time_stamp),
                 "thermal_filepath": camera_filepath,
                 "thermal_filepath": thermal_filepath,
                 "thermal_history_filepath": thermal_history_filepath,
