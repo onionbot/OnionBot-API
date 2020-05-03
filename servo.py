@@ -120,8 +120,6 @@ class Servo(object):
             #  printing runtime of loop , see end of while true loop
             #  start_time_each_loop = time.time()
 
-            logger.debug("Position not reached...")
-
             angle = self.get_angle()
 
             #  #   Position Control
@@ -247,7 +245,7 @@ class Servo(object):
 
         normalised = (100 * (actual_angle - MIN_SET_POINT_ANGLE)) / angle_range
 
-        return round(normalised)
+        return 100 - round(normalised)
 
     def hob_off(self):
 
