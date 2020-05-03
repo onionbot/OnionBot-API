@@ -71,6 +71,7 @@ class OnionBot(object):
                     )
                     self.session_name = None
                     self.active_label = None
+                    self.latest_meta = previous_meta
 
                 self.measurement_id += 1
                 measurement_id = self.measurement_id
