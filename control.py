@@ -6,7 +6,6 @@ from collections import deque
 
 import logging
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
 
 servo = Servo()
 

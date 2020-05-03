@@ -29,51 +29,67 @@ def index():
     """Index is run automatically on init by flask"""
 
     if request.form["action"] == "start":
+        logger.debug("start called")
         return bot.start(request.form["value"])
 
     if request.form["action"] == "stop":
+        logger.debug("stop called")
         return bot.stop()
 
     if request.form["action"] == "get_latest_meta":
+        logger.debug("get_latest_meta called")
         return bot.get_latest_meta()
 
     if request.form["action"] == "get_thermal_history":
+        logger.debug("get_thermal_history called")
         return bot.get_thermal_history()
 
     if request.form["action"] == "get_chosen_labels":
+        logger.debug("get_chosen_labels called")
         return bot.get_chosen_labels()
 
     if request.form["action"] == "set_chosen_labels":
+        logger.debug("set_chosen_labels called")
         return bot.set_chosen_labels(request.form["value"])
 
     if request.form["action"] == "set_active_label":
+        logger.debug("set_active_label called")
         return bot.set_active_label(request.form["value"])
 
     if request.form["action"] == "set_active_model":
+        logger.debug("set_active_model called")
         return bot.set_active_model(request.form["value"])
 
     if request.form["action"] == "get_temperature_setpoint":
+        logger.debug("get_temperature_setpoint called")
         return bot.get_temperature_setpoint()
 
     if request.form["action"] == "get_camera_frame_rate":
+        logger.debug("get_camera_frame_rate called")
         return bot.get_camera_frame_rate()
 
     if request.form["action"] == "set_hob_setpoint":
+        logger.debug("set_hob_setpoint called")
         return bot.set_hob_setpoint(request.form["value"])
 
     if request.form["action"] == "set_hob_off":
+        logger.debug("set_hob_off called")
         return bot.set_hob_off()
 
     if request.form["action"] == "set_camera_sleep":
+        logger.debug("set_camera_sleep called")
         return bot.set_camera_sleep(request.form["value"])
 
     if request.form["action"] == "get_all_labels":
+        logger.debug("get_all_labels called")
         return bot.get_all_labels()
 
     if request.form["action"] == "get_all_models":
+        logger.debug("get_all_models called")
         return bot.get_all_models()
 
     if request.form["action"] == "quit":
+        logger.debug("quit called")        
         bot.quit()
         logger.info("Shutting down server")
         server_quit = request.environ.get('werkzeug.server.shutdown')

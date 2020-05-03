@@ -5,7 +5,6 @@ import statistics
 
 import logging
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
 
 
 MIN_SAFE_ANGLE = 20
