@@ -13,8 +13,12 @@ import json
 
 import logging
 
+# Fix logging faliure issue 
+for handler in logging.root.handlers[:]:
+    logging.root.removeHandler(handler)
+
 FORMAT = "%(relativeCreated)6d %(levelname)-8s %(module)s %(process)d %(message)s"
-logging.basicConfig(format=FORMAT, level=logging.DEBUG)
+logging.basicConfig(format=FORMAT, level=logging.INFO)
 
 cloud = Cloud()
 thermal = ThermalCamera()
@@ -27,6 +31,7 @@ class OnionBot(object):
     def __init__(self):
 
         # Launch multiprocessing threads
+        logging.info("Launching worker threads")
         camera.launch()
         thermal.launch()
         control.launch()
