@@ -1,5 +1,5 @@
 from threading import Thread, Event
-from time import sleep
+from time import sleep, strftime
 
 from thermal_camera import ThermalCamera
 from camera import Camera
@@ -60,8 +60,7 @@ class OnionBot(object):
                 # Get time stamp
                 timer = datetime.datetime.now()
 
-                time_stamp = time.strftime("%Y-%m-%d_%H-%M-%S-%f")
-
+                time_stamp = strftime("%Y-%m-%d_%H-%M-%S-%f")
 
                 self.measurement_id += 1
                 measurement_id = self.measurement_id
@@ -95,7 +94,7 @@ class OnionBot(object):
 
                     # Generate metadata
                     metadata = data.generate_meta(
-                        filepaths = filepaths,
+                        filepaths=filepaths,
                         session_name=session_name,
                         time_stamp=time_stamp,
                         measurement_id=measurement_id,
