@@ -22,7 +22,7 @@ class Servo(object):
         unitsFC=360,
         dcMin=31.85,
         dcMax=956.41,
-        wheel_gpio=5,
+        feedback_gpio=5,
         servo_gpio=13,
         min_pw=1210,
         max_pw=1750,
@@ -53,7 +53,7 @@ class Servo(object):
         self.Ki_s = Ki_s
         self.Kd_s = Kd_s
 
-        self.wheel = lib_para_360_servo.read_pwm(pi=self.pi, gpio=wheel_gpio)
+        self.feedback = lib_para_360_servo.read_pwm(pi=self.pi, gpio=feedback_gpio)
         self.servo = lib_para_360_servo.write_pwm(
             pi=self.pi,
             gpio=servo_gpio,
@@ -63,29 +63,30 @@ class Servo(object):
             max_speed=max_speed,
         )
 
-        #  needed time for initializing the instances
-        # time.sleep(1)
+        self.hob_off()
 
-    def set_speed(self, speed):
+    def _set_speed(self, speed):
 
-        self.servo.set_speed(speed)
+        self.servo._set_speed(speed)
 
         return None
 
     #  angular position in units full circle
-    def get_angle(self):
+    def _get_angle(self):
 
         #  driving forward will increase the angle
 
         angle = (
-            (self.wheel.read() - self.dcMin) * self.unitsFC / (self.dcMax - self.dcMin + 1)
+            (self.feedback.read() - self.dcMin)
+            * self.unitsFC
+            / (self.dcMax - self.dcMin + 1)
         )
 
         angle = max(min((self.unitsFC - 1), angle), 0)
 
         return angle
 
-    def rotate(self, target_angle):
+    def _rotate(self, target_angle):
 
         target_angle = float(360 - target_angle)
 
@@ -114,7 +115,7 @@ class Servo(object):
             #  printing runtime of loop , see end of while true loop
             #  start_time_each_loop = time.time()
 
-            angle = self.get_angle()
+            angle = self._get_angle()
 
             #  #   Position Control
             #  Er = SP - PV
@@ -135,7 +136,9 @@ class Servo(object):
 
             #  POSITION PID-Controller
             output_p = (
-                self.Kp_p * error_p + self.Ki_p * self.sampling_time * sum_error_p + self.Kd_p / self.sampling_time * (error_p - error_p_old)
+                self.Kp_p * error_p
+                + self.Ki_p * self.sampling_time * sum_error_p
+                + self.Kd_p / self.sampling_time * (error_p - error_p_old)
             )
             #  limit output of position control to speed range
             output_p = max(min(1, output_p), -1)
@@ -143,7 +146,7 @@ class Servo(object):
             error_p_old = error_p
 
             #  #   Speed Control
-            #  full speed of a wheel forward and backward = +-650 ticks/s
+            #  full speed forward and backward = +-650 ticks/s
             output_p_con = 650 * output_p
 
             try:
@@ -173,14 +176,16 @@ class Servo(object):
 
             #  SPEED PID-Controller
             output_s = (
-                self.Kp_s * error_s + self.Ki_s * self.sampling_time * sum_error_s + self.Kd_s / self.sampling_time * (error_s - error_s_old)
+                self.Kp_s * error_s
+                + self.Ki_s * self.sampling_time * sum_error_s
+                + self.Kd_s / self.sampling_time * (error_s - error_s_old)
             )
 
             error_s_old = error_s
 
             #  convert range output_s fom ticks/s to -1 to 1
             output_s_con = output_s / 650
-            self.set_speed(output_s_con)
+            self._set_speed(output_s_con)
 
             prev_angle = angle
 
@@ -188,11 +193,11 @@ class Servo(object):
                 reached_sp_counter += 1
 
                 if reached_sp_counter >= wait_after_reach_sp:
-                    self.set_speed(0.0)
+                    self._set_speed(0.0)
                     position_reached = True
                     print("Position reached!")
                 elif time.time() - start_time >= 5:
-                    self.set_speed(0.0)
+                    self._set_speed(0.0)
                     position_reached = True
                     print("Timed out, position not reached")
 
@@ -205,25 +210,33 @@ class Servo(object):
 
         return None
 
-    def safe_rotate(self, target_angle):
-
+    def _safe_rotate(self, target_angle):
         target_angle = float(target_angle)
-
         safe_target = max(min(target_angle, MAX_SAFE_ANGLE), MIN_SAFE_ANGLE)
 
-        return self.rotate(safe_target)
+        return self._rotate(safe_target)
 
     def update_setpoint(self, target_setpoint):
         target_setpoint = float(target_setpoint)
-
-        target_setpoint = max(min(target_setpoint, 100), 0) * 0.01
-
+        target_setpoint = max(min(target_setpoint, 100), 0)
+        self.target_setpoint = target_setpoint
         angle_range = MAX_SET_POINT_ANGLE - MIN_SET_POINT_ANGLE
+        setpoint_angle = (target_setpoint * 0.01 * angle_range) + MIN_SET_POINT_ANGLE
 
-        setpoint_angle = (target_setpoint * angle_range) + MIN_SET_POINT_ANGLE
+        return self._safe_rotate(setpoint_angle)
 
-        return self.safe_rotate(setpoint_angle)
+    def get_setpoint(self):
+
+        return self.target_setpoint
+
+    def get_actual(self):
+
+        actual_angle = self._angle()
+
+        print(actual_angle)
 
     def hob_off(self):
 
-        return self.rotate(OFF_ANGLE)
+        self.target_setpoint = 0
+
+        return self._rotate(OFF_ANGLE)
