@@ -72,7 +72,7 @@ class Servo(object):
         return None
 
     #  angular position in units full circle
-    def _get_angle(self):
+    def get_angle(self):
 
         #  driving forward will increase the angle
 
@@ -86,7 +86,7 @@ class Servo(object):
 
         return angle
 
-    def _rotate(self, target_angle):
+    def rotate(self, target_angle):
 
         target_angle = float(360 - target_angle)
 
@@ -115,7 +115,7 @@ class Servo(object):
             #  printing runtime of loop , see end of while true loop
             #  start_time_each_loop = time.time()
 
-            angle = self._get_angle()
+            angle = self.get_angle()
 
             #  #   Position Control
             #  Er = SP - PV
@@ -210,11 +210,11 @@ class Servo(object):
 
         return None
 
-    def _safe_rotate(self, target_angle):
+    def safe_rotate(self, target_angle):
         target_angle = float(target_angle)
         safe_target = max(min(target_angle, MAX_SAFE_ANGLE), MIN_SAFE_ANGLE)
 
-        return self._rotate(safe_target)
+        return self.rotate(safe_target)
 
     def update_setpoint(self, target_setpoint):
         target_setpoint = float(target_setpoint)
@@ -223,7 +223,7 @@ class Servo(object):
         angle_range = MAX_SET_POINT_ANGLE - MIN_SET_POINT_ANGLE
         setpoint_angle = (target_setpoint * 0.01 * angle_range) + MIN_SET_POINT_ANGLE
 
-        return self._safe_rotate(setpoint_angle)
+        return self.safe_rotate(setpoint_angle)
 
     def get_setpoint(self):
 
@@ -239,4 +239,4 @@ class Servo(object):
 
         self.target_setpoint = 0
 
-        return self._rotate(OFF_ANGLE)
+        return self.rotate(OFF_ANGLE)
