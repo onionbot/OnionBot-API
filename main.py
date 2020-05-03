@@ -60,7 +60,7 @@ class OnionBot(object):
                 # Get time stamp
                 timer = datetime.datetime.now()
 
-                time_stamp = strftime("%Y-%m-%d_%H-%M-%S-%f")
+                time_stamp = timer.strftime("%Y-%m-%d_%H-%M-%S-%f")
 
                 self.measurement_id += 1
                 measurement_id = self.measurement_id

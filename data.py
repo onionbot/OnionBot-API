@@ -18,8 +18,6 @@ class Data:
     ):
         """Generate filepaths for local and cloud storage for all file types"""
 
-        time_stamp = time.strftime("%Y-%m-%d_%H-%M-%S-%f")
-
         filepaths = {}
 
         path = f"logs/{session_name}/camera/{active_label}"
