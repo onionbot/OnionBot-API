@@ -99,10 +99,10 @@ class ThermalCamera(object):
             # w = 16
             # # t = frame[h * 32 + w]
 
-            temperature_square = [col[6:10] for col in frame[4:8]] # Take mean of central square when dived into 9ths. 
-            flat_list = [item for sublist in temperature_square for item in sublist]
+            f = frame
+            center_square = [f[72],f[73],f[74],f[75],f[88],f[89],f[90],f[91],f[104],f[105],f[106],f[107],f[120],f[121],f[122],f[123]]
 
-            temperature = "{:.1f}".format(mean(flat_list))
+            temperature = "{:.1f}".format(mean(center_square))
 
             thermal_history.append(temperature)
             thermal_history.popleft()
