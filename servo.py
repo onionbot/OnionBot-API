@@ -246,7 +246,7 @@ class Servo(object):
 
         for _ in range(5):
             actual_angle = self.get_angle()
-            time.sleep(0.01)
+            time.sleep(0.001)
             window.append(actual_angle)
 
         # Calculate centered average to eliminate noise spikes 
