@@ -98,9 +98,8 @@ class OnionBot(object):
 
                     # Wait for all meantime processes to finish
                     if not cloud.join():
-                        with meta.get("attributes") as attributes:
-                            attributes["camera_filepath"] = "placeholder.png"
-                            attributes["thermal_filepath"] = "placeholder.png"
+                        meta["attributes"]["camera_filepath"] = "placeholder.png"
+                        meta["attributes"]["thermal_filepath"] = "placeholder.png"
                     # inference.join()
 
                     # Push meta information to file level for API access
