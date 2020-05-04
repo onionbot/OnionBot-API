@@ -6,12 +6,12 @@ from statistics import mean, pvariance
 import time
 import board
 import busio
-import json
 from PIL import Image
 from collections import deque
 
 import adafruit_mlx90640
 import logging
+
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
@@ -61,6 +61,8 @@ class ThermalCamera(object):
 
         self.temperature = 0
         self.thermal_history = deque([0] * 120)
+        self.variance = 0
+        self.data = {}
 
     def _constrain(self, val, min_val, max_val):
         return min(max_val, max(min_val, val))
@@ -106,7 +108,24 @@ class ThermalCamera(object):
             # # t = frame[h * 32 + w]
 
             f = frame
-            center_square = [f[72],f[73],f[74],f[75],f[88],f[89],f[90],f[91],f[104],f[105],f[106],f[107],f[120],f[121],f[122],f[123]]
+            center_square = [
+                f[72],
+                f[73],
+                f[74],
+                f[75],
+                f[88],
+                f[89],
+                f[90],
+                f[91],
+                f[104],
+                f[105],
+                f[106],
+                f[107],
+                f[120],
+                f[121],
+                f[122],
+                f[123],
+            ]
 
             temperature = "{:.1f}".format(mean(center_square))
 
@@ -116,14 +135,6 @@ class ThermalCamera(object):
             thermal_history.append(temperature)
             thermal_history.popleft()
             self.thermal_history = thermal_history
-
-            # data = {
-            #     "type": "thermal_history",
-            #     "attributes": {"data": list(thermal_history),},
-            # }
-
-            # with open(history_file_path, "w") as write_file:
-            #     json.dump(data, write_file)
 
             return thermal_history
 
@@ -149,9 +160,7 @@ class ThermalCamera(object):
             img.save(file_path)
 
         while True:
-            paths = self.file_queue.get(block=True)
-
-            [file_path, history_file_path] = paths
+            file_path = self.file_queue.get(block=True)
 
             logger.debug("Capturing frame")
             frame = [0] * 768
@@ -159,9 +168,13 @@ class ThermalCamera(object):
             while True:
                 try:
                     self.mlx.getFrame(frame)
-                    if pvariance(frame) >= VARIANCE_THRESHOLD:  # Handle chessboard error
-                        logger.info("Frame capture error, retrying (VARIANCE_THRESHOLD exceed)")
+                    variance = pvariance(frame)
+                    if variance >= VARIANCE_THRESHOLD:  # Handle chessboard error
+                        logger.info(
+                            "Frame capture error, retrying (VARIANCE_THRESHOLD exceed)"
+                        )
                         continue
+                    self.variance = "{:.1f}".format(variance)
                     break
                 except ValueError:  # Handle ValueError in module
                     logger.info("Frame capture error, retrying")
@@ -181,18 +194,24 @@ class ThermalCamera(object):
         return temperature
 
     def get_thermal_history(self):
-        thermal_history = self.thermal_history
+        thermal_history = list(self.thermal_history)
         logger.debug("self.thermal_history is %s " % (thermal_history))
 
-        return self.thermal_history
+        return thermal_history
 
-    def start(self, file_path, history_file_path):
+    def start(self, file_path):
         logger.debug("Calling start")
-        self.file_queue.put([file_path, history_file_path], block=True)
+        self.file_queue.put(file_path, block=True)
 
     def join(self):
         logger.debug("Calling join")
         self.file_queue.join()
+
+        self.data = {
+            "temperature": self.get_temperature(),
+            "thermal_history": self.get_thermal_history(),
+            "variance": self.variance,
+        }
 
     def launch(self):
         logger.debug("Initialising worker")
