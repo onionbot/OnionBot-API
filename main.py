@@ -104,7 +104,7 @@ class OnionBot(object):
                     # inference.join()
 
                     # Push meta information to file level for API access
-                    self.latest_meta = meta
+                    self.latest_meta = json.dumps(meta)
 
                 # Wait for queued image captures to finish, refresh control data
                 thermal.join()
