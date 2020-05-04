@@ -1,7 +1,6 @@
 import json
 from cloud import Cloud
 import os
-import time
 
 cloud = Cloud()
 
@@ -30,11 +29,6 @@ class Data:
         filename = f"{session_name}_{str(measurement_id).zfill(5)}_{time_stamp}_thermal_{active_label}.jpg"
         filepaths["thermal"] = f"{path}/{filename}"
 
-        path = f"logs/{session_name}/thermal_history/{active_label}"
-        os.makedirs(path, exist_ok=True)
-        filename = f"{session_name}_{str(measurement_id).zfill(5)}_{time_stamp}_thermal_history_{active_label}.json"
-        filepaths["thermal_history"] = f"{path}/{filename}"
-
         path = f"logs/{session_name}/meta/{active_label}"
         os.makedirs(path, exist_ok=True)
         filename = f"{session_name}_{str(measurement_id).zfill(5)}_{time_stamp}_meta_{active_label}.json"
@@ -43,13 +37,19 @@ class Data:
         return filepaths
 
     def generate_meta(
-        self, filepaths, session_name, time_stamp, measurement_id, active_label, hob_setpoint
+        self,
+        session_name,
+        time_stamp,
+        measurement_id,
+        active_label,
+        filepaths,
+        thermal_data,
+        control_data,
     ):
-        """Generate metadata to be parsed by portal / training process"""
+        """Generate metadata to be parsed by portal"""
 
         camera_filepath = cloud.get_public_path(filepaths["camera"])
         thermal_filepath = cloud.get_public_path(filepaths["thermal"])
-        thermal_history_filepath = cloud.get_public_path(filepaths["thermal_history"])
 
         data = {
             "type": "meta",
@@ -61,8 +61,10 @@ class Data:
                 "time_stamp": time_stamp,
                 "camera_filepath": camera_filepath,
                 "thermal_filepath": thermal_filepath,
-                "thermal_history_filepath": thermal_history_filepath,
-                "hob_setpoint": str(hob_setpoint),
+                "servo_setpoint": control_data["servo_setpoint"],
+                "servo_setpoint_history": control_data["servo_setpoint_history"],
+                "servo_actual": control_data["servo_actual"],
+                "servo_actual_history": control_data["servo_actual_history"],
             },
         }
 
@@ -102,10 +104,3 @@ class Data:
         }
 
         return data
-
-
-
-
-
-
-

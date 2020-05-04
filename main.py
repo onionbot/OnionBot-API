@@ -1,5 +1,5 @@
 from threading import Thread, Event
-from time import sleep, strftime
+from time import sleep
 
 from thermal_camera import ThermalCamera
 from camera import Camera
@@ -60,7 +60,6 @@ class OnionBot(object):
 
                 # Get time stamp
                 timer = datetime.datetime.now()
-
                 time_stamp = timer.strftime("%Y-%m-%d_%H-%M-%S-%f")
 
                 self.measurement_id += 1
@@ -74,12 +73,13 @@ class OnionBot(object):
                 )
 
                 queued_meta = data.generate_meta(
-                    filepaths=queued_filepaths,
                     session_name=session_name,
                     time_stamp=time_stamp,
                     measurement_id=measurement_id,
                     active_label=active_label,
-                    hob_setpoint=control.get_actual(),
+                    filepaths=queued_filepaths,
+                    thermal_data=thermal.data,
+                    control_data=control.data,
                 )
 
                 # Start sensor capture
@@ -101,9 +101,10 @@ class OnionBot(object):
                     # Push meta information to file level for API access
                     self.latest_meta = meta
 
-                # Wait for queued image captures to finish
+                # Wait for queued image captures to finish, refresh control data
                 thermal.join()
                 camera.join()
+                control.refresh()
 
                 # Log to console
                 logger.info(

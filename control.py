@@ -5,13 +5,13 @@ from collections import deque
 
 
 import logging
+
 logger = logging.getLogger(__name__)
 
 servo = Servo()
 
 
 class Control(object):
-
     def __init__(self):
 
         self.quit_event = Event()
@@ -23,12 +23,16 @@ class Control(object):
         self.setpoint_history = deque([0] * 120)
         self.actual_history = deque([0] * 120)
 
+        self.data = None
+
     def _worker(self):
 
         while True:
             logger.debug("Getting data from servo module")
 
-            logger.debug("Calling servo update_setpoint with %s " % (self.control_setpoint))
+            logger.debug(
+                "Calling servo update_setpoint with %s " % (self.control_setpoint)
+            )
             servo.update_setpoint(self.control_setpoint)
 
             if self.quit_event.is_set():
@@ -51,44 +55,34 @@ class Control(object):
 
         self.control_setpoint = target_setpoint
 
-    def get_setpoint(self):
+    def refresh(self):
+        """NOTE: Must be called only ONCE per frame for history to stay in sync with thermal"""
+        logger.debug("Refresh called")
+
         setpoint = servo.get_setpoint()
         logger.debug("Servo get_setpoint returned %s " % (setpoint))
 
-        history = self.setpoint_history
-        history.append(setpoint)
-        history.popleft()
-        self.setpoint_history = history
-
-        return setpoint
-
-    def get_setpoint_history(self):
-        """NOTE: Relies on get_setpoint function only being called once per frame"""
-        logger.debug("get_setpoint_history called")
-
-        return list(self.setpoint_history)
-
-    def get_actual(self):
+        setpoint_history = self.setpoint_history
+        setpoint_history.append(setpoint)
+        setpoint_history.popleft()
+        self.setpoint_history = setpoint_history
 
         actual = servo.get_actual()
         logger.debug("Servo get_actual returned %s " % (actual))
 
-        history = self.actual_history
-        history.append(actual)
-        history.popleft()
-        self.actual_history = history
+        actual_history = self.actual_history
+        actual_history.append(actual)
+        actual_history.popleft()
+        self.actual_history = actual_history
 
-        return actual
-
-    def get_actual_history(self):
-        """NOTE: Relies on get_actual function only being called once per frame"""
-
-        logger.debug("get_actual_history called")
-
-        return list(self.actual_history)
+        self.data = {
+            "servo_setpoint": setpoint,
+            "servo_setpoint_history": list(setpoint_history),
+            "servo_actual": actual,
+            "servo_actual_history": list(actual_history),
+        }
 
     def hob_off(self):
         logger.debug("hob_off called")
 
         self.control_setpoint = 0
-
