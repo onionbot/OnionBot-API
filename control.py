@@ -43,6 +43,7 @@ class Control(object):
             "servo_setpoint_history": None,
             "servo_achieved": None,
             "servo_achieved_history": None,
+            "temperature_target": None,
         }
 
     def _worker(self):
