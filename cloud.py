@@ -39,12 +39,18 @@ class Cloud(object):
         self.threads.append(thread)
 
     def join(self):
-        [t.join() for t in self.threads]
+        while True:
+            for t in self.threads:
+                t.join(timeout=1)
+                if t.is_alive():
+                    logger.info("Slow connection...")
+                    continue
+            break
         self.threads = []
 
     def quit(self):
         logger.debug("Quitting cloud")
-        [p.join() for p in self.threads]
+        [t.join() for t in self.threads]
 
     def get_public_path(self, local_path):
 
