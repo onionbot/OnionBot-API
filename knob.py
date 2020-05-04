@@ -231,12 +231,14 @@ class Knob(object):
         angle_range = MAX_SET_POINT_ANGLE - MIN_SET_POINT_ANGLE
         target_angle = (target_setpoint * 0.01 * angle_range) + MIN_SET_POINT_ANGLE
 
-        self.thread.join(timeout=1)
-        if self.thread.is_alive():
-            raise RuntimeError("Knob thread failed to quit")
+        try: # Handle no thread running
+            self.thread.join(timeout=1)
+            if self.thread.is_alive():
+                raise RuntimeError("Knob thread failed to quit")
+        except AttributeError:
+            logger.debug("No thread to join")
 
         logger.debug("Initialising worker with target_angle %s " % (target_angle))
-
         self.thread = Thread(target=self._worker, args=(target_angle,))
         self.thread.start()
 
