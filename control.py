@@ -1,14 +1,25 @@
 from threading import Thread, Event
-from servo import Servo
+from knob import Knob
 from time import sleep
 from collections import deque
 
+from pid import PID
 
 import logging
 
 logger = logging.getLogger(__name__)
 
-servo = Servo()
+knob = Knob()
+pid = PID(
+    Kp=1.0,
+    Ki=0.0,
+    Kd=0.0,
+    setpoint=0,
+    sample_time=0.01,
+    output_limits=(0, 100),
+    is_enabled=False,
+    proportional_on_measurement=False,
+)
 
 DEADBAND_THRESHOLD = 5
 
@@ -16,20 +27,22 @@ DEADBAND_THRESHOLD = 5
 class Control(object):
     def __init__(self):
 
+        logger.info("Initialising control script")
+
         self.quit_event = Event()
 
         self.control_setpoint = 0
         self.servo_setpoint = 0
-        self.servo_actual = 0
+        self.servo_achieved = 0
 
         self.setpoint_history = deque([0] * 120)
-        self.actual_history = deque([0] * 120)
+        self.achieved_history = deque([0] * 120)
 
         self.data = {
             "servo_setpoint": None,
             "servo_setpoint_history": None,
-            "servo_actual": None,
-            "servo_actual_history": None,
+            "servo_achieved": None,
+            "servo_achieved_history": None,
         }
 
     def _worker(self):
@@ -39,11 +52,11 @@ class Control(object):
                 "Calling servo update_setpoint with %s " % (self.control_setpoint)
             )
 
-            delta = abs(float(self.control_setpoint) - servo.get_actual())
+            delta = abs(float(self.control_setpoint) - knob.get_achieved())
             logger.debug("Servo setpoint delta: {:.1f}".format(delta))
 
             if delta >= DEADBAND_THRESHOLD:
-                servo.update_setpoint(self.control_setpoint)
+                knob.update_setpoint(self.control_setpoint)
 
             if self.quit_event.is_set():
                 logger.debug("Quitting control thread...")
@@ -69,7 +82,7 @@ class Control(object):
         """NOTE: Must be called only ONCE per frame for history to stay in sync with thermal"""
         logger.debug("Refresh called")
 
-        setpoint = servo.get_setpoint()
+        setpoint = knob.get_setpoint()
         logger.debug("Servo get_setpoint returned %s " % (setpoint))
 
         setpoint_history = self.setpoint_history
@@ -77,22 +90,34 @@ class Control(object):
         setpoint_history.popleft()
         self.setpoint_history = setpoint_history
 
-        actual = servo.get_actual()
-        logger.debug("Servo get_actual returned %s " % (actual))
+        achieved = knob.get_achieved()
+        logger.debug("Servo get_achieved returned %s " % (achieved))
 
-        actual_history = self.actual_history
-        actual_history.append(actual)
-        actual_history.popleft()
-        self.actual_history = actual_history
+        achieved_history = self.achieved_history
+        achieved_history.append(achieved)
+        achieved_history.popleft()
+        self.achieved_history = achieved_history
 
         self.data = {
             "servo_setpoint": setpoint,
             "servo_setpoint_history": list(setpoint_history),
-            "servo_actual": actual,
-            "servo_actual_history": list(actual_history),
+            "servo_achieved": achieved,
+            "servo_achieved_history": list(achieved_history),
         }
 
     def hob_off(self):
         logger.debug("hob_off called")
 
         self.control_setpoint = 0
+
+    def set_pid_enabled(self, enabled):
+
+        pid.set_is_enabled(enabled, last_output=self.control_setpoint)
+
+    def set_pid_coefficients(self, coefficients):
+
+        pid.coefficients(coefficients)
+
+    def set_pid_reset(self):
+
+        pid.reset()
