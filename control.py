@@ -39,7 +39,7 @@ class Control(object):
                 "Calling servo update_setpoint with %s " % (self.control_setpoint)
             )
 
-            delta = abs(self.control_setpoint - servo.get_actual())
+            delta = abs(float(self.control_setpoint) - servo.get_actual())
             logger.debug("Servo setpoint delta: {:.1f}".format(delta))
 
             if delta >= DEADBAND_THRESHOLD:
