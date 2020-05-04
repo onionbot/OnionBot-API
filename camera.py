@@ -1,9 +1,10 @@
 import multiprocessing as mp
-from multiprocessing import JoinableQueue, Event
+from multiprocessing import JoinableQueue, Event, Empty
 
 from picamera import PiCamera
 
 import logging
+
 logger = logging.getLogger(__name__)
 
 
@@ -23,15 +24,15 @@ class Camera(object):
         camera.resolution = (1024, 768)
 
         while True:
-            try:
-                file_path = self.file_queue.get(block=True, timeout=0.1) # Timeout raises queue.Empty
+            try:  # Timeout raises queue.Empty
+                file_path = self.file_queue.get(block=True, timeout=0.1)
 
                 logger.debug("Capturing image")
                 camera.capture(file_path, resize=(240, 240))
 
                 self.file_queue.task_done()
 
-            except self.file_queue.Empty:
+            except Empty:
                 if self.quit_event.is_set():
                     logger.debug("Quitting camera thread...")
                     break
