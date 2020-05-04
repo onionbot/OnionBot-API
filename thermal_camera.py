@@ -15,7 +15,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-VARIANCE_THRESHOLD = 100
+VARIANCE_THRESHOLD = 50
 
 INTERPOLATE = 10
 
@@ -173,14 +173,18 @@ class ThermalCamera(object):
                 try:
                     self.mlx.getFrame(frame)
                 except ValueError:  # Handle ValueError in module
-                    logger.info("Frame capture error, retrying")
+                    logger.info("Frame capture error, retrying [ValueError]")
+                    time.sleep(0.1)
+                    continue
+                except RuntimeError:  # Handle RuntimeError in module
+                    logger.info("Frame capture error, retrying [RuntimeError]")
                     time.sleep(0.1)
                     continue
 
                 variance = pvariance(frame)
                 if variance >= VARIANCE_THRESHOLD:  # Handle chessboard error
                     logger.info(
-                        "Frame capture error, retrying (VARIANCE_THRESHOLD exceeded: %.1f)".format(variance)
+                        "Frame capture error, retrying [VARIANCE_THRESHOLD exceeded: {:.1f}]".format(variance)
                     )
                     time.sleep(0.1)
                     continue
