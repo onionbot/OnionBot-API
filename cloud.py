@@ -1,6 +1,6 @@
 import os
 from google.cloud import storage
-import multiprocessing as mp
+from threading import Thread
 
 import logging
 logger = logging.getLogger(__name__)
@@ -14,7 +14,7 @@ class Cloud(object):
     """Save image to file"""
 
     def __init__(self):
-        self.processes = []
+        self.threads = []
 
     def _worker(self, path):
 
@@ -33,18 +33,18 @@ class Cloud(object):
 
         logger.debug("Calling start")
 
-        process = mp.Process(target=self._worker, args=(path,))
-        process.start()
+        thread = Thread(target=self._worker, args=(path,))
+        thread.start()
 
-        self.processes.append(process)
+        self.threads.append(thread)
 
     def join(self):
-        [p.join() for p in self.processes]
-        self.processes = []
+        [t.join() for t in self.threads]
+        self.threads = []
 
     def quit(self):
         logger.debug("Quitting cloud")
-        [p.join(timeout=1) for p in self.processes]
+        [p.join(timeout=1) for p in self.threades]
 
     def get_public_path(self, local_path):
 
