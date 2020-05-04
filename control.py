@@ -76,6 +76,7 @@ class Control(object):
         logger.debug("Updating fixed setpoint to %s/100 " % (setpoint))
         self.fixed_setpoint = float(setpoint)
         self.set_pid_enabled(False)
+        self.temperature_target = None
 
     def hob_off(self):
         logger.debug("hob_off called")
@@ -85,6 +86,7 @@ class Control(object):
         logger.debug("Updating self.temperature_target to %s degrees " % (setpoint))
         self.temperature_target = float(setpoint)
         self.set_pid_enabled(True)
+        self.fixed_setpoint = None
 
     def set_pid_enabled(self, enabled):
         pid.set_is_enabled(enabled, last_output=knob.get_setpoint())
@@ -122,6 +124,7 @@ class Control(object):
             "servo_setpoint_history": list(setpoint_history),
             "servo_achieved": achieved,
             "servo_achieved_history": list(achieved_history),
+            "temperature_target": self.temperature_target,
         }
 
     def quit(self):

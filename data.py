@@ -3,6 +3,7 @@ from cloud import Cloud
 import os
 
 import logging
+
 logger = logging.getLogger(__name__)
 
 cloud = Cloud()
@@ -71,6 +72,7 @@ class Data:
                 "servo_setpoint_history": control_data["servo_setpoint_history"],
                 "servo_achieved": control_data["servo_achieved"],
                 "servo_achieved_history": control_data["servo_achieved_history"],
+                "temperature_target": control_data["temperature_target"],
             },
         }
 

@@ -60,7 +60,7 @@ function update() {
         $('#time-stamp').html(data.attributes.time_stamp);
 
         // Updata live data
-        
+
 
         // Load new images
         $('#camera-image').attr("src", data.attributes.camera_filepath);
@@ -79,7 +79,8 @@ function update() {
 
 
 
-        $('#hob-setpoint').attr("placeholder", data.attributes.hob_setpoint);
+        $('#fixed-setpoint').attr("placeholder", data.attributes.servo_setpoint);
+        $('#temperature-target').attr("placeholder", data.attributes.temperature_target);
         // $('#camera-sleep').attr("placeholder", data.attributes.camera_sleep);
 
         if(data.attributes.session_name == undefined){
@@ -227,16 +228,22 @@ $(document).ready(function() {
         set('set_active_model', $('#select-model').val());
     });
 
-    $('#hob-setpoint-button').on('click', function() {
-        set('set_hob_setpoint', $('#hob-setpoint').val());
-        $('#hob-setpoint').attr("placeholder", "Updating...");
-        $('#hob-setpoint').val('');
+    $('#fixed-setpoint-button').on('click', function() {
+        set('set_fixed_setpoint', $('#fixed-setpoint').val());
+        $('#fixed-setpoint').attr("placeholder", "Updating...");
+        $('#fixed-setpoint').val('');
+    });
+
+    $('#temperature-target-button').on('click', function() {
+        set('set_temperature_target', $('#temperature-target').val());
+        $('#temperature-target').attr("placeholder", "Updating...");
+        $('#temperature-target').val('');
     });
 
     $('#hob-off-button').on('click', function() {
         set('set_hob_off', "_");
-        $('#hob-setpoint').attr("placeholder", "Updating...");
-        $('#hob-setpoint').val('');
+        $('#fixed-setpoint').attr("placeholder", "Updating...");
+        $('#fixed-setpoint').val('');
     });
 
     $('#camera-sleep-button').on('click', function() {

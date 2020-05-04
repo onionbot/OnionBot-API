@@ -68,9 +68,13 @@ def index():
         logger.debug("get_camera_frame_rate called")
         return bot.get_camera_frame_rate()
 
-    if request.form["action"] == "set_hob_setpoint":
-        logger.debug("set_hob_setpoint called")
-        return bot.set_hob_setpoint(request.form["value"])
+    if request.form["action"] == "set_fixed_setpoint":
+        logger.debug("set_fixed_setpoint called")
+        return bot.set_fixed_setpoint(request.form["value"])
+
+    if request.form["action"] == "set_temperature_target":
+        logger.debug("set_temperature_target called")
+        return bot.set_temperature_target(request.form["value"])
 
     if request.form["action"] == "set_hob_off":
         logger.debug("set_hob_off called")

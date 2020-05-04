@@ -226,6 +226,7 @@ class Knob(object):
 
         target_setpoint = float(target_setpoint)
         target_setpoint = max(min(target_setpoint, 100), 0)
+        self.target_setpoint = target_setpoint
         angle_range = MAX_SET_POINT_ANGLE - MIN_SET_POINT_ANGLE
         target_angle = (target_setpoint * 0.01 * angle_range) + MIN_SET_POINT_ANGLE
 

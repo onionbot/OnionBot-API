@@ -196,11 +196,17 @@ class OnionBot(object):
 
         return "success"
 
-    def set_hob_setpoint(self, value):
-        """Command to change current temperature setpoint"""
+    def set_fixed_setpoint(self, value):
+        """Command to change fixed setpoint"""
 
-        control.update_setpoint(value)
-        self.hob_setpoint = value
+        control.update_fixed_setpoint(value)
+
+        return "success"
+
+    def set_temperature_target(self, value):
+        """Command to change temperature target"""
+
+        control.update_temperature_target(value)
 
         return "success"
 
@@ -208,7 +214,6 @@ class OnionBot(object):
         """Command to turn hob off"""
 
         control.hob_off()
-        self.hob_setpoint = "OFF"
 
         return "success"
 
