@@ -242,6 +242,5 @@ class ThermalCamera(object):
         self.thread.start()
 
     def quit(self):
-        logger.info("Quitting thermal camera")
         self.quit_event.set()
         self.thread.join()
