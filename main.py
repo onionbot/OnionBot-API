@@ -42,7 +42,7 @@ class OnionBot(object):
         thermal.launch()
         control.launch()
 
-        self.latest_meta = "None"
+        self.latest_meta = " "
         self.measurement_id = 0
         self.session_name = None
         self.active_label = None
@@ -84,40 +84,41 @@ class OnionBot(object):
 
                 # Start sensor capture
                 camera.start(queued_filepaths["camera"])
-                thermal.start(
-                    queued_filepaths["thermal"], queued_filepaths["thermal_history"]
-                )
+                thermal.start(queued_filepaths["thermal"])
 
-                # While taking a picture, process previous data
+                # While taking a picture, process previous data in meantime
                 if filepaths:
 
                     cloud.start(filepaths["camera"])
                     cloud.start(filepaths["thermal"])
-                    cloud.start(filepaths["thermal_history"])
 
                     # inference.start(previous_meta)
 
-                    # Wait for all processes to finish
+                    # Wait for all meantime processes to finish
                     cloud.join()
                     # inference.join()
 
+                    # Push meta information to file level for API access
                     self.latest_meta = meta
 
+                # Wait for queued image captures to finish
+                thermal.join()
+                camera.join()
+
+                # Log to console
                 logger.info(
-                    "Logged %s | session_name %s | Label %s | Interval %0.3f s"
+                    "Logged %s | session_name %s | Label %s | Interval %0.2f | Temperature %s | Temperature Variance %s "
                     % (
                         measurement_id,
                         session_name,
                         active_label,
                         (datetime.datetime.now() - timer).total_seconds(),
+                        thermal.data["temperature"],
+                        thermal.data["variance"],
                     )
                 )
 
-                # temp, thermal history = thermal.join()
-                thermal.join()
-                camera.join()
-                # Servo get values, history
-
+                # Move queue forward one place
                 filepaths = queued_filepaths
                 meta = queued_meta
 
