@@ -7,7 +7,6 @@ from pid import PID
 import logging
 
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
 
 knob = Knob()
 pid = PID(
@@ -32,6 +31,7 @@ class Control(object):
         self.quit_event = Event()
 
         self.fixed_setpoint = 0
+        self.temperature_target = None
         self.servo_setpoint = 0
         self.servo_achieved = 0
 
