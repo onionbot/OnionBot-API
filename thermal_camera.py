@@ -1,5 +1,5 @@
 from threading import Thread, Event
-from queue import Queue
+from queue import Queue, Empty
 
 import math
 from statistics import mean, pvariance
@@ -166,44 +166,49 @@ class ThermalCamera(object):
             img.save(file_path)
 
         while True:
-            file_path = self.file_queue.get(block=True)
 
-            logger.debug("Capturing frame")
-            frame = [0] * 768
-            stamp = time.monotonic()
-            while True:
-                try:
-                    self.mlx.getFrame(frame)
-                except ValueError:  # Handle ValueError in module
-                    logger.debug("Frame capture error, retrying [ValueError]")
-                    time.sleep(0.1)
-                    continue
-                except RuntimeError:  # Handle RuntimeError in module
-                    logger.debug("Frame capture error, retrying [RuntimeError]")
-                    time.sleep(0.1)
-                    continue
+            try:  # Timeout raises queue.Empty
+                file_path = self.file_queue.get(block=True, timeout=0.1)
 
-                variance = pvariance(frame)
-                if variance >= VARIANCE_THRESHOLD:  # Handle chessboard error
-                    logger.debug(
-                        "Frame capture error, retrying [VARIANCE_THRESHOLD exceeded: {:.1f}]".format(variance)
-                    )
-                    time.sleep(0.1)
-                    continue
-                break
+                logger.debug("Capturing frame")
+                frame = [0] * 768
+                stamp = time.monotonic()
+                while True:
+                    try:
+                        self.mlx.getFrame(frame)
+                    except ValueError:  # Handle ValueError in module
+                        logger.debug("Frame capture error, retrying [ValueError]")
+                        time.sleep(0.1)
+                        continue
+                    except RuntimeError:  # Handle RuntimeError in module
+                        logger.debug("Frame capture error, retrying [RuntimeError]")
+                        time.sleep(0.1)
+                        continue
 
-            self.variance = "{:.1f}".format(variance)
-            logger.debug("Read 2 frames in %0.3f s" % (time.monotonic() - stamp))
+                    variance = pvariance(frame)
+                    if variance >= VARIANCE_THRESHOLD:  # Handle chessboard error
+                        logger.debug(
+                            "Frame capture error, retrying [VARIANCE_THRESHOLD exceeded: {:.1f}]".format(
+                                variance
+                            )
+                        )
+                        time.sleep(0.1)
+                        continue
+                    break
 
-            # Call numerical and graphical functions
-            _value(frame)
-            _image(frame, file_path)
+                self.variance = "{:.1f}".format(variance)
+                logger.debug("Read 2 frames in %0.3f s" % (time.monotonic() - stamp))
 
-            self.file_queue.task_done()
+                # Call numerical and graphical functions
+                _value(frame)
+                _image(frame, file_path)
 
-            if self.quit_event.is_set():
-                logger.debug("Quitting thermal camera thread...")
-                break
+                self.file_queue.task_done()
+
+            except Empty:
+                if self.quit_event.is_set():
+                    logger.debug("Quitting thermal camera thread...")
+                    break
 
     def get_temperature(self):
         temperature = self.temperature
