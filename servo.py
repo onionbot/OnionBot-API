@@ -242,13 +242,13 @@ class Servo(object):
 
         angle_range = MAX_SET_POINT_ANGLE - MIN_SET_POINT_ANGLE
 
-        test = []
+        nums = []
 
         for _ in range(6):
             actual_angle = self.get_angle()
             time.sleep(0.01)
-            test.append(actual_angle)
-        print(max(test) - min(test))
+            nums.append(actual_angle)
+        print((sum(nums) - max(nums) - min(nums)) / (len(nums) - 2))
 
         actual_angle = self.get_angle()
 
