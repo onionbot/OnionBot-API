@@ -4,6 +4,7 @@ import lib_para_360_servo
 import statistics
 
 import logging
+
 logger = logging.getLogger(__name__)
 
 
@@ -238,7 +239,16 @@ class Servo(object):
         return self.target_setpoint
 
     def get_actual(self):
+
         angle_range = MAX_SET_POINT_ANGLE - MIN_SET_POINT_ANGLE
+
+        test = []
+
+        for _ in range(6):
+            actual_angle = self.get_angle()
+            time.sleep(0.01)
+            test.append(actual_angle)
+        print(max(test) - min(test))
 
         actual_angle = self.get_angle()
 
