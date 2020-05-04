@@ -39,14 +39,13 @@ class Cloud(object):
         self.threads.append(thread)
 
     def join(self):
-        while True:
-            for t in self.threads:
-                t.join(timeout=1)
-                if t.is_alive():
-                    logger.info("Slow connection...")
-                    continue
-            break
+        for t in self.threads:
+            t.join(timeout=1)
+            if t.is_alive():
+                logger.info("Slow connection...")
+                return False
         self.threads = []
+        return True
 
     def quit(self):
         logger.debug("Quitting cloud")
