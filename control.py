@@ -1,6 +1,5 @@
 from threading import Thread, Event
 from knob import Knob
-from time import sleep
 from collections import deque
 
 from pid import PID
@@ -8,6 +7,7 @@ from pid import PID
 import logging
 
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 
 knob = Knob()
 pid = PID(
@@ -31,7 +31,7 @@ class Control(object):
 
         self.quit_event = Event()
 
-        self.control_setpoint = 0
+        self.fixed_setpoint = 0
         self.servo_setpoint = 0
         self.servo_achieved = 0
 
@@ -48,36 +48,54 @@ class Control(object):
     def _worker(self):
 
         while True:
-            logger.debug(
-                "Calling servo update_setpoint with %s " % (self.control_setpoint)
-            )
 
-            delta = abs(float(self.control_setpoint) - knob.get_achieved())
+            current_setpoint = knob.get_achieved()
+
+            if pid.is_enabled:
+                pid.setpoint = self.temperature_target
+                target_setpoint = pid(current_setpoint)
+            else:
+                target_setpoint = self.fixed_setpoint
+
+            delta = abs(target_setpoint - current_setpoint)
             logger.debug("Servo setpoint delta: {:.1f}".format(delta))
 
             if delta >= DEADBAND_THRESHOLD:
-                knob.update_setpoint(self.control_setpoint)
+                knob.update_setpoint(target_setpoint)
 
             if self.quit_event.is_set():
                 logger.debug("Quitting control thread...")
                 break
-
-            sleep(0.1)
 
     def launch(self):
         logger.debug("Initialising worker")
         self.thread = Thread(target=self._worker)
         self.thread.start()
 
-    def quit(self):
-        self.quit_event.set()
-        knob.quit()
-        self.thread.join(timeout=1)
+    def update_fixed_setpoint(self, setpoint):
+        logger.debug("Updating fixed setpoint to %s/100 " % (setpoint))
+        self.fixed_setpoint = float(setpoint)
+        self.set_pid_enabled(False)
 
-    def update_setpoint(self, target_setpoint):
-        logger.debug("Updating setpoint flag to %s " % (target_setpoint))
+    def hob_off(self):
+        logger.debug("hob_off called")
+        self.update_fixed_setpoint(0)
 
-        self.control_setpoint = target_setpoint
+    def update_temperature_target(self, setpoint):
+        logger.debug("Updating self.temperature_target to %s degrees " % (setpoint))
+        self.temperature_target = float(setpoint)
+        self.set_pid_enabled(True)
+
+    def set_pid_enabled(self, enabled):
+        pid.set_is_enabled(enabled, last_output=knob.get_setpoint())
+
+    def set_pid_coefficients(self, coefficients):
+        pid.coefficients(coefficients)
+
+    def set_pid_reset(self):
+        pid.reset()
+
+    # Create update_angle_setpoint separate to temp setpoint
 
     def refresh(self):
         """NOTE: Must be called only ONCE per frame for history to stay in sync with thermal"""
@@ -106,19 +124,7 @@ class Control(object):
             "servo_achieved_history": list(achieved_history),
         }
 
-    def hob_off(self):
-        logger.debug("hob_off called")
-
-        self.control_setpoint = 0
-
-    def set_pid_enabled(self, enabled):
-
-        pid.set_is_enabled(enabled, last_output=self.control_setpoint)
-
-    def set_pid_coefficients(self, coefficients):
-
-        pid.coefficients(coefficients)
-
-    def set_pid_reset(self):
-
-        pid.reset()
+    def quit(self):
+        self.quit_event.set()
+        knob.quit()
+        self.thread.join(timeout=1)
