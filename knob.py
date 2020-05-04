@@ -238,6 +238,7 @@ class Knob(object):
             logger.debug("No thread to join")
 
         logger.debug("Initialising worker with target_angle %s " % (target_angle))
+        self.stop_event.clear()
         self.thread = Thread(target=self._worker, args=(target_angle,))
         self.thread.start()
 
