@@ -42,7 +42,7 @@ class Cloud(object):
         for t in self.threads:
             t.join(timeout=1)
             if t.is_alive():
-                logger.info("Slow connection...")
+                logger.info("Slow connection to cloud service...")
                 return False
         self.threads = []
         return True
