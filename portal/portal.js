@@ -53,20 +53,32 @@ function update() {
         connection_success()
         data = JSON.parse(data);
 
+        // Update key information
         $('#session-name').html(data.attributes.session_name);
         $('#active-label').html(data.attributes.active_label);
-        // $('#active-model').html(data.attributes.active_model);
-        // $('#camera-prediction').html(data.attributes.camera_prediction);
-        // $('#thermal-prediction').html(data.attributes.thermal_prediction);
         $('#measurement-id').html(data.attributes.measurement_id);
         $('#time-stamp').html(data.attributes.time_stamp);
-        // $('#temperature').html(data.attributes.temperature);
+
+        // Updata live data
+        
+
+        // Load new images
+        $('#camera-image').attr("src", data.attributes.camera_filepath);
+        $('#thermal-image').attr("src", data.attributes.thermal_filepath);
         $('#camera-filepath').html(data.attributes.camera_filepath);
         $('#thermal-filepath').html(data.attributes.thermal_filepath);
         $('#camera-filepath').attr("href", data.attributes.camera_filepath);
         $('#thermal-filepath').attr("href", data.attributes.thermal_filepath);
-        $('#camera-image').attr("src", data.attributes.camera_filepath);
-        $('#thermal-image').attr("src", data.attributes.thermal_filepath);
+
+
+
+        chart.data.datasets[0].data = data.attributes.thermal_history;
+        chart.data.datasets[1].data = data.attributes.servo_setpoint_history;
+        chart.data.datasets[2].data = data.attributes.servo_achieved_history;
+        chart.update()
+
+
+
         $('#hob-setpoint').attr("placeholder", data.attributes.hob_setpoint);
         // $('#camera-sleep').attr("placeholder", data.attributes.camera_sleep);
 
@@ -81,15 +93,7 @@ function update() {
             $('#session-id').prop("disabled", true);
             $('#session-id').attr("placeholder", data.attributes.session_name);
         }
-        
-        $.getJSON(data.attributes.thermal_history_filepath, function(data) {
-            console.log(data);
-            // a = JSON.parse(data);
-            console.log(data.attributes.data.slice(-1)[0])
-            chart.data.datasets[0].data = data.attributes.data;
-            chart.update()
-        });
-
+    
     });
 }
 
