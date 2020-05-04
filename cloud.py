@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/home/pi/onionbot-819a387e4e79.json"
 
-bucket_name = "onionbucket"
+BUCKET_NAME = "onionbucket"
 
 
 class Cloud(object):
@@ -21,7 +21,7 @@ class Cloud(object):
         logger.debug("Initialising upload worker")
 
         client = storage.Client()
-        bucket = client.get_bucket(bucket_name)
+        bucket = client.get_bucket(BUCKET_NAME)
 
         blob = bucket.blob(path)
         blob.upload_from_filename(path)
@@ -44,13 +44,13 @@ class Cloud(object):
 
     def quit(self):
         logger.debug("Quitting cloud")
-        [p.join(timeout=1) for p in self.threades]
+        [p.join(timeout=1) for p in self.threads]
 
     def get_public_path(self, local_path):
 
         if local_path:
             # Public URL
-            cloud_location = "https://storage.googleapis.com/" + bucket_name
+            cloud_location = "https://storage.googleapis.com/" + BUCKET_NAME
 
             return f"{cloud_location}/{local_path}"
         else:
