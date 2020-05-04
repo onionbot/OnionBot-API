@@ -242,15 +242,15 @@ class Servo(object):
 
         angle_range = MAX_SET_POINT_ANGLE - MIN_SET_POINT_ANGLE
 
-        nums = []
+        window = []
 
-        for _ in range(6):
+        for _ in range(5):
             actual_angle = self.get_angle()
             time.sleep(0.01)
-            nums.append(actual_angle)
-        print((sum(nums) - max(nums) - min(nums)) / (len(nums) - 2))
+            window.append(actual_angle)
 
-        actual_angle = self.get_angle()
+        # Calculate centered average to eliminate noise spikes 
+        actual_angle = (sum(window) - max(window) - min(window)) / (len(window) - 2)
 
         normalised = (100 * (actual_angle - MIN_SET_POINT_ANGLE)) / angle_range
 
