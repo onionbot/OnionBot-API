@@ -69,8 +69,8 @@ class Data:
                 "variance": thermal_data["variance"],
                 "servo_setpoint": control_data["servo_setpoint"],
                 "servo_setpoint_history": control_data["servo_setpoint_history"],
-                "servo_actual": control_data["servo_actual"],
-                "servo_actual_history": control_data["servo_actual_history"],
+                "servo_achieved": control_data["servo_achieved"],
+                "servo_achieved_history": control_data["servo_achieved_history"],
             },
         }
 
