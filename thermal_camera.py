@@ -172,17 +172,20 @@ class ThermalCamera(object):
             while True:
                 try:
                     self.mlx.getFrame(frame)
-                    variance = pvariance(frame)
-                    if variance >= VARIANCE_THRESHOLD:  # Handle chessboard error
-                        logger.info(
-                            "Frame capture error, retrying (VARIANCE_THRESHOLD exceed)"
-                        )
-                        continue
-                    self.variance = "{:.1f}".format(variance)
-                    break
                 except ValueError:  # Handle ValueError in module
                     logger.info("Frame capture error, retrying")
+                    time.sleep(0.1)
+                    continue
 
+                variance = pvariance(frame)
+                if variance >= VARIANCE_THRESHOLD:  # Handle chessboard error
+                    logger.info(
+                        "Frame capture error, retrying (VARIANCE_THRESHOLD exceed)"
+                    )
+                    continue
+                break
+
+            self.variance = "{:.1f}".format(variance)
             logger.debug("Read 2 frames in %0.3f s" % (time.monotonic() - stamp))
 
             # Call numerical and graphical functions
