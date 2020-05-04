@@ -1,4 +1,4 @@
-from threading import Thread
+from threading import Thread, Event
 from queue import Queue
 
 import math
@@ -45,6 +45,8 @@ class ThermalCamera(object):
     """Save image to file"""
 
     def __init__(self, i2c=None, visualise_on=False):
+
+        self.quit_event = Event()
 
         logger.info("Initialising thermal camera...")
 
@@ -173,17 +175,17 @@ class ThermalCamera(object):
                 try:
                     self.mlx.getFrame(frame)
                 except ValueError:  # Handle ValueError in module
-                    logger.info("Frame capture error, retrying [ValueError]")
+                    logger.debug("Frame capture error, retrying [ValueError]")
                     time.sleep(0.1)
                     continue
                 except RuntimeError:  # Handle RuntimeError in module
-                    logger.info("Frame capture error, retrying [RuntimeError]")
+                    logger.debug("Frame capture error, retrying [RuntimeError]")
                     time.sleep(0.1)
                     continue
 
                 variance = pvariance(frame)
                 if variance >= VARIANCE_THRESHOLD:  # Handle chessboard error
-                    logger.info(
+                    logger.debug(
                         "Frame capture error, retrying [VARIANCE_THRESHOLD exceeded: {:.1f}]".format(variance)
                     )
                     time.sleep(0.1)
@@ -198,6 +200,10 @@ class ThermalCamera(object):
             _image(frame, file_path)
 
             self.file_queue.task_done()
+
+            if self.quit_event.is_set():
+                logger.debug("Quitting thermal camera thread...")
+                break
 
     def get_temperature(self):
         temperature = self.temperature
@@ -232,5 +238,5 @@ class ThermalCamera(object):
 
     def quit(self):
         logger.info("Quitting thermal camera")
-        self.file_queue.close()
+        self.quit_event.set()
         self.thread.join(timeout=1)

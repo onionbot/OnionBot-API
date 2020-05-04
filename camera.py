@@ -1,5 +1,5 @@
 import multiprocessing as mp
-from multiprocessing import JoinableQueue
+from multiprocessing import JoinableQueue, Event
 
 from picamera import PiCamera
 
@@ -10,6 +10,8 @@ logger = logging.getLogger(__name__)
 class Camera(object):
     def __init__(self):
         self.file_queue = JoinableQueue(1)
+
+        self.quit_event = Event()
 
     def _worker(self):
 
@@ -28,6 +30,10 @@ class Camera(object):
 
             self.file_queue.task_done()
 
+            if self.quit_event.is_set():
+                logger.debug("Quitting camera thread...")
+                break
+
     def start(self, file_path):
         logger.debug("Calling start")
         self.file_queue.put(file_path, block=True)
@@ -44,4 +50,5 @@ class Camera(object):
     def quit(self):
         logger.info("Quitting camera")
         self.file_queue.close()
+        self.quit_event.set()
         self.p.join(timeout=1)
