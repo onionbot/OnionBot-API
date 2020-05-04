@@ -13,7 +13,6 @@ var connected = false;
 var ctx = document.getElementById('myChart').getContext('2d');
 
 
-
 // ------------------ INTERFACE WITH API ----------------
 
 function set(function_name, argument) {
@@ -176,51 +175,6 @@ function get_all_labels() {
 
     });
 }
-
-var chart = new Chart(ctx, {
-    // The type of chart we want to create
-    type: 'line',
-    // The data for our dataset
-    data: {
-        labels: new Array(120).fill(" "),
-        datasets: [{
-            label: 'My First dataset',
-            fill: false,
-            borderColor: 'rgb(0,123,255)',
-            data: new Array(120).fill(0),
-            lineTension: 0,
-        }]
-    },
-    // Configuration options go here
-    options: {
-        animation: {
-            duration: 0
-        },
-        scales: {
-            yAxes: [{
-                ticks: {
-                    min: 0, 
-                    // max: 250,
-                }
-            }],
-            xAxes: [{
-                ticks: {
-                    min: 0, 
-                    max: 250,
-                },
-                display: false
-            }]
-        },
-        legend: {
-            display: false
-        },
-        elements: {
-            point:{
-                radius: 0
-            }
-        },
-    }
-});
 
 function get_all_models() {
     get("get_all_models", function(data) {
