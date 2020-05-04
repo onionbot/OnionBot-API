@@ -71,6 +71,7 @@ class Control(object):
 
     def quit(self):
         self.quit_event.set()
+        knob.quit()
         self.thread.join(timeout=1)
 
     def update_setpoint(self, target_setpoint):

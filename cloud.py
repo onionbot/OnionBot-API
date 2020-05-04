@@ -49,7 +49,10 @@ class Cloud(object):
 
     def quit(self):
         logger.debug("Quitting cloud")
-        [t.join() for t in self.threads]
+        for t in self.threads:
+            t.join(timeout=1)
+            if t.is_alive():
+                logger.error("Knob thread failed to quit")
 
     def get_public_path(self, local_path):
 
