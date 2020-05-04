@@ -23,16 +23,18 @@ class Camera(object):
         camera.resolution = (1024, 768)
 
         while True:
-            file_path = self.file_queue.get(block=True)
+            try:
+                file_path = self.file_queue.get(block=True, timeout=0.1) # Timeout raises queue.Empty
 
-            logger.debug("Capturing image")
-            camera.capture(file_path, resize=(240, 240))
+                logger.debug("Capturing image")
+                camera.capture(file_path, resize=(240, 240))
 
-            self.file_queue.task_done()
+                self.file_queue.task_done()
 
-            if self.quit_event.is_set():
-                logger.debug("Quitting camera thread...")
-                break
+            except self.file_queue.Empty:
+                if self.quit_event.is_set():
+                    logger.debug("Quitting camera thread...")
+                    break
 
     def start(self, file_path):
         logger.debug("Calling start")
