@@ -44,7 +44,7 @@ class Cloud(object):
 
     def quit(self):
         logger.debug("Quitting cloud")
-        [p.join(timeout=1) for p in self.threads]
+        [p.join() for p in self.threads]
 
     def get_public_path(self, local_path):
 

@@ -62,6 +62,7 @@ class OnionBot(object):
                 timer = datetime.datetime.now()
                 time_stamp = timer.strftime("%Y-%m-%d_%H-%M-%S-%f")
 
+                # Get update on key information
                 self.measurement_id += 1
                 measurement_id = self.measurement_id
                 active_label = self.active_label
@@ -72,6 +73,7 @@ class OnionBot(object):
                     session_name, time_stamp, measurement_id, active_label
                 )
 
+                # Generate metadata for frontend
                 queued_meta = data.generate_meta(
                     session_name=session_name,
                     time_stamp=time_stamp,
@@ -233,8 +235,14 @@ class OnionBot(object):
     def quit(self):
         logger.info("Raising exit flag")
         self.quit_event.set()
+        self.thread.join()
+        logger.info("Main module quit")
         camera.quit()
+        logger.info("Camera module quit")
         thermal.quit()
+        logger.info("Thermal module quit")
         cloud.quit()
+        logger.info("Cloud module quit")
         control.quit()
-        self.thread.join(timeout=1)
+        logger.info("Control module quit")
+        logger.info("Success")
