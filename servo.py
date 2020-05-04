@@ -58,7 +58,7 @@ class Servo(object):
         self.Kd_s = Kd_s
 
         self.feedback = lib_para_360_servo.read_pwm(pi=self.pi, gpio=feedback_gpio)
-        self.servo = lib_para_360_servo.write_pwm(
+        self.motor = lib_para_360_servo.write_pwm(
             pi=self.pi,
             gpio=servo_gpio,
             min_pw=min_pw,
@@ -71,7 +71,7 @@ class Servo(object):
 
     def set_speed(self, speed):
 
-        self.servo.set_speed(speed)
+        self.motor.set_speed(speed)
 
         return None
 
@@ -214,6 +214,10 @@ class Servo(object):
             #  print('{:.20f}'.format((time.time() - start_time_each_loop)))
 
         return None
+
+
+
+
 
     def safe_rotate(self, target_angle):
         target_angle = float(target_angle)
