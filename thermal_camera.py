@@ -13,6 +13,8 @@ from collections import deque
 import adafruit_mlx90640
 import logging
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+
 
 VARIANCE_THRESHOLD = 100
 
@@ -57,6 +59,9 @@ class ThermalCamera(object):
 
         self.file_queue = Queue(1)
 
+        self.temperature = 0
+        self.thermal_history = deque([0] * 120)
+
     def _constrain(self, val, min_val, max_val):
         return min(max_val, max(min_val, val))
 
@@ -92,7 +97,7 @@ class ThermalCamera(object):
         return r, g, b
 
     def _worker(self):
-        def _value(frame, history_file_path, thermal_history):
+        def _value(frame):
 
             logger.debug("Proccessing numerical data")
 
@@ -105,16 +110,20 @@ class ThermalCamera(object):
 
             temperature = "{:.1f}".format(mean(center_square))
 
+            self.temperature = temperature
+
+            thermal_history = self.thermal_history
             thermal_history.append(temperature)
             thermal_history.popleft()
+            self.thermal_history = thermal_history
 
-            data = {
-                "type": "thermal_history",
-                "attributes": {"data": list(thermal_history),},
-            }
+            # data = {
+            #     "type": "thermal_history",
+            #     "attributes": {"data": list(thermal_history),},
+            # }
 
-            with open(history_file_path, "w") as write_file:
-                json.dump(data, write_file)
+            # with open(history_file_path, "w") as write_file:
+            #     json.dump(data, write_file)
 
             return thermal_history
 
@@ -139,8 +148,6 @@ class ThermalCamera(object):
             img = img.transpose(method=Image.FLIP_LEFT_RIGHT)
             img.save(file_path)
 
-        thermal_history = deque([0] * 120)
-
         while True:
             paths = self.file_queue.get(block=True)
 
@@ -161,11 +168,23 @@ class ThermalCamera(object):
 
             logger.debug("Read 2 frames in %0.3f s" % (time.monotonic() - stamp))
 
-            thermal_history = _value(frame, history_file_path, thermal_history)
-
+            # Call numerical and graphical functions
+            _value(frame)
             _image(frame, file_path)
 
             self.file_queue.task_done()
+
+    def get_temperature(self):
+        temperature = self.temperature
+        logger.debug("self.temperature is %s " % (temperature))
+
+        return temperature
+
+    def get_thermal_history(self):
+        thermal_history = self.thermal_history
+        logger.debug("self.thermal_history is %s " % (thermal_history))
+
+        return self.thermal_history
 
     def start(self, file_path, history_file_path):
         logger.debug("Calling start")
