@@ -10,6 +10,8 @@ logger = logging.getLogger(__name__)
 
 servo = Servo()
 
+DEADBAND_THRESHOLD = 5
+
 
 class Control(object):
     def __init__(self):
@@ -38,7 +40,12 @@ class Control(object):
             logger.debug(
                 "Calling servo update_setpoint with %s " % (self.control_setpoint)
             )
-            servo.update_setpoint(self.control_setpoint)
+
+            delta = abs(servo.get_setpoint() - servo.get_actual())
+            logger.info("Servo setpoint delta: {:.1f}".format(delta))
+
+            if delta >= DEADBAND_THRESHOLD:
+                servo.update_setpoint(self.control_setpoint)
 
             if self.quit_event.is_set():
                 logger.debug("Quitting control thread...")
