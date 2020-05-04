@@ -66,7 +66,7 @@ class Control(object):
         """NOTE: Relies on get_setpoint function only being called once per frame"""
         logger.debug("get_setpoint_history called")
 
-        return self.setpoint_history
+        return list(self.setpoint_history)
 
     def get_actual(self):
 
@@ -85,7 +85,7 @@ class Control(object):
 
         logger.debug("get_actual_history called")
 
-        return self.actual_history
+        return list(self.actual_history)
 
     def hob_off(self):
         logger.debug("hob_off called")
