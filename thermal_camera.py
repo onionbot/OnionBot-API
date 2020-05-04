@@ -180,8 +180,9 @@ class ThermalCamera(object):
                 variance = pvariance(frame)
                 if variance >= VARIANCE_THRESHOLD:  # Handle chessboard error
                     logger.info(
-                        "Frame capture error, retrying (VARIANCE_THRESHOLD exceed)"
+                        "Frame capture error, retrying (VARIANCE_THRESHOLD exceeded: %.1f)".format(variance)
                     )
+                    time.sleep(0.1)
                     continue
                 break
 
