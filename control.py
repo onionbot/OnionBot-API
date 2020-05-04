@@ -35,14 +35,12 @@ class Control(object):
     def _worker(self):
 
         while True:
-            logger.debug("Getting data from servo module")
-
             logger.debug(
                 "Calling servo update_setpoint with %s " % (self.control_setpoint)
             )
 
             delta = abs(self.control_setpoint - servo.get_actual())
-            logger.info("Servo setpoint delta: {:.1f}".format(delta))
+            logger.debug("Servo setpoint delta: {:.1f}".format(delta))
 
             if delta >= DEADBAND_THRESHOLD:
                 servo.update_setpoint(self.control_setpoint)
