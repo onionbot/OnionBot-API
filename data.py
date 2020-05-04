@@ -2,6 +2,10 @@ import json
 from cloud import Cloud
 import os
 
+import logging
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+
 cloud = Cloud()
 
 
@@ -75,6 +79,8 @@ class Data:
         }
         cleaned_data = {"attributes": cleaned_data}
         data.update(cleaned_data)
+
+        logger.debug(data)
 
         with open(filepaths["meta"], "w") as write_file:
             json.dump(data, write_file)

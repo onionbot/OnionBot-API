@@ -23,7 +23,12 @@ class Control(object):
         self.setpoint_history = deque([0] * 120)
         self.actual_history = deque([0] * 120)
 
-        self.data = None
+        self.data = {
+            "servo_setpoint": None,
+            "servo_setpoint_history": None,
+            "servo_actual": None,
+            "servo_actual_history": None,
+        }
 
     def _worker(self):
 

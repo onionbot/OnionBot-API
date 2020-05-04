@@ -11,6 +11,7 @@ from collections import deque
 
 import adafruit_mlx90640
 import logging
+
 logger = logging.getLogger(__name__)
 
 
@@ -60,7 +61,12 @@ class ThermalCamera(object):
         self.temperature = 0
         self.thermal_history = deque([0] * 120)
         self.variance = 0
-        self.data = None
+
+        self.data = {
+            "temperature": None,
+            "thermal_history": None,
+            "variance": None,
+        }
 
     def _constrain(self, val, min_val, max_val):
         return min(max_val, max(min_val, val))
