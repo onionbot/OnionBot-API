@@ -1,5 +1,6 @@
 import multiprocessing as mp
-from multiprocessing import JoinableQueue, Event, Empty
+from multiprocessing import JoinableQueue, Event
+from queue import Empty
 
 from picamera import PiCamera
 
