@@ -22,19 +22,19 @@ FORMAT = "%(relativeCreated)6d %(levelname)-8s %(name)s %(process)d %(message)s"
 logging.basicConfig(format=FORMAT, level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-
+config = Config()
 cloud = Cloud()
 thermal = ThermalCamera()
 camera = Camera()
 control = Control()
 data = Data()
-config = Config()
 
 
 class OnionBot(object):
     def __init__(self):
 
         self.quit_event = Event()
+        config.set_config("shutdown_flag", False)
 
         # Launch multiprocessing threads
         logger.info("Launching worker threads")
@@ -134,6 +134,9 @@ class OnionBot(object):
                 if self.quit_event.is_set():
                     logger.debug("Quitting main thread...")
                     break
+                elif config.get_config("shutdown_flag"):
+                    logger.debug("Shutdown config flag detected...")
+                    self.quit()
 
         # Start thread
         self.thread = Thread(target=_worker, daemon=True)

@@ -1,4 +1,5 @@
 {
+    "shutdown_flag": false,
     "camera_sleep": 0,
     "Kp": 0.5,
     "Ki": 0,
