@@ -159,11 +159,11 @@ class PID(object):
     def set_coefficients(self, Kp, Ki, Kd):
         """Set the PID coefficients."""
         if Kp is not None:
-            self.Kp = Kp
+            self.Kp = float(Kp)
         if Ki is not None:
-            self.Ki = Ki
+            self.Ki = float(Ki)
         if Kd is not None:
-            self.Kd = Kd
+            self.Kd = float(Kd)
 
     @property
     def is_enabled(self):
