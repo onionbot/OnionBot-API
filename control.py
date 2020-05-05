@@ -32,8 +32,6 @@ class Control(object):
 
         self.quit_event = Event()
 
-        self.temperature = 0
-
         self.fixed_setpoint = 0
         self.temperature_target = None
         self.servo_setpoint = 0
@@ -57,7 +55,7 @@ class Control(object):
 
         while True:
 
-            current_setpoint = self.temperature
+            current_setpoint = knob.get_achieved()
 
             if pid.is_enabled:
                 pid.setpoint = self.temperature_target
@@ -116,11 +114,9 @@ class Control(object):
 
     # Create update_angle_setpoint separate to temp setpoint
 
-    def refresh(self, temperature):
+    def refresh(self):
         """NOTE: Must be called only ONCE per frame for history to stay in sync with thermal"""
         logger.debug("Refresh called")
-
-        self.temperature = temperature
 
         setpoint = knob.get_setpoint()
         logger.debug("Servo get_setpoint returned %s " % (setpoint))
