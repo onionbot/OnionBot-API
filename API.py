@@ -21,7 +21,7 @@ CORS(app)
 
 bot = OnionBot()
 shutdown = Shutdown()
-# shutdown.set_shutdown("shutdown_flag", False)      
+shutdown.set_shutdown("shutdown_flag", False)      
 
 
 logger.info("Web server ready. Go to 0.0.0.0:8888/portal to connect")
