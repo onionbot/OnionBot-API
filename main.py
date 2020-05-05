@@ -136,7 +136,7 @@ class OnionBot(object):
                     break
 
         # Start thread
-        self.thread = Thread(target=_worker)
+        self.thread = Thread(target=_worker, daemon=True)
         self.thread.start()
 
     def start(self, session_name):

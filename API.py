@@ -7,6 +7,7 @@ from flask_cors import CORS
 from main import OnionBot
 
 import os
+import sys
 
 import logging
 logger = logging.getLogger("werkzeug")
@@ -120,8 +121,8 @@ def index():
         if server_quit is None:
             raise RuntimeError('Not running with the Werkzeug Server')
         server_quit()
+        sys.exit()
         os.system('sleep 1 ; pkill -f API.py') # If all else fails...
-        return "success"
 
 
 if __name__ == "__main__":

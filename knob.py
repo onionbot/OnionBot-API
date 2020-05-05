@@ -5,6 +5,7 @@ import lib_para_360_servo
 import statistics
 
 import logging
+
 logger = logging.getLogger(__name__)
 
 MIN_SAFE_ANGLE = 20
@@ -230,7 +231,7 @@ class Knob(object):
         angle_range = MAX_SET_POINT_ANGLE - MIN_SET_POINT_ANGLE
         target_angle = (target_setpoint * 0.01 * angle_range) + MIN_SET_POINT_ANGLE
 
-        try: # Handle no thread running
+        try:  # Handle no thread running
             self.thread.join(timeout=1)
             if self.thread.is_alive():
                 raise RuntimeError("Knob thread failed to quit")
@@ -239,7 +240,7 @@ class Knob(object):
 
         logger.debug("Initialising worker with target_angle %s " % (target_angle))
         self.stop_event.clear()
-        self.thread = Thread(target=self._worker, args=(target_angle,))
+        self.thread = Thread(target=self._worker, args=(target_angle,), daemon=True)
         self.thread.start()
 
     def get_setpoint(self):

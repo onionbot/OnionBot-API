@@ -33,7 +33,7 @@ class Cloud(object):
 
         logger.debug("Calling start")
 
-        thread = Thread(target=self._worker, args=(path,))
+        thread = Thread(target=self._worker, args=(path,), daemon=True)
         thread.start()
 
         self.threads.append(thread)
