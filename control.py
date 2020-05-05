@@ -56,12 +56,11 @@ class Control(object):
     def _worker(self):
 
         while True:
-            print(self.temperature)
             current_setpoint = knob.get_achieved()
 
             if pid.is_enabled:
                 pid.setpoint = self.temperature_target
-                target_setpoint = pid(current_setpoint)
+                target_setpoint = pid(self.temperature)
             else:
                 target_setpoint = self.fixed_setpoint
 
