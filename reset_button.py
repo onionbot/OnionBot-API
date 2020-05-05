@@ -19,7 +19,7 @@ pi.set_glitch_filter(PIN, 100)
 
 timer = time()
 
-logger.info("Preparing Onionbot big red button listener...")
+logger.info("Onionbot big red button listener ready")
 
 
 def released_callback(gpio, level, tick):
@@ -33,8 +33,7 @@ def released_callback(gpio, level, tick):
         logger.info("Calling shutdown over API")
         try:
             post("http://192.168.0.70:5000/", data={"action": "quit"})
-            sleep(1)
-        except (ConnectionRefusedError, ConnectionError):
+        except:
             logger.info("API is not currently alive")
 
     elif 3 < time_elapsed <= 10:
