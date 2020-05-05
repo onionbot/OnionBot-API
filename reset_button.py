@@ -4,8 +4,7 @@ from os import system
 from requests import post
 import logging
 
-spacer = "      "
-FORMAT = "%(spacer)6d %(levelname)-8s %(name)s %(process)d %(message)s"
+FORMAT = "       %(levelname)-8s %(name)s %(process)d %(message)s"
 logging.basicConfig(format=FORMAT, level=logging.INFO)
 logger = logging.getLogger(__name__)
 
