@@ -1,9 +1,9 @@
 import pigpio
 import time
 import os
-from config import Shutdown
+from shutdown import Shutdown
 
-config = Shutdown()
+shutdown = Shutdown()
 pi = pigpio.pi()
 
 PIN = 21
@@ -30,12 +30,12 @@ def unpressed_callback(gpio, level, tick):
     time_elapsed = time.time() - timer
 
     if 0.2 < time_elapsed <= 3:
-        config.set_config("shutdown_flag", True)
+        shutdown.set_shutdown("shutdown_flag", True)
     elif 3 < time_elapsed <= 10:
         os.system("pkill -f API.py; sleep 0.1; ./runonion")  # If all else fails...
     elif 10 < time_elapsed <= 20:
         try:
-            config.set_config("shutdown_flag", "Pi Killed")
+            shutdown.set_shutdown("shutdown_flag", "Pi Killed")
         except:
             pass
         os.system("sudo reboot now")

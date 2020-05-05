@@ -5,7 +5,7 @@ from flask import request
 from flask_cors import CORS
 
 from main import OnionBot
-from config import Shutdown
+from shutdown import Shutdown
 
 import os
 import sys
@@ -20,8 +20,8 @@ app = Flask(__name__)
 CORS(app)
 
 bot = OnionBot()
-config = Shutdown()
-config.set_config("shutdown_flag", False)      
+shutdown = Shutdown()
+# shutdown.set_shutdown("shutdown_flag", False)      
 
 
 logger.info("Web server ready. Go to 0.0.0.0:8888/portal to connect")
@@ -117,7 +117,7 @@ def index():
         logger.debug("get_all_models called")
         return bot.get_all_models()
 
-    if request.form["action"] == "quit" or config.get_config("shutdown_flag"):
+    if request.form["action"] == "quit" or shutdown.get_shutdown("shutdown_flag"):
         logger.debug("quit called")  
         bot.quit()
         logger.info("Shutting down server")
