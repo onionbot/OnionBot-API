@@ -29,7 +29,9 @@ def released_callback(gpio, level, tick):
         post("http://192.168.0.70:5000/", data={"action": "quit"})
     elif 3 < time_elapsed <= 10:
         print("Terminating and restarting")
-        os.system("pkill -f API.py; sleep 0.1; ./runonion")  # If all else fails...
+        os.system("pkill -f API.py;")  # If all else fails...
+        time.sleep(1)
+        os.system("./runonion") 
     elif 10 < time_elapsed <= 20:
         print("Restarting Pi")
         os.system("sudo reboot now")

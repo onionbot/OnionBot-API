@@ -8,5 +8,5 @@ echo " "
 echo "COPYRIGHT BEN COBLEY 2020" 
 echo "Starting ONIONBOT System Version 0.2."
 echo " "
-sudo pkill python3
+sudo pkill -f API.py
 python3 API.py 
