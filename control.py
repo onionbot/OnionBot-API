@@ -32,6 +32,8 @@ class Control(object):
 
         self.quit_event = Event()
 
+        self.temperature = 0
+
         self.fixed_setpoint = 0
         self.temperature_target = None
         self.servo_setpoint = 0
@@ -54,7 +56,7 @@ class Control(object):
     def _worker(self):
 
         while True:
-
+            print(self.temperature)
             current_setpoint = knob.get_achieved()
 
             if pid.is_enabled:
@@ -118,7 +120,7 @@ class Control(object):
         """NOTE: Must be called only ONCE per frame for history to stay in sync with thermal"""
         logger.debug("Refresh called")
 
-        print(temperature)
+        self.temperature = temperature
 
         setpoint = knob.get_setpoint()
         logger.debug("Servo get_setpoint returned %s " % (setpoint))
