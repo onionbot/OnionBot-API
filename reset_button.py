@@ -24,14 +24,17 @@ def released_callback(gpio, level, tick):
     time_elapsed = time.time() - timer
     print("Time elapsed:", time_elapsed)
 
-    if 0.1 < time_elapsed <= 3:
+    if 0.01 < time_elapsed <= 3:
         print("Calling shutdown over API")
-        post("http://192.168.0.70:5000/", data={"action": "quit"})
+        try:
+            post("http://192.168.0.70:5000/", data={"action": "quit"})
+        except ConnectionRefusedError:
+            print("API not running")
     elif 3 < time_elapsed <= 10:
         print("Terminating and restarting")
         os.system("pkill -f API.py;")  # If all else fails...
         time.sleep(1)
-        os.system("./runonion") 
+        os.system("./runonion &")
     elif 10 < time_elapsed <= 20:
         print("Restarting Pi")
         os.system("sudo reboot now")
