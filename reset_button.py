@@ -35,7 +35,7 @@ def released_callback(gpio, level, tick):
         try:
             post("http://192.168.0.70:5000/", data={"action": "quit"})
             sleep(1)
-        except ConnectionRefusedError:
+        except (ConnectionRefusedError, ConnectionError):
             logger.info("API is not currently alive")
 
     elif 3 < time_elapsed <= 10:
