@@ -1,4 +1,3 @@
-
 from flask import Flask
 from flask import request
 
@@ -10,6 +9,7 @@ import os
 import sys
 
 import logging
+
 logger = logging.getLogger("werkzeug")
 logger.setLevel(logging.ERROR)
 
@@ -114,15 +114,15 @@ def index():
         return bot.get_all_models()
 
     if request.form["action"] == "quit":
-        logger.debug("quit called")  
+        logger.debug("quit called")
         bot.quit()
         logger.info("Shutting down server")
-        server_quit = request.environ.get('werkzeug.server.shutdown')
+        server_quit = request.environ.get("werkzeug.server.shutdown")
         if server_quit is None:
-            raise RuntimeError('Not running with the Werkzeug Server')
+            raise RuntimeError("Not running with the Werkzeug Server")
         server_quit()
         sys.exit()
-        os.system('sleep 1 ; pkill -f API.py') # If all else fails...
+        os.system("sleep 1 ; pkill -f API.py")  # If all else fails...
 
 
 if __name__ == "__main__":
