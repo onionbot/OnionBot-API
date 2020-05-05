@@ -3,7 +3,7 @@ import time
 import os
 from config import Config
 
-config = Config()
+config = Config("shutdown.json")
 pi = pigpio.pi()
 
 PIN = 21

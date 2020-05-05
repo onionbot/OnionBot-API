@@ -1,12 +1,14 @@
 import json
 
-FILE = "config.json"
-
 
 class Config(object):
+
+    def __init__(self, file):
+        self.file = file
+
     def get_config(self, key):
 
-        with open(FILE) as json_data_file:
+        with open(self.file) as json_data_file:
             config = json.load(json_data_file)
             try:
                 return config[key]
@@ -15,7 +17,7 @@ class Config(object):
 
     def set_config(self, key, value):
 
-        with open(FILE) as json_data_file:
+        with open(self.file) as json_data_file:
             config = json.load(json_data_file)
 
             if key in config:
