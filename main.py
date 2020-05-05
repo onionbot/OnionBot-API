@@ -34,7 +34,6 @@ class OnionBot(object):
     def __init__(self):
 
         self.quit_event = Event()
-        config.set_config("shutdown_flag", False)
 
         # Launch multiprocessing threads
         logger.info("Launching worker threads")
