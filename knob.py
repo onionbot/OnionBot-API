@@ -267,6 +267,7 @@ class Knob(object):
     def quit(self):
         self.update_setpoint(0)
         time.sleep(1)
+        self._set_speed(0)
         self.stop_event.set()
         self.thread.join(timeout=1)
         if self.thread.is_alive():

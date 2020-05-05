@@ -8,7 +8,6 @@ from inference import Classify
 from control import Control
 from data import Data
 from config import Config
-from shutdown import Shutdown
 
 import datetime
 import json
@@ -24,8 +23,6 @@ logging.basicConfig(format=FORMAT, level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 config = Config()
-shutdown = Shutdown()
-shutdown.set_shutdown("shutdown_flag", False)      
 cloud = Cloud()
 thermal = ThermalCamera()
 camera = Camera()
@@ -136,14 +133,10 @@ class OnionBot(object):
                 if self.quit_event.is_set():
                     logger.debug("Quitting main thread...")
                     break
-                elif shutdown.get_shutdown("shutdown_flag"):
-                    break
-
 
         # Start thread
-        self.thread = Thread(target=_worker(), daemon=True)
+        self.thread = Thread(target=_worker, daemon=True)
         self.thread.start()
-        self.quit()
 
     def start(self, session_name):
         self.session_name = session_name
