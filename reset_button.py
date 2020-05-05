@@ -11,7 +11,7 @@ pi.set_glitch_filter(PIN, 100)
 
 
 while True:
-    pi.wait_for_edge(user_gpio=PIN, edge=pigpio.FALLING_EDGE, timeout=0)
+    pi.wait_for_edge(user_gpio=PIN, edge=pigpio.FALLING_EDGE, wait_timeout=0)
     print("Rising edge detected")
     timer = datetime.now()
 
