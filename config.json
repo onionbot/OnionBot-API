@@ -4,5 +4,5 @@
     "Ki": 0,
     "Kd": 0,
     "sample_time": 0.01,
-    "output_limit": 100,
+    "output_limit": 100
 }

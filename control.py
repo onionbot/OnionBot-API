@@ -98,15 +98,15 @@ class Control(object):
         pid.set_is_enabled(enabled, last_output=knob.get_setpoint())
 
     def set_p_coefficient(self, Kp):
-        config.set_config("Kp")
+        config.set_config("Kp", Kp)
         pid.set_coefficients(Kp, None, None)
 
     def set_i_coefficient(self, Ki):
-        config.set_config("Ki")
+        config.set_config("Ki", Ki)
         pid.set_coefficients(None, Ki, None)
 
     def set_d_coefficient(self, Kd):
-        config.set_config("Kd")
+        config.set_config("Kd", Kd)
         pid.set_coefficients(None, None, Kd)
 
     def set_pid_reset(self):
