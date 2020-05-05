@@ -1,24 +1,26 @@
 from threading import Thread, Event
-from knob import Knob
 from collections import deque
 
+from config import Config
 from pid import PID
+from knob import Knob
 
 import logging
 
 logger = logging.getLogger(__name__)
 
-knob = Knob()
+config = Config()
 pid = PID(
-    Kp=1.0,
-    Ki=0.0,
-    Kd=0.0,
-    setpoint=0,
-    sample_time=0.01,
-    output_limits=(0, 100),
+    Kp=config.get_config("Kp"),
+    Ki=config.get_config("Ki"),
+    Kd=config.get_config("Kd"),
+    sample_time=config.get_config("sample_time"),
+    output_limits=(0, config.get_config("output_limit")),
     is_enabled=False,
     proportional_on_measurement=False,
 )
+knob = Knob()
+
 
 DEADBAND_THRESHOLD = 5
 
@@ -73,7 +75,7 @@ class Control(object):
 
     def launch(self):
         logger.debug("Initialising worker")
-        self.thread = Thread(target=self._worker)
+        self.thread = Thread(target=self._worker, daemon=True)
         self.thread.start()
 
     def update_fixed_setpoint(self, setpoint):
@@ -96,12 +98,15 @@ class Control(object):
         pid.set_is_enabled(enabled, last_output=knob.get_setpoint())
 
     def set_p_coefficient(self, Kp):
+        config.set_config("Kp")
         pid.set_coefficients(Kp, None, None)
 
     def set_i_coefficient(self, Ki):
+        config.set_config("Ki")
         pid.set_coefficients(None, Ki, None)
 
     def set_d_coefficient(self, Kd):
+        config.set_config("Kd")
         pid.set_coefficients(None, None, Kd)
 
     def set_pid_reset(self):
@@ -130,7 +135,7 @@ class Control(object):
         self.achieved_history = achieved_history
 
         coefficients = pid.coefficients
-        logger.info(coefficients)
+        logger.debug(coefficients)
 
         self.data = {
             "servo_setpoint": setpoint,
