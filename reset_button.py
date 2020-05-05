@@ -1,9 +1,8 @@
 import pigpio
 import time
 import os
-from shutdown import Shutdown
+from requests import post
 
-shutdown = Shutdown()
 pi = pigpio.pi()
 
 PIN = 21
@@ -26,17 +25,13 @@ def released_callback(gpio, level, tick):
     print("Time elapsed:", time_elapsed)
 
     if 0.1 < time_elapsed <= 3:
-        print("Updating shutdown_flag")
-        shutdown.set_shutdown("shutdown_flag", True)
+        print("Calling shutdown over API")
+        post("http://192.168.0.70:5000/", data={"action": "quit"})
     elif 3 < time_elapsed <= 10:
         print("Terminating and restarting")
         os.system("pkill -f API.py; sleep 0.1; ./runonion")  # If all else fails...
     elif 10 < time_elapsed <= 20:
         print("Restarting Pi")
-        try:
-            shutdown.set_shutdown("shutdown_flag", "Pi Killed")
-        except:
-            pass
         os.system("sudo reboot now")
 
     global released
