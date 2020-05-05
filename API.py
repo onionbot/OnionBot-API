@@ -80,6 +80,18 @@ def index():
         logger.debug("set_hob_off called")
         return bot.set_hob_off()
 
+    if request.form["action"] == "set_pid_enabled":
+        logger.debug("set_pid_enabled called")
+        return bot.set_pid_enabled(request.form["value"])
+
+    if request.form["action"] == "set_pid_coefficients":
+        logger.debug("set_pid_coefficients called")
+        return bot.set_pid_coefficients(request.form["value"])
+
+    if request.form["action"] == "set_pid_reset":
+        logger.debug("set_pid_reset called")
+        return bot.set_pid_reset(request.form["value"])
+
     if request.form["action"] == "set_camera_sleep":
         logger.debug("set_camera_sleep called")
         return bot.set_camera_sleep(request.form["value"])

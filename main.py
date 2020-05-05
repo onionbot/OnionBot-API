@@ -140,45 +140,36 @@ class OnionBot(object):
         self.thread.start()
 
     def start(self, session_name):
-
         self.session_name = session_name
-
-        return "success"
+        return "1"
 
     def stop(self):
         """Stop logging"""
-
         self.session_name = None
-
-        return "success"
+        return "1"
 
     def get_latest_meta(self):
         """Returns cloud filepath of latest meta.json - includes path location of images"""
-
         return self.latest_meta
 
     def get_thermal_history(self):
         """Returns last 300 temperature readings"""
-
         return self.thermal_history
 
     def get_chosen_labels(self):
         """Returns options for labels selected from `all_labels` in new session process"""
-
         # (Placeholder) TODO: Update to return list of labels that adapts to selected dropdown
         return '[{"ID":"0","label":"discard"},{"ID":"1","label":"water_boiling"},{"ID":"2","label":"water_not_boiling"}]'
 
     def set_chosen_labels(self, string):
         """Returns options for labels selected from `all_labels` in new session process"""
-
         self.chosen_labels = string
-        return "success"
+        return "1"
 
     def set_active_label(self, string):
         """Command to change current active label -  for building training datasets"""
-
         self.active_label = string
-        return "success"
+        return "1"
 
     def set_active_model(self, string):
         """Command to change current active model for predictions"""
@@ -194,50 +185,50 @@ class OnionBot(object):
             )
             self.active_model = string
 
-        return "success"
+        return "1"
 
     def set_fixed_setpoint(self, value):
         """Command to change fixed setpoint"""
-
         control.update_fixed_setpoint(value)
-
-        return "success"
+        return "1"
 
     def set_temperature_target(self, value):
         """Command to change temperature target"""
-
         control.update_temperature_target(value)
-
-        return "success"
+        return "1"
 
     def set_hob_off(self):
         """Command to turn hob off"""
-
         control.hob_off()
-
-        return "success"
+        return "1"
 
     def set_camera_sleep(self, value):
         """Command to change camera targe refresh rate"""
-
         config.set_config("camera_sleep", value)
-
-        return "success"
+        return "1"
 
     def get_all_labels(self):
         """Returns available image labels for training"""
-
         # data = '[{"ID":"0","label":"discard,water_boiling,water_not_boiling"},{"ID":"1","label":"discard,onions_cooked,onions_not_cooked"}]'
         labels = json.dumps(data.generate_labels())
-
         return labels
 
     def get_all_models(self):
         """Returns available models for prediction"""
-
         data = '[{"ID":"0","label":"tflite_water_boiling_1"}]'
-
         return data
+
+    def set_pid_enabled(self, enabled):
+        control.set_pid_enabled(enabled)
+        return "1"
+
+    def set_pid_coefficients(self, coefficients):
+        control.set_pid_coefficients(coefficients)
+        return "1"
+
+    def set_pid_reset(self):
+        control.set_pid_reset()
+        return "1"
 
     def quit(self):
         logger.info("Raising exit flag")
@@ -252,4 +243,4 @@ class OnionBot(object):
         logger.info("Cloud module quit")
         control.quit()
         logger.info("Control module quit")
-        logger.info("Success")
+        logger.info("Quit process complete")

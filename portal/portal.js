@@ -240,6 +240,17 @@ $(document).ready(function() {
         $('#temperature-target').val('');
     });
 
+    $('#pid-button').on('click', function() {
+        var coefficients = [('#p-coefficient').val(), ('#i-coefficient').val(), ('#d-coefficient').val()]
+        set('set_pid_coefficients', coefficients);
+        $('#p-coefficient').attr("placeholder", "Updating...");
+        $('#p-coefficient').val('');
+        $('#i-coefficient').attr("placeholder", "Updating...");
+        $('#i-coefficient').val('');
+        $('#d-coefficient').attr("placeholder", "Updating...");
+        $('#d-coefficient').val('');
+    });
+
     $('#hob-off-button').on('click', function() {
         set('set_hob_off', "_");
         $('#fixed-setpoint').attr("placeholder", "Updating...");
