@@ -121,7 +121,7 @@ class Control(object):
 
         self.temperature = float(temperature)
 
-        setpoint = knob.get_setpoint()
+        setpoint = round(knob.get_setpoint())
         logger.debug("Servo get_setpoint returned %s " % (setpoint))
 
         setpoint_history = self.setpoint_history
