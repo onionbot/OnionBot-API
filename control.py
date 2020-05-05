@@ -99,14 +99,17 @@ class Control(object):
         pid.set_is_enabled(enabled, last_output=knob.get_setpoint())
 
     def set_p_coefficient(self, Kp):
+        Kp = float(Kp)
         config.set_config("Kp", Kp)
         pid.set_coefficients(Kp, None, None)
 
     def set_i_coefficient(self, Ki):
+        Ki = float(Ki)
         config.set_config("Ki", Ki)
         pid.set_coefficients(None, Ki, None)
 
     def set_d_coefficient(self, Kd):
+        Kd = float(Kd)
         config.set_config("Kd", Kd)
         pid.set_coefficients(None, None, Kd)
 
