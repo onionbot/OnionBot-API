@@ -99,7 +99,7 @@ def index():
 
     if request.form["action"] == "set_pid_reset":
         logger.debug("set_pid_reset called")
-        return bot.set_pid_reset(request.form["value"])
+        return bot.set_pid_reset()
 
     if request.form["action"] == "set_camera_sleep":
         logger.debug("set_camera_sleep called")
