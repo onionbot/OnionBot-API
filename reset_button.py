@@ -1,7 +1,13 @@
 import pigpio
-import time
-import os
+from time import sleep, time
+from os import system
 from requests import post
+import logging
+
+spacer = "      "
+FORMAT = "%(spacer)6d %(levelname)-8s %(name)s %(process)d %(message)s"
+logging.basicConfig(format=FORMAT, level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 pi = pigpio.pi()
 
@@ -14,31 +20,35 @@ pi.set_glitch_filter(PIN, 100)
 
 timer = time.time()
 
-print("Running")
+logger.info("Preparing Onionbot big red button listener...")
 
 
 def released_callback(gpio, level, tick):
-    print("Button released")
+    logger.info("Reset button released")
 
     global timer
     time_elapsed = time.time() - timer
-    print("Time elapsed:", time_elapsed)
+    logger.info("Time elapsed:", time_elapsed)
 
     if 0.01 < time_elapsed <= 3:
-        print("Calling shutdown over API")
+        logger.info("Calling shutdown over API")
         try:
             post("http://192.168.0.70:5000/", data={"action": "quit"})
-            time.sleep(1)
+            sleep(1)
         except ConnectionRefusedError:
-            print("API not running")
+            logger.info("API is not currently alive")
+
     elif 3 < time_elapsed <= 10:
-        print("Terminating and restarting")
-        os.system("pkill -f API.py;")  # If all else fails...
-        time.sleep(1)
-        os.system("./runonion &")
+        logger.info("Forcing termination...")
+        system("pkill -f API.py;")  # If all else fails...
+        sleep(1)
+        logger.info("Restarting...")
+        system("./runonion &")
+
     elif 10 < time_elapsed <= 20:
-        print("Restarting Pi")
-        os.system("sudo reboot now")
+        logger.info("Restarting Raspberry Pi")
+        sleep(1)
+        system("sudo reboot now")
 
     global released
     released.cancel()
@@ -48,7 +58,7 @@ def released_callback(gpio, level, tick):
 
 
 def pressed_callback(gpio, level, tick):
-    print("Button pressed")
+    logger.info("Reset button pressed")
 
     global timer
     timer = time.time()
@@ -64,4 +74,4 @@ pressed = pi.callback(PIN, pigpio.FALLING_EDGE, pressed_callback)
 
 
 while True:
-    time.sleep(0.1)
+    sleep(0.1)
