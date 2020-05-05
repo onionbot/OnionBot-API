@@ -28,6 +28,7 @@ def released_callback(gpio, level, tick):
         print("Calling shutdown over API")
         try:
             post("http://192.168.0.70:5000/", data={"action": "quit"})
+            time.sleep(1)
         except ConnectionRefusedError:
             print("API not running")
     elif 3 < time_elapsed <= 10:
