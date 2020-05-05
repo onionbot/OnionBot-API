@@ -114,9 +114,11 @@ class Control(object):
 
     # Create update_angle_setpoint separate to temp setpoint
 
-    def refresh(self):
+    def refresh(self, temperature):
         """NOTE: Must be called only ONCE per frame for history to stay in sync with thermal"""
         logger.debug("Refresh called")
+
+        print(temperature)
 
         setpoint = knob.get_setpoint()
         logger.debug("Servo get_setpoint returned %s " % (setpoint))

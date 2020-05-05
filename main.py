@@ -107,7 +107,7 @@ class OnionBot(object):
                 # Wait for queued image captures to finish, refresh control data
                 thermal.join()
                 camera.join()
-                control.refresh(temperature=thermal.data["temperature"])
+                control.refresh(thermal.data["temperature"])
 
                 # Log to console
                 logger.info(
