@@ -44,6 +44,9 @@ class Control(object):
             "servo_achieved": None,
             "servo_achieved_history": None,
             "temperature_target": None,
+            "p_coefficient": None,
+            "i_coefficient": None,
+            "d_coefficient": None,
         }
 
     def _worker(self):
@@ -120,12 +123,18 @@ class Control(object):
         achieved_history.popleft()
         self.achieved_history = achieved_history
 
+        coefficients = pid.coefficients
+        logger.info(coefficients)
+
         self.data = {
             "servo_setpoint": setpoint,
             "servo_setpoint_history": list(setpoint_history),
             "servo_achieved": achieved,
             "servo_achieved_history": list(achieved_history),
             "temperature_target": self.temperature_target,
+            "p_coefficient": coefficients[0],
+            "i_coefficient": coefficients[1],
+            "d_coefficient": coefficients[2],
         }
 
     def quit(self):

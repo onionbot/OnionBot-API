@@ -70,8 +70,7 @@ function update() {
         $('#camera-filepath').attr("href", data.attributes.camera_filepath);
         $('#thermal-filepath').attr("href", data.attributes.thermal_filepath);
 
-
-
+        // Update chart
         chart.data.datasets[0].data = data.attributes.thermal_history;
         chart.data.datasets[1].data = data.attributes.servo_setpoint_history;
         chart.data.datasets[2].data = data.attributes.servo_achieved_history;
@@ -81,6 +80,10 @@ function update() {
 
         $('#fixed-setpoint').attr("placeholder", data.attributes.servo_setpoint);
         $('#temperature-target').attr("placeholder", data.attributes.temperature_target);
+        $('#p-coefficient').attr("placeholder", data.attributes.p_coefficient);
+        $('#i-coefficient').attr("placeholder", data.attributes.i_coefficient);
+        $('#d-coefficient').attr("placeholder", data.attributes.d_coefficient);
+
         // $('#camera-sleep').attr("placeholder", data.attributes.camera_sleep);
 
         if(data.attributes.session_name == undefined){
