@@ -120,7 +120,7 @@ class Control(object):
         """NOTE: Must be called only ONCE per frame for history to stay in sync with thermal"""
         logger.debug("Refresh called")
 
-        self.temperature = float(temperature)
+        self.temperature = temperature
 
         setpoint = knob.get_setpoint()
         logger.debug("Servo get_setpoint returned %s " % (setpoint))
