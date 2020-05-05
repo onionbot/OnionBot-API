@@ -18,7 +18,7 @@ pi.set_pull_up_down(PIN, pigpio.PUD_UP)
 pi.set_glitch_filter(PIN, 100)
 
 
-timer = time.time()
+timer = time()
 
 logger.info("Preparing Onionbot big red button listener...")
 
@@ -27,7 +27,7 @@ def released_callback(gpio, level, tick):
     logger.info("Reset button released")
 
     global timer
-    time_elapsed = time.time() - timer
+    time_elapsed = time() - timer
     logger.info("Time elapsed:", time_elapsed)
 
     if 0.01 < time_elapsed <= 3:
@@ -61,7 +61,7 @@ def pressed_callback(gpio, level, tick):
     logger.info("Reset button pressed")
 
     global timer
-    timer = time.time()
+    timer = time()
 
     global pressed
     pressed.cancel()
