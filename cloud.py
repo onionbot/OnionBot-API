@@ -52,7 +52,7 @@ class Cloud(object):
         for t in self.threads:
             t.join(timeout=1)
             if t.is_alive():
-                logger.error("Knob thread failed to quit")
+                logger.error("Cloud thread failed to quit")
 
     def get_public_path(self, local_path):
 
