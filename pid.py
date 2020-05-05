@@ -155,8 +155,8 @@ class PID(object):
         """The coefficients used by the controller as a tuple: (Kp, Ki, Kd)."""
         return self.Kp, self.Ki, self.Kd
 
-    @coefficients.setter
-    def coefficients(self, Kp, Ki, Kd):
+    # @coefficients.setter
+    def set_coefficients(self, Kp, Ki, Kd):
         """Set the PID coefficients."""
         if Kp is not None:
             self.Kp = Kp
