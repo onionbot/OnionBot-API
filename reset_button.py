@@ -23,18 +23,18 @@ logger.info("Onionbot big red button listener ready")
 
 
 def released_callback(gpio, level, tick):
-    logger.info("Reset button released")
+    logger.debug("Reset button released")
 
     global timer
     time_elapsed = time() - timer
-    logger.info("Time elapsed:", time_elapsed)
+    logger.debug("Time elapsed: %0.2f" % (time_elapsed))
 
     if 0.01 < time_elapsed <= 3:
         logger.info("Calling shutdown over API")
         try:
             post("http://192.168.0.70:5000/", data={"action": "quit"})
         except:
-            logger.info("API is not currently alive")
+            logger.info("API is not/no longer alive")
 
     elif 3 < time_elapsed <= 10:
         logger.info("Forcing termination...")
