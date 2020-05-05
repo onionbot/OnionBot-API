@@ -6,7 +6,7 @@ import logging
 
 FORMAT = "       %(levelname)-8s %(name)s %(process)d %(message)s"
 logging.basicConfig(format=FORMAT, level=logging.INFO)
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("launcher")
 
 pi = pigpio.pi()
 
@@ -19,7 +19,7 @@ pi.set_glitch_filter(PIN, 100)
 
 timer = time()
 
-logger.info("Onionbot big red button listener ready")
+logger.info("Onionbot big red button listener ready...")
 
 
 def released_callback(gpio, level, tick):
@@ -37,10 +37,9 @@ def released_callback(gpio, level, tick):
             logger.info("API is not/no longer alive")
 
     elif 3 < time_elapsed <= 10:
-        logger.info("Forcing termination...")
         system("pkill -f API.py;")  # If all else fails...
         sleep(1)
-        logger.info("Restarting...")
+        logger.info("Starting Onionbot Software")
         system("./runonion &")
 
     elif 10 < time_elapsed <= 20:
@@ -56,7 +55,7 @@ def released_callback(gpio, level, tick):
 
 
 def pressed_callback(gpio, level, tick):
-    logger.info("Reset button pressed")
+    logger.debug("Reset button pressed")
 
     global timer
     timer = time()
