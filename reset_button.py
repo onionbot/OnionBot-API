@@ -29,20 +29,20 @@ def released_callback(gpio, level, tick):
     time_elapsed = time() - timer
     logger.debug("Time elapsed: %0.2f" % (time_elapsed))
 
-    if 0.01 < time_elapsed <= 3:
+    if 0.01 < time_elapsed <= 1.5:
         logger.info("Calling shutdown over API")
         try:
             post("http://192.168.0.70:5000/", data={"action": "quit"})
         except:
             logger.info("API is not/no longer alive")
 
-    elif 3 < time_elapsed <= 10:
+    elif 1.5 < time_elapsed <= 5:
         system("pkill -f API.py;")  # If all else fails...
         sleep(1)
         logger.info("Starting Onionbot Software")
         system("./runonion &")
 
-    elif 10 < time_elapsed <= 20:
+    elif 5 < time_elapsed <= 10:
         logger.info("Restarting Raspberry Pi")
         sleep(1)
         system("sudo reboot now")
