@@ -21,6 +21,8 @@ CORS(app)
 
 bot = OnionBot()
 config = Config("shutdown.json")
+config.set_config("shutdown_flag", False)      
+
 
 logger.info("Web server ready. Go to 0.0.0.0:8888/portal to connect")
 
@@ -116,7 +118,7 @@ def index():
         return bot.get_all_models()
 
     if request.form["action"] == "quit" or config.get_config("shutdown_flag"):
-        logger.debug("quit called")        
+        logger.debug("quit called")  
         bot.quit()
         logger.info("Shutting down server")
         server_quit = request.environ.get('werkzeug.server.shutdown')
