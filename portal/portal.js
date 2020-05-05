@@ -261,10 +261,18 @@ $(document).ready(function() {
         $('#d-coefficient').val('');
     });
 
+
     $('#hob-off-button').on('click', function() {
         set('set_hob_off', "_");
         $('#fixed-setpoint').attr("placeholder", "Updating...");
         $('#fixed-setpoint').val('');
+    });
+
+    $('#reset-pid-button').on('click', function() {
+        console.log("Yes")
+        get("set_pid_reset", function(foo) {
+            console.log("Resetting PID")
+        });
     });
 
     $('#camera-sleep-button').on('click', function() {
