@@ -10,10 +10,12 @@ PIN = 21
 
 pi.set_mode(PIN, pigpio.INPUT)  # GPIO  4 as input
 pi.set_pull_up_down(PIN, pigpio.PUD_UP)
-pi.set_glitch_filter(PIN, 100000)
+pi.set_glitch_filter(PIN, 100)
 
 
 timer = time.time()
+
+print("Running")
 
 
 def pressed_callback(gpio, level, tick):
@@ -30,7 +32,7 @@ def released_callback(gpio, level, tick):
     time_elapsed = time.time() - timer
     print("Time elapsed:", time_elapsed)
 
-    if 0.2 < time_elapsed <= 3:
+    if 0 < time_elapsed <= 3:
         print("Updating shutdown_flag")
         shutdown.set_shutdown("shutdown_flag", True)
     elif 3 < time_elapsed <= 10:
@@ -48,7 +50,6 @@ def released_callback(gpio, level, tick):
 falling = pi.callback(PIN, pigpio.FALLING_EDGE, pressed_callback)
 
 rising = pi.callback(PIN, pigpio.RISING_EDGE, released_callback)
-
 
 while True:
     time.sleep(0.1)
