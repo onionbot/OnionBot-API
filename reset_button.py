@@ -18,13 +18,6 @@ timer = time.time()
 print("Running")
 
 
-def pressed_callback(gpio, level, tick):
-    print("Button pressed")
-
-    global timer
-    timer = time.time()
-
-
 def released_callback(gpio, level, tick):
     print("Button released")
 
@@ -32,7 +25,7 @@ def released_callback(gpio, level, tick):
     time_elapsed = time.time() - timer
     print("Time elapsed:", time_elapsed)
 
-    if 0 < time_elapsed <= 3:
+    if 0.1 < time_elapsed <= 3:
         print("Updating shutdown_flag")
         shutdown.set_shutdown("shutdown_flag", True)
     elif 3 < time_elapsed <= 10:
@@ -46,10 +39,28 @@ def released_callback(gpio, level, tick):
             pass
         os.system("sudo reboot now")
 
+    global released
+    released.cancel()
 
-falling = pi.callback(PIN, pigpio.FALLING_EDGE, pressed_callback)
+    global pressed
+    pressed = pi.callback(PIN, pigpio.FALLING_EDGE, pressed_callback)
 
-rising = pi.callback(PIN, pigpio.RISING_EDGE, released_callback)
+
+def pressed_callback(gpio, level, tick):
+    print("Button pressed")
+
+    global timer
+    timer = time.time()
+
+    global pressed
+    pressed.cancel()
+
+    global released
+    released = pi.callback(PIN, pigpio.RISING_EDGE, released_callback)
+
+
+pressed = pi.callback(PIN, pigpio.FALLING_EDGE, pressed_callback)
+
 
 while True:
     time.sleep(0.1)
