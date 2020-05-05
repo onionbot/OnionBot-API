@@ -22,7 +22,7 @@ FORMAT = "%(relativeCreated)6d %(levelname)-8s %(name)s %(process)d %(message)s"
 logging.basicConfig(format=FORMAT, level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-config = Config("config.json")
+config = Config()
 cloud = Cloud()
 thermal = ThermalCamera()
 camera = Camera()

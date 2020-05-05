@@ -9,7 +9,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-config = Config("config.json")
+config = Config()
 pid = PID(
     Kp=config.get_config("Kp"),
     Ki=config.get_config("Ki"),

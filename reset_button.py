@@ -1,9 +1,9 @@
 import pigpio
 import time
 import os
-from config import Config
+from config import Shutdown
 
-config = Config("shutdown.json")
+config = Shutdown()
 pi = pigpio.pi()
 
 PIN = 21

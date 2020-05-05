@@ -5,7 +5,7 @@ from flask import request
 from flask_cors import CORS
 
 from main import OnionBot
-from config import Config
+from config import Shutdown
 
 import os
 import sys
@@ -20,7 +20,7 @@ app = Flask(__name__)
 CORS(app)
 
 bot = OnionBot()
-config = Config("shutdown.json")
+config = Shutdown()
 config.set_config("shutdown_flag", False)      
 
 
