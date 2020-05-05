@@ -95,8 +95,14 @@ class Control(object):
     def set_pid_enabled(self, enabled):
         pid.set_is_enabled(enabled, last_output=knob.get_setpoint())
 
-    def set_pid_coefficients(self, coefficients):
-        pid.coefficients(coefficients)
+    def set_p_coefficient(self, Kp):
+        pid.coefficients(Kp, None, None)
+
+    def set_i_coefficient(self, Ki):
+        pid.coefficients(None, Ki, None)
+
+    def set_d_coefficient(self, Kd):
+        pid.coefficients(None, None, Kd)
 
     def set_pid_reset(self):
         pid.reset()

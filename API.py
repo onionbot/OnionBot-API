@@ -84,9 +84,17 @@ def index():
         logger.debug("set_pid_enabled called")
         return bot.set_pid_enabled(request.form["value"])
 
-    if request.form["action"] == "set_pid_coefficients":
-        logger.debug("set_pid_coefficients called")
-        return bot.set_pid_coefficients(request.form["value"])
+    if request.form["action"] == "set_p_coefficient":
+        logger.debug("set_p_coefficient called")
+        return bot.set_p_coefficient(request.form["value"])
+
+    if request.form["action"] == "set_i_coefficient":
+        logger.debug("set_i_coefficient called")
+        return bot.set_i_coefficient(request.form["value"])
+
+    if request.form["action"] == "set_d_coefficient":
+        logger.debug("set_d_coefficient called")
+        return bot.set_d_coefficient(request.form["value"])
 
     if request.form["action"] == "set_pid_reset":
         logger.debug("set_pid_reset called")

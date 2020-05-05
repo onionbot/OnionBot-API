@@ -86,18 +86,18 @@ function update() {
 
         // $('#camera-sleep').attr("placeholder", data.attributes.camera_sleep);
 
-        if(data.attributes.session_name == undefined){
+        if (data.attributes.session_name == undefined) {
             $("#stop").hide();
             $("#start").show();
             $('#session-id').prop("disabled", false);
             $('#session-id').attr("placeholder", "Enter session ID");
-        }   else {
+        } else {
             $("#start").hide();
             $("#stop").show();
             $('#session-id').prop("disabled", true);
             $('#session-id').attr("placeholder", data.attributes.session_name);
         }
-    
+
     });
 }
 
@@ -107,10 +107,10 @@ function update() {
 
 function connection_success() {
     $('#connection-monitor').css("background-color", "green");
-    if(connected == false){
-    get_all_labels()
-    get_all_models()
-    connected = true
+    if (connected == false) {
+        get_all_labels()
+        get_all_models()
+        connected = true
 
     }
 }
@@ -243,13 +243,20 @@ $(document).ready(function() {
         $('#temperature-target').val('');
     });
 
-    $('#pid-button').on('click', function() {
-        var coefficients = [('#p-coefficient').val(), ('#i-coefficient').val(), ('#d-coefficient').val()]
-        set('set_pid_coefficients', coefficients);
+    $('#pid-p-button').on('click', function() {
+        set('set_p_coefficient', $('#p-coefficient').val());
         $('#p-coefficient').attr("placeholder", "Updating...");
         $('#p-coefficient').val('');
+    });
+
+    $('#pid-i-button').on('click', function() {
+        set('set_i_coefficient', $('#i-coefficient').val());
         $('#i-coefficient').attr("placeholder", "Updating...");
         $('#i-coefficient').val('');
+    });
+
+    $('#pid-d-button').on('click', function() {
+        set('set_d_coefficient', $('#d-coefficient').val());
         $('#d-coefficient').attr("placeholder", "Updating...");
         $('#d-coefficient').val('');
     });
@@ -264,7 +271,3 @@ $(document).ready(function() {
         set('set_camera_sleep', $('#camera-sleep').val());
     });
 });
-
-
-
-

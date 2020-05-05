@@ -222,8 +222,16 @@ class OnionBot(object):
         control.set_pid_enabled(enabled)
         return "1"
 
-    def set_pid_coefficients(self, coefficients):
-        control.set_pid_coefficients(coefficients)
+    def set_p_coefficient(self, coefficient):
+        control.set_p_coefficient(coefficient)
+        return "1"
+
+    def set_i_coefficient(self, coefficient):
+        control.set_i_coefficient(coefficient)
+        return "1"
+
+    def set_d_coefficient(self, coefficient):
+        control.set_d_coefficient(coefficient)
         return "1"
 
     def set_pid_reset(self):

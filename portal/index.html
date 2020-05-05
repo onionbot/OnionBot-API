@@ -53,11 +53,34 @@
                         <div class="row">
                             <label style="padding-top: 15px;">PID Control</span></label>
                             <div class="input-group">
-                                <input type="text" class="form-control" id="p-coefficient" placeholder="kP">
-                                <input type="text" class="form-control" id="i-coefficient" placeholder="kI">
-                                <input type="text" class="form-control" id="d-coefficient" placeholder="kD">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">kP</span>
+                                </div>
+                                <input type="text" class="form-control" id="p-coefficient" placeholder="_">
                                 <div class="input-group-append">
-                                    <button id="pid-button" type="button" class="btn btn-primary">Update</button>
+                                    <button id="pid-p-button" type="button" class="btn btn-primary">Update</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">kI </span>
+                                </div>
+                                <input type="text" class="form-control" id="i-coefficient" placeholder="_">
+                                <div class="input-group-append">
+                                    <button id="pid-i-button" type="button" class="btn btn-primary">Update</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="input-group"> 
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">kD</span>
+                                </div>
+                                <input type="text" class="form-control" id="d-coefficient" placeholder="_">
+                                <div class="input-group-append">
+                                    <button id="pid-d-button" type="button" class="btn btn-primary">Update</button>
                                 </div>
                             </div>
                         </div>

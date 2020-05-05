@@ -156,9 +156,14 @@ class PID(object):
         return self.Kp, self.Ki, self.Kd
 
     @coefficients.setter
-    def coefficients(self, coefficients):
+    def coefficients(self, Kp, Ki, Kd):
         """Set the PID coefficients."""
-        self.Kp, self.Ki, self.Kd = coefficients
+        if Kp is not None:
+            self.Kp = Kp
+        if Ki is not None:
+            self.Ki = Ki
+        if Kd is not None:
+            self.Kd = Kd
 
     @property
     def is_enabled(self):
