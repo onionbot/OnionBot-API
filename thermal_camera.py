@@ -105,6 +105,45 @@ class ThermalCamera(object):
         return r, g, b
 
     def _worker(self):
+        def _value(frame):
+
+            logger.debug("Proccessing numerical data")
+
+            # h = 12
+            # w = 16
+            # # t = frame[h * 32 + w]
+
+            f = frame
+            center_square = [
+                f[72],
+                f[73],
+                f[74],
+                f[75],
+                f[88],
+                f[89],
+                f[90],
+                f[91],
+                f[104],
+                f[105],
+                f[106],
+                f[107],
+                f[120],
+                f[121],
+                f[122],
+                f[123],
+            ]
+
+            temperature = "{:.1f}".format(mean(center_square))
+
+            self.temperature = temperature
+
+            thermal_history = self.thermal_history
+            thermal_history.append(temperature)
+            thermal_history.popleft()
+            self.thermal_history = thermal_history
+
+            return thermal_history
+
         def _image(frame, file_path):
 
             logger.debug("Proccessing image data")
@@ -146,32 +185,9 @@ class ThermalCamera(object):
                         time.sleep(0.1)
                         continue
 
-                    f = frame
-                    center_square = [
-                        f[72],
-                        f[73],
-                        f[74],
-                        f[75],
-                        f[88],
-                        f[89],
-                        f[90],
-                        f[91],
-                        f[104],
-                        f[105],
-                        f[106],
-                        f[107],
-                        f[120],
-                        f[121],
-                        f[122],
-                        f[123],
-                    ]
-
                     variance = pvariance(frame)
-
-                    logger.info(center_square)
-
                     if variance >= VARIANCE_THRESHOLD:  # Handle chessboard error
-                        logger.info(
+                        logger.debug(
                             "Frame capture error, retrying [VARIANCE_THRESHOLD exceeded: {:.1f}]".format(
                                 variance
                             )
@@ -180,18 +196,11 @@ class ThermalCamera(object):
                         continue
                     break
 
-                temperature = "{:.1f}".format(mean(center_square))
-
-                self.temperature = temperature
-
-                thermal_history = self.thermal_history
-                thermal_history.append(temperature)
-                thermal_history.popleft()
-                self.thermal_history = thermal_history
-
                 self.variance = "{:.1f}".format(variance)
                 logger.debug("Read 2 frames in %0.3f s" % (time.monotonic() - stamp))
 
+                # Call numerical and graphical functions
+                _value(frame)
                 _image(frame, file_path)
 
                 self.file_queue.task_done()
