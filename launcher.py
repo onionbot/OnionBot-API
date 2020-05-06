@@ -20,6 +20,11 @@ pi.set_glitch_filter(PIN, 100)
 
 timer = time()
 
+testIP = "8.8.8.8"
+s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+s.connect((testIP, 0))
+ip_address = s.getsockname()[0]
+
 
 def released_callback(gpio, level, tick):
     logger.debug("Reset button released")
@@ -28,10 +33,11 @@ def released_callback(gpio, level, tick):
     time_elapsed = time() - timer
     logger.debug("Time elapsed: %0.2f" % (time_elapsed))
 
+    global ip_address
     if 0.01 < time_elapsed <= 1.5:
         logger.info("Calling shutdown over API")
         try:
-            post("http://192.168.0.77:5000/", data={"action": "quit"})
+            post("http://" + ip_address + ":5000/", data={"action": "quit"})
         except:
             logger.info("API is not/no longer alive")
 
@@ -67,12 +73,6 @@ def pressed_callback(gpio, level, tick):
 
 
 pressed = pi.callback(PIN, pigpio.FALLING_EDGE, pressed_callback)
-
-
-testIP = "8.8.8.8"
-s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-s.connect((testIP, 0))
-ip_address = s.getsockname()[0]
 
 logger.info("Onionbot launcher is ready.")
 logger.info("Hold red button for 1s to start")
