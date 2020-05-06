@@ -23,7 +23,7 @@ class Cloud(object):
         self.thermal_file_queue = Queue()
         self.camera_file_queue = Queue()
 
-    def _camera_worker(self, path):
+    def _camera_worker(self):
 
         logger.debug("Initialising upload worker for camera")
 
@@ -60,7 +60,7 @@ class Cloud(object):
         self.camera_thread = Thread(target=self._camera_worker, daemon=True)
         self.camera_thread.start()
 
-    def _thermal_worker(self, path):
+    def _thermal_worker(self):
 
         logger.debug("Initialising upload worker for thermal")
 
