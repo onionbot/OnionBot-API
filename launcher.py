@@ -35,7 +35,7 @@ def released_callback(gpio, level, tick):
         except:
             logger.info("API is not/no longer alive")
 
-    elif 1.5 < time_elapsed <= 5:
+    elif 0.5 < time_elapsed <= 5:
         system("pkill -f API.py;")  # If all else fails...
         sleep(1)
         logger.info("Starting Onionbot Software")
@@ -73,10 +73,10 @@ testIP = "8.8.8.8"
 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 s.connect((testIP, 0))
 ip_address = s.getsockname()[0]
-host = socket.gethostname()
 
 logger.info("Onionbot launcher is ready.")
-logger.info("Connect to: %s@%s" % (host, ip_address))
+logger.info("Hold red button for 1s to start")
+logger.info("Point control panel to IP: %s" % (ip_address))
 
 while True:
     try:
