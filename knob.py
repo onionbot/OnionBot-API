@@ -212,11 +212,14 @@ class Knob(object):
     #  angular position in units full circle
     def get_angle(self):
 
-        angle = (
-            (self.feedback.read() - self.dcMin)
-            * self.unitsFC
-            / (self.dcMax - self.dcMin + 1)
-        )
+        try:
+            angle = (
+                (self.feedback.read() - self.dcMin)
+                * self.unitsFC
+                / (self.dcMax - self.dcMin + 1)
+            )
+        except TypeError:
+            raise TypeError("Could not calculate angle. Servo may not be connected.")
 
         angle = max(min((self.unitsFC - 1), angle), 0)
 
