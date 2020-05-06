@@ -75,3 +75,4 @@ while True:
         sleep(0.1)
     except KeyboardInterrupt:
         logger.info("Launcher quit succesfully")
+        break

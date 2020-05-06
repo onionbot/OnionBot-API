@@ -1,29 +1,31 @@
 cat << "EOF"
-                           //
-                     \  \ //
-                      \ ////
-                      // //
-                     // //
-                   ///8//
-                  / 8 /\ \
-                /  8 .,,  \
-              /8 o  i       \
-            /8  o   i  ;     `\
-           /8' 8..o   1..    `.\
-         /#' o i  '' x .   i i `.\
-        I# i8 i  1'  x  `.  i ii  I
-        I 8o i i 1o.` '. . i i i  I
-        I 88 ioi .8.   . . i i  i I
-        I o888ooi WW. .o. i i     I
-         \888##ooo`W1 8 '  i   ,'/
-          \####WWWoo W 8..'  #,'/
-            \W88##oo8888### o./
-              \###j[\##//##}/
-                 ++///--\//_
-                  \\ \ \ \  \_
-                  /  /    \
 
-         Starting ONIONBOT Launcher
+
+                                       //
+                                 \  \ //
+                                  \ ////
+                                  // //
+                                 // //
+                               ///8//
+                              / 8 /\ \
+                            /  8 .,,  \
+                          /8 o  i       \
+                        /8  o   i  ;     `\
+                       /8' 8..o   1..    `.\
+                     /#' o i  '' x .   i i `.\
+                    I# i8 i  1'  x  `.  i ii  I
+                    I 8o i i 1o.` '. . i i i  I
+                    I 88 ioi .8.   . . i i  i I
+                    I o888ooi WW. .o. i i     I
+                     \888##ooo`W1 8 '  i   ,'/
+                      \####WWWoo W 8..'  #,'/
+                        \W88##oo8888### o./
+                          \###j[\##//##}/
+                             ++///--\//_
+                              \\ \ \ \  \_
+                              /  /    \
+
+                     Starting ONIONBOT Launcher
 
 EOF
 sudo pkill -f launcher.py
