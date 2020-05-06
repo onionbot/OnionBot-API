@@ -117,14 +117,13 @@ class OnionBot(object):
 
                 # Log to console
                 logger.info(
-                    "Logged %s | session_name %s | Label %s | Interval %0.2f | Temperature %s | Temperature Variance %s "
+                    "Logged %s | session_name %s | Label %s | Interval %0.2f | Temperature %s"
                     % (
                         measurement_id,
                         session_name,
                         active_label,
                         (datetime.datetime.now() - timer).total_seconds(),
                         thermal.data["temperature"],
-                        thermal.data["variance"],
                     )
                 )
 

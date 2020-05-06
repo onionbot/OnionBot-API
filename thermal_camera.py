@@ -2,7 +2,7 @@ from threading import Thread, Event
 from queue import Queue, Empty
 
 import math
-from statistics import mean, pvariance
+from statistics import mean
 import time
 import board
 import busio
@@ -15,7 +15,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-VARIANCE_THRESHOLD = 100
+CHESSBOARD_MAX_THRESHOLD = 300
 
 INTERPOLATE = 10
 
@@ -62,12 +62,10 @@ class ThermalCamera(object):
 
         self.temperature = 0
         self.thermal_history = deque([0] * 120)
-        self.variance = 0
 
         self.data = {
             "temperature": None,
             "thermal_history": None,
-            "variance": None,
         }
 
     def _constrain(self, val, min_val, max_val):
@@ -108,10 +106,6 @@ class ThermalCamera(object):
         def _value(frame):
 
             logger.debug("Proccessing numerical data")
-
-            # h = 12
-            # w = 16
-            # # t = frame[h * 32 + w]
 
             f = frame
             center_square = [
@@ -185,18 +179,21 @@ class ThermalCamera(object):
                         time.sleep(0.1)
                         continue
 
-                    variance = pvariance(frame)
-                    if variance >= VARIANCE_THRESHOLD:  # Handle chessboard error
-                        logger.debug(
-                            "Frame capture error, retrying [VARIANCE_THRESHOLD exceeded: {:.1f}]".format(
-                                variance
-                            )
+                    if 0 in frame:  # Handle chessboard error zeros
+                        logger.info("Frame capture error, retrying [Zero Error]")
+                        time.sleep(0.1)
+                        continue
+
+                    if max(frame) > CHESSBOARD_MAX_THRESHOLD:
+                        logger.info(
+                            "Frame capture error, retrying [Max Temp Error: %0.2f ]"
+                            % (max(frame))
                         )
                         time.sleep(0.1)
                         continue
+
                     break
 
-                self.variance = "{:.1f}".format(variance)
                 logger.debug("Read 2 frames in %0.3f s" % (time.monotonic() - stamp))
 
                 # Call numerical and graphical functions
@@ -233,7 +230,6 @@ class ThermalCamera(object):
         self.data = {
             "temperature": self.get_temperature(),
             "thermal_history": self.get_thermal_history(),
-            "variance": self.variance,
         }
 
     def launch(self):
