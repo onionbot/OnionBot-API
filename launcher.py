@@ -71,4 +71,7 @@ pressed = pi.callback(PIN, pigpio.FALLING_EDGE, pressed_callback)
 
 
 while True:
-    sleep(0.1)
+    try:
+        sleep(0.1)
+    except KeyboardInterrupt:
+        logger.info("Launcher quit succesfully")
