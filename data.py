@@ -1,12 +1,14 @@
 import json
 from cloud import Cloud
-import os
+from os import makedirs, path
 
 import logging
 
 logger = logging.getLogger(__name__)
 
 cloud = Cloud()
+
+PATH = path.dirname(__file__)
 
 
 class Data:
@@ -23,18 +25,18 @@ class Data:
 
         filepaths = {}
 
-        path = f"logs/{session_name}/camera/{active_label}"
-        os.makedirs(path, exist_ok=True)
+        path = f"{PATH}/logs/{session_name}/camera/{active_label}"
+        makedirs(path, exist_ok=True)
         filename = f"{session_name}_{str(measurement_id).zfill(5)}_{time_stamp}_camera_{active_label}.jpg"
         filepaths["camera"] = f"{path}/{filename}"
 
-        path = f"logs/{session_name}/thermal/{active_label}"
-        os.makedirs(path, exist_ok=True)
+        path = f"{PATH}/logs/{session_name}/thermal/{active_label}"
+        makedirs(path, exist_ok=True)
         filename = f"{session_name}_{str(measurement_id).zfill(5)}_{time_stamp}_thermal_{active_label}.jpg"
         filepaths["thermal"] = f"{path}/{filename}"
 
-        path = f"logs/{session_name}/meta/{active_label}"
-        os.makedirs(path, exist_ok=True)
+        path = f"{PATH}/logs/{session_name}/meta/{active_label}"
+        makedirs(path, exist_ok=True)
         filename = f"{session_name}_{str(measurement_id).zfill(5)}_{time_stamp}_meta_{active_label}.json"
         filepaths["meta"] = f"{path}/{filename}"
 
@@ -52,8 +54,18 @@ class Data:
     ):
         """Generate metadata to be parsed by portal"""
 
-        camera_filepath = cloud.get_public_path(filepaths["camera"])
-        thermal_filepath = cloud.get_public_path(filepaths["thermal"])
+        def _get_public_path(local_path):
+
+            if local_path:
+                # Public URL
+                cloud_location = "https://storage.googleapis.com/" + "onionbucket"
+
+                return f"{cloud_location}/{local_path}"
+            else:
+                return None
+
+        camera_filepath = _get_public_path(filepaths["camera"])
+        thermal_filepath = _get_public_path(filepaths["thermal"])
 
         data = {
             "type": "meta",

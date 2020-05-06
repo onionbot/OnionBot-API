@@ -1,6 +1,7 @@
 import json
+from os import path
 
-FILE = "config.json"
+FILE = path.dirname(__file__) + "/config.json"
 
 
 class Config(object):
