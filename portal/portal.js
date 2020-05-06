@@ -45,7 +45,6 @@ function get(function_name, callback) {
 // ------------- UPDATE FREQUENTLY -------------
 
 function update() {
-    // console.log("Update page called")
 
     get("get_latest_meta", function(data) {
         // data is a js object 
@@ -58,6 +57,7 @@ function update() {
         $('#active-label').html(data.attributes.active_label);
         $('#measurement-id').html(data.attributes.measurement_id);
         $('#time-stamp').html(data.attributes.time_stamp);
+        $('#temperature').html(data.attributes.temperature);
 
         // Updata live data
 
@@ -106,7 +106,7 @@ function update() {
 
 
 function connection_success() {
-    $('#connection-monitor').css("background-color", "green");
+    $('#connection-monitor').css("background-color", "rgb(0,123,255)");
     if (connected == false) {
         get_all_labels()
         get_all_models()
@@ -116,7 +116,7 @@ function connection_success() {
 }
 
 function connection_failed() {
-    $('#connection-monitor').css("background-color", "yellow");
+    $('#connection-monitor').css("background-color", "gray");
     connected = false
 }
 
@@ -162,20 +162,15 @@ function get_all_labels() {
 
             let key = $(this).val();
 
-            //console.log(dataJSON);
-            //console.log(dataJSON.attributes);
-
             let label_buttons = $('#label-button-group');
             label_buttons.empty();
 
             $.each(dataJSON.attributes[key], function(key, entry) {
-                console.log(entry);
 
                 label_buttons.append($('<button type="button" class="btn btn-secondary label-button"></button>').html(entry)); //.html(entry).attr('value', entry)
             });
 
             $('.label-button').on('click', function() {
-                console.log($(this).text());
                 set('set_active_label', $(this).text());
             });
 
@@ -216,15 +211,11 @@ $(document).ready(function() {
     });
 
     $('#stop').on('click', function() {
-        get("stop", function(foo) {
-            console.log("Stopping")
-        });
+        get("stop", function(foo) {});
     });
 
     $('#connection-monitor').on('click', function() {
-        get("quit", function(foo) {
-            console.log("Quitting")
-        });
+        get("quit", function(foo) {});
     });
 
     $('#select-model-button').on('click', function() {
@@ -269,10 +260,7 @@ $(document).ready(function() {
     });
 
     $('#reset-pid-button').on('click', function() {
-        console.log("Yes")
-        get("set_pid_reset", function(foo) {
-            console.log("Resetting PID")
-        });
+        get("set_pid_reset", function(foo) {});
     });
 
     $('#camera-sleep-button').on('click', function() {
