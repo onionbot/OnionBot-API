@@ -1,6 +1,7 @@
 import os
 from google.cloud import storage
-from threading import Thread
+from threading import Thread, Event
+from queue import Queue, Empty
 
 import logging
 
@@ -15,42 +16,90 @@ class Cloud(object):
     """Save image to file"""
 
     def __init__(self):
-        self.threads = []
 
-    def _worker(self, path):
+        logger.info("Initialising cloud upload...")
 
-        logger.debug("Initialising upload worker")
+        self.quit_event = Event()
+        self.thermal_file_queue = Queue()
+        self.camera_file_queue = Queue()
+
+    def _camera_worker(self, path):
+
+        logger.debug("Initialising upload worker for camera")
 
         client = storage.Client()
         bucket = client.get_bucket(BUCKET_NAME)
 
-        blob = bucket.blob(path)
-        blob.upload_from_filename(path)
-        blob.make_public()
-        logger.debug("Uploaded to cloud: %s" % (path))
-        logger.debug("Blob is publicly accessible at %s" % (blob.public_url))
+        while True:
+            try:  # Timeout raises queue.Empty
+                path = self.camera_file_queue.get(block=True, timeout=0.1)
 
-    def start(self, path):
+                blob = bucket.blob(path)
+                blob.upload_from_filename(path)
+                blob.make_public()
+                logger.debug("Uploaded camera file to cloud: %s" % (path))
+                logger.debug("Blob is publicly accessible at %s" % (blob.public_url))
 
-        logger.debug("Calling start")
+                self.camera_file_queue.task_done()
 
-        thread = Thread(target=self._worker, args=(path,), daemon=True)
-        thread.start()
+            except Empty:
+                if self.quit_event.is_set():
+                    logger.debug("Quitting camera camera thread...")
+                    break
 
-        self.threads.append(thread)
+    def start_camera(self, file_path):
+        logger.debug("Calling start for camera")
+        self.camera_file_queue.put(file_path)
 
-    def join(self):
-        for t in self.threads:
-            t.join(timeout=1)
-            if t.is_alive():
-                logger.info("Slow connection to cloud service...")
-                return False
-        self.threads = []
-        return True
+    def join_camera(self):
+        logger.debug("Calling join for camera")
+        self.camera_file_queue.join()
+
+    def launch_camera(self):
+        logger.debug("Initialising worker for camera")
+        self.camera_thread = Thread(target=self._camera_worker, daemon=True)
+        self.camera_thread.start()
+
+    def _thermal_worker(self, path):
+
+        logger.debug("Initialising upload worker for thermal")
+
+        client = storage.Client()
+        bucket = client.get_bucket(BUCKET_NAME)
+
+        while True:
+            try:  # Timeout raises queue.Empty
+                path = self.thermal_file_queue.get(block=True, timeout=0.1)
+
+                blob = bucket.blob(path)
+                blob.upload_from_filename(path)
+                blob.make_public()
+                logger.debug("Uploaded to cloud: %s" % (path))
+                logger.debug("Blob is publicly accessible at %s" % (blob.public_url))
+
+                self.thermal_file_queue.task_done()
+
+            except Empty:
+                if self.quit_event.is_set():
+                    logger.debug("Quitting thermal camera thread...")
+                    break
+
+    def start_thermal(self, file_path):
+        logger.debug("Calling start for thermal")
+        self.thermal_file_queue.put(file_path)
+
+    def join_thermal(self):
+        logger.debug("Calling join for thermal")
+        self.thermal_file_queue.join()
+
+    def launch_thermal(self):
+        logger.debug("Initialising worker for thermal")
+        self.thermal_thread = Thread(target=self._thermal_worker, daemon=True)
+        self.thermal_thread.start()
 
     def quit(self):
-        logger.debug("Quitting cloud")
-        for t in self.threads:
-            t.join(timeout=1)
-            if t.is_alive():
-                logger.error("Completing uploads to cloud...")
+        self.quit_event.set()
+        logger.debug("Waiting for camera cloud thread to finish uploading")
+        self.camera_thread.join()
+        logger.debug("Waiting for thermal cloud thread to finish uploading")
+        self.thermal_thread.join()

@@ -15,7 +15,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-VARIANCE_THRESHOLD = 50
+VARIANCE_THRESHOLD = 100
 
 INTERPOLATE = 10
 
@@ -238,8 +238,7 @@ class ThermalCamera(object):
 
     def launch(self):
         logger.debug("Initialising worker")
-        self.thread = Thread(target=self._worker)
-        self.thread.daemon = True
+        self.thread = Thread(target=self._worker, daemon=True)
         self.thread.start()
 
     def quit(self):

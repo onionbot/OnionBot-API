@@ -40,6 +40,8 @@ class OnionBot(object):
         camera.launch()
         thermal.launch()
         control.launch()
+        cloud.launch_camera()
+        cloud.launch_thermal()
 
         self.latest_meta = " "
         self.measurement_id = 0
@@ -90,15 +92,19 @@ class OnionBot(object):
                 # While taking a picture, process previous data in meantime
                 if filepaths:
 
-                    cloud.start(filepaths["camera"])
-                    cloud.start(filepaths["thermal"])
+                    cloud.start_camera(filepaths["camera"])
+                    cloud.start_thermal(filepaths["thermal"])
 
                     # inference.start(previous_meta)
 
                     # Wait for all meantime processes to finish
-                    if not cloud.join():
-                        meta["attributes"]["camera_filepath"] = "placeholder.png"
-                        meta["attributes"]["thermal_filepath"] = "placeholder.png"
+
+                    cloud.join_camera()
+                    cloud.join_thermal()
+
+                    # if not cloud.join():
+                    #     meta["attributes"]["camera_filepath"] = "placeholder.png"
+                    #     meta["attributes"]["thermal_filepath"] = "placeholder.png"
                     # inference.join()
 
                     # Push meta information to file level for API access
