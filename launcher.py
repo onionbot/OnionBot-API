@@ -19,7 +19,7 @@ pi.set_glitch_filter(PIN, 100)
 
 timer = time()
 
-logger.info("Onionbot big red button listener ready...")
+logger.info("Onionbot launcher is ready.")
 
 
 def released_callback(gpio, level, tick):
