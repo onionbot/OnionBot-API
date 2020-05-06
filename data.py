@@ -23,17 +23,17 @@ class Data:
 
         filepaths = {}
 
-        path = f"logs/{session_name}/camera/{active_label}"
+        path = f"~/onionbot/logs/{session_name}/camera/{active_label}"
         os.makedirs(path, exist_ok=True)
         filename = f"{session_name}_{str(measurement_id).zfill(5)}_{time_stamp}_camera_{active_label}.jpg"
         filepaths["camera"] = f"{path}/{filename}"
 
-        path = f"logs/{session_name}/thermal/{active_label}"
+        path = f"~/onionbot/logs/{session_name}/thermal/{active_label}"
         os.makedirs(path, exist_ok=True)
         filename = f"{session_name}_{str(measurement_id).zfill(5)}_{time_stamp}_thermal_{active_label}.jpg"
         filepaths["thermal"] = f"{path}/{filename}"
 
-        path = f"logs/{session_name}/meta/{active_label}"
+        path = f"~/onionbot/logs/{session_name}/meta/{active_label}"
         os.makedirs(path, exist_ok=True)
         filename = f"{session_name}_{str(measurement_id).zfill(5)}_{time_stamp}_meta_{active_label}.json"
         filepaths["meta"] = f"{path}/{filename}"

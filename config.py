@@ -1,6 +1,6 @@
 import json
 
-FILE = "config.json"
+FILE = "~/onionbot/config.json"
 
 
 class Config(object):
