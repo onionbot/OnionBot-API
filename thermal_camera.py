@@ -238,8 +238,7 @@ class ThermalCamera(object):
 
     def launch(self):
         logger.debug("Initialising worker")
-        self.thread = Thread(target=self._worker)
-        self.thread.daemon = True
+        self.thread = Thread(target=self._worker, daemon=True)
         self.thread.start()
 
     def quit(self):
