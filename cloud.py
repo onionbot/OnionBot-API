@@ -3,11 +3,12 @@ from google.cloud import storage
 from threading import Thread
 
 import logging
+
 logger = logging.getLogger(__name__)
 
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/home/pi/onionbot-819a387e4e79.json"
 
-BUCKET_NAME = "onionbucket" # NOTE: Hard coded in data file
+BUCKET_NAME = "onionbucket"  # NOTE: Hard coded in data file
 
 
 class Cloud(object):
@@ -52,6 +53,4 @@ class Cloud(object):
         for t in self.threads:
             t.join(timeout=1)
             if t.is_alive():
-                logger.error("Cloud thread failed to quit")
-
-
+                logger.error("Completing uploads to cloud...")
