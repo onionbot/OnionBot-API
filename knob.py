@@ -9,7 +9,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 MIN_SAFE_ANGLE = 20
-MAX_SAFE_ANGLE = 310
+MAX_SAFE_ANGLE = 250
 
 # OFF_ANGLE = 25
 MIN_SET_POINT_ANGLE = 50

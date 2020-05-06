@@ -15,7 +15,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-VARIANCE_THRESHOLD = 50
+VARIANCE_THRESHOLD = 100
 
 INTERPOLATE = 10
 
