@@ -40,7 +40,7 @@ def released_callback(gpio, level, tick):
         system("pkill -f API.py;")  # If all else fails...
         sleep(1)
         logger.info("Starting Onionbot Software")
-        system("./runonion &")
+        system(". ~/onionbot/runonion &")
 
     elif 5 < time_elapsed <= 10:
         logger.info("Restarting Raspberry Pi")
