@@ -3,6 +3,7 @@ from time import sleep, time
 from os import system
 from requests import post
 import logging
+import socket
 
 FORMAT = "       %(levelname)-8s %(name)s %(process)d %(message)s"
 logging.basicConfig(format=FORMAT, level=logging.INFO)
@@ -19,8 +20,6 @@ pi.set_glitch_filter(PIN, 100)
 
 timer = time()
 
-logger.info("Onionbot launcher is ready.")
-
 
 def released_callback(gpio, level, tick):
     logger.debug("Reset button released")
@@ -32,7 +31,7 @@ def released_callback(gpio, level, tick):
     if 0.01 < time_elapsed <= 1.5:
         logger.info("Calling shutdown over API")
         try:
-            post("http://192.168.0.70:5000/", data={"action": "quit"})
+            post("http://192.168.0.77:5000/", data={"action": "quit"})
         except:
             logger.info("API is not/no longer alive")
 
@@ -69,6 +68,15 @@ def pressed_callback(gpio, level, tick):
 
 pressed = pi.callback(PIN, pigpio.FALLING_EDGE, pressed_callback)
 
+
+testIP = "8.8.8.8"
+s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+s.connect((testIP, 0))
+ip_address = s.getsockname()[0]
+host = socket.gethostname()
+
+logger.info("Onionbot launcher is ready.")
+logger.info("Connect to: %s@%s" % (host, ip_address))
 
 while True:
     try:

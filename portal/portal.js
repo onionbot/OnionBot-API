@@ -7,7 +7,14 @@
 // -------------------------------------------------------
 // ---------------- APPLICATION VARIABLES ----------------
 
-var endpoint_url = 'http://192.168.0.70:5000/';
+if (!localStorage.ip_address) {
+  localStorage.ip_address ="192.168.0.1";
+}
+
+console.log("ip_address " + localStorage.ip_address);
+
+
+var endpoint_url = 'http://' + localStorage.ip_address + ':5000/';
 var update_interval = 100;
 var connected = false;
 var ctx = document.getElementById('myChart').getContext('2d');
@@ -126,6 +133,8 @@ function connection_failed() {
 
 
 $(document).ready(function() {
+
+    $('#ip-address').attr("placeholder", localStorage.ip_address);
 
     $("#start").hide();
     $("#stop").hide();
@@ -261,6 +270,12 @@ $(document).ready(function() {
 
     $('#reset-pid-button').on('click', function() {
         get("set_pid_reset", function(foo) {});
+    });
+
+    $('#ip-address-button').on('click', function() {
+        localStorage.ip_address = $('#ip-address').val()
+        $('#ip-address').attr("placeholder", localStorage.ip_address);
+        $('#ip-address').val('');
     });
 
     $('#camera-sleep-button').on('click', function() {
