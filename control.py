@@ -15,9 +15,9 @@ pid = PID(
     Ki=config.get_config("Ki"),
     Kd=config.get_config("Kd"),
     sample_time=config.get_config("sample_time"),
-    output_limits=(0, config.get_config("output_limit")),
+    output_limits=(0, 100),
     is_enabled=False,
-    proportional_on_measurement=False,
+    proportional_on_measurement=True,
 )
 knob = Knob()
 

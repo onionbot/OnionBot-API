@@ -9,11 +9,11 @@ import logging
 logger = logging.getLogger(__name__)
 
 MIN_SAFE_ANGLE = 20
-MAX_SAFE_ANGLE = 250
+MAX_SAFE_ANGLE = 310
 
 # OFF_ANGLE = 25
-MIN_SET_POINT_ANGLE = 50
-MAX_SET_POINT_ANGLE = 310
+MIN_SET_POINT_ANGLE = 30
+MAX_SET_POINT_ANGLE = 250
 
 TIMEOUT_PERIOD = 2.5
 
@@ -30,11 +30,11 @@ class Knob(object):
         servo_gpio=13,
         min_pw=1280,  # 1210
         max_pw=1750,  # 1750
-        min_speed=-0.5,
-        max_speed=0.5,
+        min_speed=-1,
+        max_speed=1,
         sampling_time=0.01,
         Kp_p=0.1,  # not too big values, otherwise output of position control would slow down too abrupt
-        Ki_p=0.1,
+        Ki_p=0.05,
         Kd_p=0.0,
         Kp_s=0.3,
         Ki_s=0,
