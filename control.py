@@ -51,6 +51,9 @@ class Control(object):
             "p_coefficient": None,
             "i_coefficient": None,
             "d_coefficient": None,
+            "p_component": None,
+            "i_component": None,
+            "d_component": None,
         }
 
     def _worker(self):
@@ -61,7 +64,6 @@ class Control(object):
             if pid.is_enabled:
                 pid.setpoint = self.temperature_target
                 target_setpoint = pid(self.temperature)
-                print(pid.components)
             else:
                 target_setpoint = self.fixed_setpoint
 
@@ -141,8 +143,9 @@ class Control(object):
         achieved_history.popleft()
         self.achieved_history = achieved_history
 
+        pid_enabled = pid.is_enabled
         coefficients = pid.coefficients
-        logger.debug(coefficients)
+        components = pid.components
 
         self.data = {
             "servo_setpoint": setpoint,
@@ -150,9 +153,13 @@ class Control(object):
             "servo_achieved": achieved,
             "servo_achieved_history": list(achieved_history),
             "temperature_target": self.temperature_target,
+            "pid_enabled": pid_enabled,
             "p_coefficient": coefficients[0],
             "i_coefficient": coefficients[1],
             "d_coefficient": coefficients[2],
+            "p_component": components[0],
+            "i_component": components[1],
+            "d_component": components[2],
         }
 
     def quit(self):

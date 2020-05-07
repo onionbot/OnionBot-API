@@ -117,13 +117,17 @@ class OnionBot(object):
 
                 # Log to console
                 logger.info(
-                    "Logged %s | session_name %s | Label %s | Interval %0.2f | Temperature %s"
+                    "Logged %s | session_name %s | Label %s | Interval %0.2f | Temperature %s | PID enabled: %s | PID components: %0.1f, %0.1f, %0.1f "
                     % (
                         measurement_id,
                         session_name,
                         active_label,
                         (datetime.datetime.now() - timer).total_seconds(),
                         thermal.data["temperature"],
+                        control.data["pid_enabled"],
+                        control.data["p_component"],
+                        control.data["i_component"],
+                        control.data["d_component"],
                     )
                 )
 
