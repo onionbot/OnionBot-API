@@ -180,7 +180,7 @@ class ThermalCamera(object):
                         continue
 
                     if 0 in frame:  # Handle chessboard error zeros
-                        logger.info("Frame capture error, retrying [Zero Error]")
+                        logger.debug("Frame capture error, retrying [Zero Error]")
                         time.sleep(0.1)
                         continue
 
