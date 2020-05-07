@@ -61,6 +61,7 @@ class Control(object):
             if pid.is_enabled:
                 pid.setpoint = self.temperature_target
                 target_setpoint = pid(self.temperature)
+                print(pid.components)
             else:
                 target_setpoint = self.fixed_setpoint
 
