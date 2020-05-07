@@ -11,9 +11,6 @@ if (!localStorage.ip_address) {
   localStorage.ip_address ="192.168.0.1";
 }
 
-console.log("ip_address " + localStorage.ip_address);
-
-
 var endpoint_url = 'http://' + localStorage.ip_address + ':5000/';
 var update_interval = 100;
 var connected = false;
