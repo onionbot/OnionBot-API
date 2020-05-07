@@ -80,7 +80,6 @@ class Data:
                 "thermal_filepath": thermal_filepath,
                 "temperature": thermal_data["temperature"],
                 "thermal_history": thermal_data["thermal_history"],
-                "variance": thermal_data["variance"],
                 "servo_setpoint": control_data["servo_setpoint"],
                 "servo_setpoint_history": control_data["servo_setpoint_history"],
                 "servo_achieved": control_data["servo_achieved"],
