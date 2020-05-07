@@ -1,34 +1,41 @@
-import os
+from threading import Thread, Event
+from queue import Queue, Empty
+
 import math
+from statistics import mean
 import time
 import board
 import busio
 from PIL import Image
-import sys
 from collections import deque
-import json
 
 import adafruit_mlx90640
+import logging
+
+logger = logging.getLogger(__name__)
+
+
+CHESSBOARD_MAX_THRESHOLD = 300
 
 INTERPOLATE = 10
 
-MINTEMP = 20. #-40 #low range of the sensor (this will be black on the screen)
-MAXTEMP = 200. #previous 50 #max 300 #high range of the sensor (this will be white on the screen)
+MINTEMP = 20.0  # -40 #low range of the sensor (this will be black on the screen)
+MAXTEMP = 200.0  # previous 50 #max 300 #high range of the sensor (this will be white on the screen)
 SCALE = 25
 
 
-#the list of colors we can choose from
+# the list of colors we can choose from
 heatmap = (
     (0.0, (0, 0, 0)),
-    (0.20, (0, 0, .5)),
-    (0.40, (0, .5, 0)),
-    (0.60, (.5, 0, 0)),
-    (0.80, (.75, .75, 0)),
-    (0.90, (1.0, .75, 0)),
+    (0.20, (0, 0, 0.5)),
+    (0.40, (0, 0.5, 0)),
+    (0.60, (0.5, 0, 0)),
+    (0.80, (0.75, 0.75, 0)),
+    (0.90, (1.0, 0.75, 0)),
     (1.00, (1.0, 1.0, 1.0)),
 )
 
-#how many color values we can have
+# how many color values we can have
 COLORDEPTH = 1000
 
 colormap = [0] * COLORDEPTH
@@ -37,180 +44,199 @@ colormap = [0] * COLORDEPTH
 class ThermalCamera(object):
     """Save image to file"""
 
-
     def __init__(self, i2c=None, visualise_on=False):
 
-        self._latest_frame = None
-        self.visualise_on = visualise_on
+        self.quit_event = Event()
+
+        logger.info("Initialising thermal camera...")
 
         if i2c is None:
-            # MUST et I2C freq to 1MHz in /boot/config.txt
             i2c = busio.I2C(board.SCL, board.SDA)
 
-        #initialize the sensor
         mlx = adafruit_mlx90640.MLX90640(i2c)
-        print("MLX addr detected on I2C, Serial #", [hex(i) for i in mlx.serial_number])
         mlx.refresh_rate = adafruit_mlx90640.RefreshRate.REFRESH_32_HZ
-        print(mlx.refresh_rate)
-        print("Refresh rate: ", pow(2, (mlx.refresh_rate-1)), "Hz")
 
         self.mlx = mlx
 
-        self.temperature_window = deque([0] * 10)
+        self.file_queue = Queue(1)
 
-        if visualise_on == True:
+        self.temperature = 0
+        self.thermal_history = deque([0] * 120)
 
-            import pygame
-
-            # set up display
-            os.environ['SDL_FBDEV'] = "/dev/fb0"
-            os.environ['SDL_VIDEODRIVER'] = "fbcon"
-            pygame.init()
-            screen = pygame.display.set_mode((24*SCALE,32*SCALE))
-            print(pygame.display.Info())
-
-            pygame.mouse.set_visible(False)
-            screen.fill((255, 0, 0))
-            pygame.display.update()
-            screen.fill((0, 0, 0))
-            pygame.display.update()
-            sensorout = pygame.Surface((32, 24))
-
-            self.screen = screen
-            self.sensorout = sensorout
-
+        self.data = {
+            "temperature": None,
+            "thermal_history": None,
+        }
 
     def _constrain(self, val, min_val, max_val):
         return min(max_val, max(min_val, val))
 
-
     def _map_value(self, x, in_min, in_max, out_min, out_max):
         return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min
 
-
     def _gaussian(self, x, a, b, c, d=0):
-        return a * math.exp(-(x - b)**2 / (2 * c**2)) + d
-
+        return a * math.exp(-((x - b) ** 2) / (2 * c ** 2)) + d
 
     def _gradient(self, x, width, cmap, spread=1):
         width = float(width)
-        r = sum([self._gaussian(x, p[1][0], p[0] * width, width/(spread*len(cmap))) for p in cmap])
-        g = sum([self._gaussian(x, p[1][1], p[0] * width, width/(spread*len(cmap))) for p in cmap])
-        b = sum([self._gaussian(x, p[1][2], p[0] * width, width/(spread*len(cmap))) for p in cmap])
-        r = int(self._constrain(r*255, 0, 255))
-        g = int(self._constrain(g*255, 0, 255))
-        b = int(self._constrain(b*255, 0, 255))
+        r = sum(
+            [
+                self._gaussian(x, p[1][0], p[0] * width, width / (spread * len(cmap)))
+                for p in cmap
+            ]
+        )
+        g = sum(
+            [
+                self._gaussian(x, p[1][1], p[0] * width, width / (spread * len(cmap)))
+                for p in cmap
+            ]
+        )
+        b = sum(
+            [
+                self._gaussian(x, p[1][2], p[0] * width, width / (spread * len(cmap)))
+                for p in cmap
+            ]
+        )
+        r = int(self._constrain(r * 255, 0, 255))
+        g = int(self._constrain(g * 255, 0, 255))
+        b = int(self._constrain(b * 255, 0, 255))
         return r, g, b
 
+    def _worker(self):
+        def _value(frame):
 
-    def _visualise(self, img):
+            logger.debug("Proccessing numerical data")
 
-        stamp = self._latest_stamp
-        screen = self.screen
+            f = frame
+            center_square = [
+                f[72],
+                f[73],
+                f[74],
+                f[75],
+                f[88],
+                f[89],
+                f[90],
+                f[91],
+                f[104],
+                f[105],
+                f[106],
+                f[107],
+                f[120],
+                f[121],
+                f[122],
+                f[123],
+            ]
 
-        img_surface = pygame.image.fromstring(img.tobytes(), img.size, img.mode)
-        pygame.transform.scale(img_surface.convert(),screen.get_size(), screen)
-        pygame.display.update()
-        print("Completed 2 frames in %0.2f s (%d FPS)" %
-              (time.monotonic()-stamp, 1.0 / (time.monotonic()-stamp)))
+            temperature = "{:.1f}".format(mean(center_square))
 
-        time.sleep(10)
+            self.temperature = temperature
 
+            thermal_history = self.thermal_history
+            thermal_history.append(temperature)
+            thermal_history.popleft()
+            self.thermal_history = thermal_history
 
-    def capture_frame(self):
+            return thermal_history
 
-        frame = [0] * 768
-        stamp = time.monotonic()
-        try:
-            self.mlx.getFrame(frame)
-        except ValueError:
-            print("ValueError: Retrying...")
+        def _image(frame, file_path):
 
-        #print("Read 2 frames in %0.2f s" % (time.monotonic()-stamp))
+            logger.debug("Proccessing image data")
 
-        self._latest_frame = frame
-        self._latest_stamp = stamp
+            for i in range(COLORDEPTH):
+                colormap[i] = self._gradient(i, COLORDEPTH, heatmap)
 
+            pixels = [0] * 768
+            for i, pixel in enumerate(frame):
+                coloridx = self._map_value(pixel, MINTEMP, MAXTEMP, 0, COLORDEPTH - 1)
+                coloridx = int(self._constrain(coloridx, 0, COLORDEPTH - 1))
+                pixels[i] = colormap[coloridx]
 
-    def get_latest_temperature(self):
+            img = Image.new("RGB", (32, 24))
+            img.putdata(pixels)
+            img = img.resize((24 * INTERPOLATE, 24 * INTERPOLATE), Image.BICUBIC)
 
-        frame = self._latest_frame
+            img = img.transpose(method=Image.ROTATE_90)
+            img = img.transpose(method=Image.FLIP_LEFT_RIGHT)
+            img.save(file_path)
 
-        if frame == None:
-            raise ValueError("Run capture function first")
-        elif frame != None:
-            h = 12
-            w = 16
-            t = self._latest_frame[h*32 + w]
-            temperature = "{:.1f}".format(t)
+        while True:
 
-            self.temperature_window.append(t)
-            self.temperature_window.popleft()
+            try:  # Timeout raises queue.Empty
+                file_path = self.file_queue.get(block=True, timeout=0.1)
 
-            return temperature
+                logger.debug("Capturing frame")
+                frame = [0] * 768
+                stamp = time.monotonic()
+                while True:
+                    try:
+                        self.mlx.getFrame(frame)
+                    except ValueError:  # Handle ValueError in module
+                        logger.debug("Frame capture error, retrying [ValueError]")
+                        time.sleep(0.1)
+                        continue
+                    except RuntimeError:  # Handle RuntimeError in module
+                        logger.debug("Frame capture error, retrying [RuntimeError]")
+                        time.sleep(0.1)
+                        continue
 
+                    if 0 in frame:  # Handle chessboard error zeros
+                        logger.debug("Frame capture error, retrying [Zero Error]")
+                        time.sleep(0.1)
+                        continue
 
-    def get_temperature_window(self):
+                    if max(frame) > CHESSBOARD_MAX_THRESHOLD:
+                        logger.info(
+                            "Frame capture error, retrying [Max Temp Error: %0.2f ]"
+                            % (max(frame))
+                        )
+                        time.sleep(0.1)
+                        continue
 
-        return json.dumps(list(self.temperature_window))
+                    break
 
+                logger.debug("Read 2 frames in %0.3f s" % (time.monotonic() - stamp))
 
-    def save_latest_jpg(self, file_path):
+                # Call numerical and graphical functions
+                _value(frame)
+                _image(frame, file_path)
 
-        frame = self._latest_frame
-        file_name = str(self._latest_stamp)
+                self.file_queue.task_done()
 
-        if frame == None:
-            raise ValueError("Run capture function first")
+            except Empty:
+                if self.quit_event.is_set():
+                    logger.debug("Quitting thermal camera thread...")
+                    break
 
-        for i in range(COLORDEPTH):
-            colormap[i] = self._gradient(i, COLORDEPTH, heatmap)
+    def get_temperature(self):
+        temperature = self.temperature
+        logger.debug("self.temperature is %s " % (temperature))
 
-        pixels = [0] * 768
-        for i, pixel in enumerate(frame):
-            coloridx = self._map_value(pixel, MINTEMP, MAXTEMP, 0, COLORDEPTH - 1)
-            coloridx = int(self._constrain(coloridx, 0, COLORDEPTH-1))
-            pixels[i] = colormap[coloridx]
+        return temperature
 
-        for h in range(24):
-            for w in range(32):
-                pixel = pixels[h*32 + w]
-                if self.visualise_on==True:
-                    self.sensorout.set_at((w, h), pixel)
+    def get_thermal_history(self):
+        thermal_history = list(self.thermal_history)
+        logger.debug("self.thermal_history is %s " % (thermal_history))
 
-        img = Image.new('RGB', (32, 24))
-        img.putdata(pixels)
-        img = img.resize((24*INTERPOLATE, 24*INTERPOLATE), Image.BICUBIC)
+        return thermal_history
 
-        img = img.transpose(method=Image.ROTATE_90)
-        img = img.transpose(method=Image.FLIP_LEFT_RIGHT)
-        img.save(file_path)
+    def start(self, file_path):
+        logger.debug("Calling start")
+        self.file_queue.put(file_path, block=True)
 
-        if self.visualise_on==True:
-            self._visualise(img)
+    def join(self):
+        logger.debug("Calling join")
+        self.file_queue.join()
 
-        return file_path
+        self.data = {
+            "temperature": self.get_temperature(),
+            "thermal_history": self.get_thermal_history(),
+        }
 
+    def launch(self):
+        logger.debug("Initialising worker")
+        self.thread = Thread(target=self._worker, daemon=True)
+        self.thread.start()
 
-    def save_latest_csv(self, file_path):
-
-        frame = self._latest_frame
-        file_name = str(self._latest_stamp)
-
-        if frame == None:
-            raise ValueError("Run capture function first")
-
-        file = open(file_path, "w")
-        for h in range(24):
-            data_string = ""
-            for w in range(32):
-                t = self._latest_frame[h*32 + w]
-                data_string = data_string + "{:.1f}".format(t) + ","
-            file.write(data_string.strip(',') + "\n")
-
-        file.close()
-
-        return file_path
-
-
-
+    def quit(self):
+        self.quit_event.set()
+        self.thread.join()

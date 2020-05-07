@@ -1,259 +1,262 @@
-import logging
-import threading
+from threading import Thread, Event
 from time import sleep
 
 from thermal_camera import ThermalCamera
 from camera import Camera
 from cloud import Cloud
 from inference import Classify
-from actuation import Servo
+from control import Control
+from data import Data
+from config import Config
 
 import datetime
 import json
 
+import logging
+
+# Fix logging faliure issue
+for handler in logging.root.handlers[:]:
+    logging.root.removeHandler(handler)
+
+FORMAT = "%(relativeCreated)6d %(levelname)-8s %(name)s %(process)d %(message)s"
+logging.basicConfig(format=FORMAT, level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+config = Config()
 cloud = Cloud()
-thermal = ThermalCamera(visualise_on=False)
+thermal = ThermalCamera()
 camera = Camera()
-servo = Servo()
-
-
-INITIAL_META = {
-                "type": "meta",
-                "id": "pre_start",
-                "attributes": {
-                    "session_name": "Initialising...",
-                    "label": "Initialising...",
-                    "camera_prediction": "Initialising...",
-                    "thermal_prediction": "Initialising...",
-                    "measurement_id": "Initialising...",
-                    "time_stamp": "Initialising...",
-                    "temperature": "Initialising...",
-                    "camera_filepath": "Initialising...",
-                    "thermal_filepath": "Initialising...",
-                    "hob_setpoint": "Initialising...",
-                    "camera_sleep": "Initialising...",
-                },
-              }
-
-
+control = Control()
+data = Data()
 
 
 class OnionBot(object):
-
     def __init__(self):
 
+        self.quit_event = Event()
 
-        self.latest_meta = json.dumps(INITIAL_META)
-        self.stop_flag = False
+        # Launch multiprocessing threads
+        logger.info("Launching worker threads")
+        camera.launch()
+        thermal.launch()
+        control.launch()
+        cloud.launch_camera()
+        cloud.launch_thermal()
 
-        self.chosen_labels = "_"
-        self.active_label = "discard"
-        self.active_model = "_"
+        self.latest_meta = " "
+        self.measurement_id = 0
+        self.session_name = None
+        self.active_label = None
 
-        self.camera_sleep = "0"
-        self.hob_setpoint = "0"
-
-        self.temperature_window = "_"
-
-
-    def start(self, session_name):
+    def run(self):
         """Start logging"""
 
-        self.session_name = session_name
-
-        def thread_function(name):
+        def _worker():
             """Threaded to run capture loop in background while allowing other processes to continue"""
 
+            filepaths = None
+            meta = None
 
-            def capture(measurement_id):
-                """Subfunction to capture sensor data"""
+            while True:
 
-                # Start timer
-                time_stamp = datetime.datetime.now()
+                # Get time stamp
+                timer = datetime.datetime.now()
+                time_stamp = timer.strftime("%Y-%m-%d_%H-%M-%S-%f")
 
-                # Capture sensor data
-                camera_filepath = camera.capture(cloud.get_path(self.session_name, "camera", "jpg", time_stamp, measurement_id, self.active_label))
-                thermal.capture_frame()
-                thermal_filepath = thermal.save_latest_jpg(cloud.get_path(self.session_name, "thermal", "jpg", time_stamp, measurement_id, self.active_label))
-                temperature = thermal.get_latest_temperature()
-                self.temperature_window = thermal.get_temperature_window()
+                # Get update on key information
+                self.measurement_id += 1
+                measurement_id = self.measurement_id
+                active_label = self.active_label
+                session_name = self.session_name
 
-                # Upload to cloud
-                cloud.upload_from_filename(camera_filepath)
-                cloud.upload_from_filename(thermal_filepath)
+                # Generate filepaths for logs
+                queued_filepaths = data.generate_filepaths(
+                    session_name, time_stamp, measurement_id, active_label
+                )
 
-                # Make prediction based on specified deep learning model
+                # Generate metadata for frontend
+                queued_meta = data.generate_meta(
+                    session_name=session_name,
+                    time_stamp=time_stamp,
+                    measurement_id=measurement_id,
+                    active_label=active_label,
+                    filepaths=queued_filepaths,
+                    thermal_data=thermal.data,
+                    control_data=control.data,
+                )
 
-                if self.active_model != "_":
-                    camera_prediction = self.camera_classifier.classify_image(camera_filepath)
-                    thermal_prediction = self.thermal_classifier.classify_image(thermal_filepath)
-                else:
-                    camera_prediction = "_"
-                    thermal_prediction = "_"
+                # Start sensor capture
+                camera.start(queued_filepaths["camera"])
+                thermal.start(queued_filepaths["thermal"])
 
-                # Generate metadata
+                # While taking a picture, process previous data in meantime
+                if filepaths:
 
-                data = {
-                  "type": "meta",
-                    "id": F"{session_name}_{measurement_id}_{str(time_stamp)}",
-                    "attributes": {
-                        "session_name": session_name,
-                        "active_label": self.active_label,
-                        "active_model": self.active_model,
-                        "camera_prediction": camera_prediction,
-                        "thermal_prediction": thermal_prediction,
-                        "measurement_id": measurement_id,
-                        "time_stamp": str(time_stamp),
-                        "temperature": str(temperature),
-                        "camera_filepath": cloud.get_public_path(camera_filepath),
-                        "thermal_filepath": cloud.get_public_path(thermal_filepath),
-                        "hob_setpoint": self.hob_setpoint,
-                        "camera_sleep": self.camera_sleep,
-                    },
-                  }
+                    cloud.start_camera(filepaths["camera"])
+                    cloud.start_thermal(filepaths["thermal"])
 
-                json_filepath = cloud.get_path(self.session_name, "meta", "json", time_stamp, measurement_id, self.active_label)
-                with open(json_filepath, "w") as write_file:
-                    json.dump(data, write_file)
+                    # inference.start(previous_meta)
 
-                # Upload to cloud
-                cloud.upload_from_filename(json_filepath)
+                    # Wait for all meantime processes to finish
 
-                return json.dumps(data)
+                    cloud.join_camera()
+                    cloud.join_thermal()
 
-            logging.info("Thread %s: starting", name)
-            measurement_id = 0
+                    # if not cloud.join():
+                    #     meta["attributes"]["camera_filepath"] = "placeholder.png"
+                    #     meta["attributes"]["thermal_filepath"] = "placeholder.png"
+                    # inference.join()
 
-            # WHILE LOOP
+                    # Push meta information to file level for API access
+                    self.latest_meta = json.dumps(meta)
 
-            while self.stop_flag == False:
+                # Wait for queued image captures to finish, refresh control data
+                thermal.join()
+                camera.join()
+                control.refresh(thermal.data["temperature"])
 
-                measurement_id += 1
+                # Log to console
+                logger.info(
+                    "Logged %s | session_name %s | Label %s | Interval %0.2f | Temperature %s | PID enabled: %s | PID components: %0.1f, %0.1f, %0.1f "
+                    % (
+                        measurement_id,
+                        session_name,
+                        active_label,
+                        (datetime.datetime.now() - timer).total_seconds(),
+                        thermal.data["temperature"],
+                        control.data["pid_enabled"],
+                        control.data["p_component"],
+                        control.data["i_component"],
+                        control.data["d_component"],
+                    )
+                )
 
-                print (F"Capturing measurement {measurement_id} with label {self.active_label}")
+                # Move queue forward one place
+                filepaths = queued_filepaths
+                meta = queued_meta
 
-                self.latest_meta = capture(measurement_id)
+                # Add delay until next reading
+                sleep(float(config.get_config("camera_sleep")))
 
-                sleep(float(self.camera_sleep))
+                # Check quit flag
+                if self.quit_event.is_set():
+                    logger.debug("Quitting main thread...")
+                    break
 
-            logging.info("Thread %s: finishing", name)
+        # Start thread
+        self.thread = Thread(target=_worker, daemon=True)
+        self.thread.start()
 
-        format = "%(asctime)s: %(message)s"
-        logging.basicConfig(format=format, level=logging.INFO,
-                            datefmt="%H:%M:%S")
-
-        logging.info("Main    : before creating thread")
-        my_thread = threading.Thread(target=thread_function, args=(1,))
-        logging.info("Main    : before running thread")
-        my_thread.start()
-        logging.info("Main    : wait for the thread to finish")
-        my_thread.join()
-        logging.info("Main    : all done")
-
-        return "success"
-
+    def start(self, session_name):
+        self.session_name = session_name
+        return "1"
 
     def stop(self):
         """Stop logging"""
-
-        self.stop_flag = True
-
-        self.latest_meta = json.dumps(INITIAL_META)
-        self.chosen_labels = "_"
-        self.active_label = "_"
-        self.active_model = "_"
-
-        return "success"
-
+        self.session_name = None
+        return "1"
 
     def get_latest_meta(self):
         """Returns cloud filepath of latest meta.json - includes path location of images"""
-
         return self.latest_meta
 
-
-    def get_temperature_window(self):
+    def get_thermal_history(self):
         """Returns last 300 temperature readings"""
-
-        return self.temperature_window
-
+        return self.thermal_history
 
     def get_chosen_labels(self):
         """Returns options for labels selected from `all_labels` in new session process"""
-
         # (Placeholder) TODO: Update to return list of labels that adapts to selected dropdown
         return '[{"ID":"0","label":"discard"},{"ID":"1","label":"water_boiling"},{"ID":"2","label":"water_not_boiling"}]'
 
-
     def set_chosen_labels(self, string):
         """Returns options for labels selected from `all_labels` in new session process"""
-
         self.chosen_labels = string
-
-        self.active_label = str(list(string.split(","))[0])
-        return "success"
-
+        return "1"
 
     def set_active_label(self, string):
         """Command to change current active label -  for building training datasets"""
-
         self.active_label = string
-        return "success"
-
+        return "1"
 
     def set_active_model(self, string):
         """Command to change current active model for predictions"""
 
-
         if string == "tflite_water_boiling_1":
             self.camera_classifier = Classify(
-                    labels="models/tflite-boiling_water_1_20200111094256-2020-01-11T11_51_24.886Z_dict.txt",
-                    model="models/tflite-boiling_water_1_20200111094256-2020-01-11T11_51_24.886Z_model.tflite")
+                labels="models/tflite-boiling_water_1_20200111094256-2020-01-11T11_51_24.886Z_dict.txt",
+                model="models/tflite-boiling_water_1_20200111094256-2020-01-11T11_51_24.886Z_model.tflite",
+            )
             self.thermal_classifier = Classify(
-                            labels="models/tflite-boiling_1_thermal_20200111031542-2020-01-11T18_45_13.068Z_dict.txt",
-                            model="models/tflite-boiling_1_thermal_20200111031542-2020-01-11T18_45_13.068Z_model.tflite")
+                labels="models/tflite-boiling_1_thermal_20200111031542-2020-01-11T18_45_13.068Z_dict.txt",
+                model="models/tflite-boiling_1_thermal_20200111031542-2020-01-11T18_45_13.068Z_model.tflite",
+            )
             self.active_model = string
 
-        return "success"
+        return "1"
 
+    def set_fixed_setpoint(self, value):
+        """Command to change fixed setpoint"""
+        control.update_fixed_setpoint(value)
+        return "1"
 
-    def set_hob_setpoint(self, value):
-        """Command to change current temperature setpoint"""
-
-        servo.update_setpoint(value)
-        self.hob_setpoint = value
-
-        return "success"
-
+    def set_temperature_target(self, value):
+        """Command to change temperature target"""
+        control.update_temperature_target(value)
+        return "1"
 
     def set_hob_off(self):
         """Command to turn hob off"""
-
-        servo.hob_off()
-        self.hob_setpoint = "OFF"
-
-        return "success"
-
+        control.hob_off()
+        return "1"
 
     def set_camera_sleep(self, value):
         """Command to change camera targe refresh rate"""
-
-        self.camera_sleep = value
-
-        return "success"
-
+        config.set_config("camera_sleep", value)
+        return "1"
 
     def get_all_labels(self):
         """Returns available image labels for training"""
-
-        data = '[{"ID":"0","label":"discard,water_boiling,water_not_boiling"},{"ID":"1","label":"discard,onions_cooked,onions_not_cooked"}]'
-
-        return data
-
+        # data = '[{"ID":"0","label":"discard,water_boiling,water_not_boiling"},{"ID":"1","label":"discard,onions_cooked,onions_not_cooked"}]'
+        labels = json.dumps(data.generate_labels())
+        return labels
 
     def get_all_models(self):
         """Returns available models for prediction"""
-
         data = '[{"ID":"0","label":"tflite_water_boiling_1"}]'
-
         return data
+
+    def set_pid_enabled(self, enabled):
+        control.set_pid_enabled(enabled)
+        return "1"
+
+    def set_p_coefficient(self, coefficient):
+        control.set_p_coefficient(coefficient)
+        return "1"
+
+    def set_i_coefficient(self, coefficient):
+        control.set_i_coefficient(coefficient)
+        return "1"
+
+    def set_d_coefficient(self, coefficient):
+        control.set_d_coefficient(coefficient)
+        return "1"
+
+    def set_pid_reset(self):
+        control.set_pid_reset()
+        return "1"
+
+    def quit(self):
+        logger.info("Raising exit flag")
+        self.quit_event.set()
+        self.thread.join()
+        logger.info("Main module quit")
+        camera.quit()
+        logger.info("Camera module quit")
+        thermal.quit()
+        logger.info("Thermal module quit")
+        cloud.quit()
+        logger.info("Cloud module quit")
+        control.quit()
+        logger.info("Control module quit")
+        logger.info("Quit process complete")

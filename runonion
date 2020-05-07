@@ -5,7 +5,8 @@ echo " _/    _/  _/  _/  _/    _/    _/    _/  _/  _/  _/  _/_/_/    _/    _/   
 echo "_/    _/  _/    _/_/    _/    _/    _/  _/    _/_/  _/    _/  _/    _/      _/        "   
 echo " _/_/    _/      _/  _/_/_/    _/_/    _/      _/  _/_/_/      _/_/        _/         "
 echo " "
-echo "Starting ONIONBOT System Version 0.2 ..."
-echo "Ben Cobley 2020" 
+echo "COPYRIGHT BEN COBLEY 2020" 
+echo "Starting ONIONBOT Software Version 0.2"
 echo " "
-python3 API.py 
+sudo pkill -f API.py
+python3 ~/onionbot/API.py 

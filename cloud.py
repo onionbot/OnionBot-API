@@ -1,47 +1,105 @@
 import os
+from google.cloud import storage
+from threading import Thread, Event
+from queue import Queue, Empty
+
+import logging
+
+logger = logging.getLogger(__name__)
+
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/home/pi/onionbot-819a387e4e79.json"
 
-import datetime
-from google.cloud import storage
-client = storage.Client()
-# GOTO: https://console.cloud.google.com/storage/browser/[bucket-id]/
+BUCKET_NAME = "onionbucket"  # NOTE: Hard coded in data file
 
-bucket_name = 'onionbucket'
-
-bucket=client.get_bucket(bucket_name)
 
 class Cloud(object):
     """Save image to file"""
 
     def __init__(self):
-        pass
-    
-    
-    def upload_from_filename(self, path):
-        blob = bucket.blob(path)
-        blob.upload_from_filename(path)
-        blob.make_public()
-        #print("Uploaded to cloud:", path)
-        #print("Blob is publicly accessible at ", blob.public_url) 
-        
 
-    def get_path(self, session_name, sensor, file_type, time, measurement_id, label):
-        
-        #Make local path
-        time_data = time.strftime("%Y-%m-%d_%H-%M-%S-%f")
-        path = F"logs/{session_name}/{sensor}/{label}"
-        filename = F"{session_name}_{str(measurement_id).zfill(5)}_{time_data}_{sensor}_{label}.{file_type}"
-        os.makedirs(path, exist_ok=True)
-        
-        return F"{path}/{filename}"
-        
-        
-        
-    def get_public_path(self, local_path):
-        
-        # Public URL 
-        cloud_location = "https://storage.googleapis.com/" + bucket_name
-        
-        return F"{cloud_location}/{local_path}"
+        logger.info("Initialising cloud upload...")
 
+        self.quit_event = Event()
+        self.thermal_file_queue = Queue()
+        self.camera_file_queue = Queue()
 
+    def _camera_worker(self):
+
+        logger.debug("Initialising upload worker for camera")
+
+        client = storage.Client()
+        bucket = client.get_bucket(BUCKET_NAME)
+
+        while True:
+            try:  # Timeout raises queue.Empty
+                path = self.camera_file_queue.get(block=True, timeout=0.1)
+
+                blob = bucket.blob(path)
+                blob.upload_from_filename(path)
+                blob.make_public()
+                logger.debug("Uploaded camera file to cloud: %s" % (path))
+                logger.debug("Blob is publicly accessible at %s" % (blob.public_url))
+
+                self.camera_file_queue.task_done()
+
+            except Empty:
+                if self.quit_event.is_set():
+                    logger.debug("Quitting camera camera thread...")
+                    break
+
+    def start_camera(self, file_path):
+        logger.debug("Calling start for camera")
+        self.camera_file_queue.put(file_path)
+
+    def join_camera(self):
+        logger.debug("Calling join for camera")
+        self.camera_file_queue.join()
+
+    def launch_camera(self):
+        logger.debug("Initialising worker for camera")
+        self.camera_thread = Thread(target=self._camera_worker, daemon=True)
+        self.camera_thread.start()
+
+    def _thermal_worker(self):
+
+        logger.debug("Initialising upload worker for thermal")
+
+        client = storage.Client()
+        bucket = client.get_bucket(BUCKET_NAME)
+
+        while True:
+            try:  # Timeout raises queue.Empty
+                path = self.thermal_file_queue.get(block=True, timeout=0.1)
+
+                blob = bucket.blob(path)
+                blob.upload_from_filename(path)
+                blob.make_public()
+                logger.debug("Uploaded to cloud: %s" % (path))
+                logger.debug("Blob is publicly accessible at %s" % (blob.public_url))
+
+                self.thermal_file_queue.task_done()
+
+            except Empty:
+                if self.quit_event.is_set():
+                    logger.debug("Quitting thermal camera thread...")
+                    break
+
+    def start_thermal(self, file_path):
+        logger.debug("Calling start for thermal")
+        self.thermal_file_queue.put(file_path)
+
+    def join_thermal(self):
+        logger.debug("Calling join for thermal")
+        self.thermal_file_queue.join()
+
+    def launch_thermal(self):
+        logger.debug("Initialising worker for thermal")
+        self.thermal_thread = Thread(target=self._thermal_worker, daemon=True)
+        self.thermal_thread.start()
+
+    def quit(self):
+        self.quit_event.set()
+        logger.debug("Waiting for camera cloud thread to finish uploading")
+        self.camera_thread.join()
+        logger.debug("Waiting for thermal cloud thread to finish uploading")
+        self.thermal_thread.join()

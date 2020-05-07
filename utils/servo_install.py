@@ -1,9 +1,8 @@
-#!/usr/bin/env python
-
 import sys
 import os
 sys.path.insert(1, os.path.join(sys.path[0], '..'))
-from actuation import Servo
+
+from servo import Servo
 import time
 
 servo = Servo()

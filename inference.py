@@ -26,11 +26,10 @@ from PIL import Image
 from tflite_runtime.interpreter import Interpreter
 
 
-
 class Classify(object):
-
-
     def __init__(self, labels, model):
+
+        print("Initialising Tensorflow interpreter...")
 
         self.labels = self.load_labels(labels)
 
@@ -38,49 +37,44 @@ class Classify(object):
         interpreter.allocate_tensors()
         self.interpreter = interpreter
 
-        _, self.height, self.width, _ = interpreter.get_input_details()[0]['shape']
+        _, self.height, self.width, _ = interpreter.get_input_details()[0]["shape"]
 
-    
     def load_labels(self, path):
-        with open(path, 'r') as f:
+        with open(path, "r") as f:
             return {i: line.strip() for i, line in enumerate(f.readlines())}
 
-
     def set_input_tensor(self, interpreter, image):
-        tensor_index = interpreter.get_input_details()[0]['index']
+        tensor_index = interpreter.get_input_details()[0]["index"]
         input_tensor = interpreter.tensor(tensor_index)()[0]
         input_tensor[:, :] = image
 
-
     def classify_image(self, imagefilepath, top_k=1):
         """Returns a sorted array of classification results."""
-        image = Image.open(imagefilepath).convert('RGB').resize((self.width, self.height),Image.ANTIALIAS)
+        image = (
+            Image.open(imagefilepath)
+            .convert("RGB")
+            .resize((self.width, self.height), Image.ANTIALIAS)
+        )
 
         interpreter = self.interpreter
 
         self.set_input_tensor(interpreter, image)
         interpreter.invoke()
         output_details = interpreter.get_output_details()[0]
-        output = np.squeeze(interpreter.get_tensor(output_details['index']))
+        output = np.squeeze(interpreter.get_tensor(output_details["index"]))
 
         # If the model is quantized (uint8 data), then dequantize the results
-        if output_details['dtype'] == np.uint8:
-            scale, zero_point = output_details['quantization']
+        if output_details["dtype"] == np.uint8:
+            scale, zero_point = output_details["quantization"]
             output = scale * (output - zero_point)
 
         ordered = np.argpartition(-output, top_k)
-        
-        result = [(self.labels[i], output[i]) for i in ordered[:top_k]][0] # Only returns single result, assumes top_k = 1
-        
+
+        result = [(self.labels[i], output[i]) for i in ordered[:top_k]][
+            0
+        ]  # Only returns single result, assumes top_k = 1
+
         label = result[0]
-        probability =  float(result[1])
+        probability = float(result[1])
 
-        
         return label + "_" + "{:.2f}".format(probability)
-
-
-
-
-
-
-

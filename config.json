@@ -1,0 +1,8 @@
+{
+    "camera_sleep": 0,
+    "Kp": 0.5,
+    "Ki": 0,
+    "Kd": 0,
+    "sample_time": 0.01,
+    "output_limit": 100
+}

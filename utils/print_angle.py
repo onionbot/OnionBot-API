@@ -1,7 +1,8 @@
 import sys
 import os
 sys.path.insert(1, os.path.join(sys.path[0], '..'))
-from actuation import Servo
+
+from servo import Servo
 import time
 
 servo = Servo()
@@ -9,4 +10,3 @@ servo = Servo()
 while True:
     print(360 - float(servo.get_angle()))
     time.sleep(.1)
-
