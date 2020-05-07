@@ -38,7 +38,7 @@ class PID(object):
         sample_time=0.01,
         output_limits=(None, None),
         is_enabled=True,
-        proportional_on_measurement=False,
+        proportional_on_measurement=True,
     ):
         """
         Initialize a new PID controller.

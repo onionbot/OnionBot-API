@@ -28,15 +28,15 @@ class Knob(object):
         dcMax=956.41,
         feedback_gpio=5,
         servo_gpio=13,
-        min_pw=1210,
-        max_pw=1750,
+        min_pw=1280,  # 1210
+        max_pw=1750,  # 1750
         min_speed=-0.5,
         max_speed=0.5,
         sampling_time=0.01,
         Kp_p=0.1,  # not too big values, otherwise output of position control would slow down too abrupt
-        Ki_p=0.05,
-        Kd_p=0.01,
-        Kp_s=0.4,
+        Ki_p=0.1,
+        Kd_p=0.0,
+        Kp_s=0.3,
         Ki_s=0,
         Kd_s=0,
     ):
