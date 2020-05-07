@@ -12,8 +12,8 @@ MIN_SAFE_ANGLE = 20
 MAX_SAFE_ANGLE = 310
 
 # OFF_ANGLE = 25
-MIN_SET_POINT_ANGLE = 30
-MAX_SET_POINT_ANGLE = 250
+MIN_SET_POINT_ANGLE = 50
+MAX_SET_POINT_ANGLE = 310
 
 TIMEOUT_PERIOD = 2.5
 
@@ -252,8 +252,6 @@ class Knob(object):
 
     def get_achieved(self):
 
-        angle_range = MAX_SET_POINT_ANGLE - MIN_SET_POINT_ANGLE
-
         window = []
 
         for _ in range(5):
@@ -263,6 +261,7 @@ class Knob(object):
 
         # Calculate centered average to eliminate noise spikes
         achieved_angle = (sum(window) - max(window) - min(window)) / (len(window) - 2)
+        angle_range = MAX_SET_POINT_ANGLE - MIN_SET_POINT_ANGLE
         normalised = (100 * (achieved_angle - MIN_SET_POINT_ANGLE)) / angle_range
 
         return 100 - round(normalised)
