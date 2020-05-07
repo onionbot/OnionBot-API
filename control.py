@@ -15,7 +15,7 @@ pid = PID(
     Ki=config.get_config("Ki"),
     Kd=config.get_config("Kd"),
     sample_time=config.get_config("sample_time"),
-    output_limits=(0, 100),
+    output_limits=(0, config.get_config("output_limit"),
     is_enabled=False,
     proportional_on_measurement=True,
 )
@@ -84,7 +84,7 @@ class Control(object):
         logger.debug("Updating fixed setpoint to %s/100 " % (setpoint))
         self.fixed_setpoint = float(setpoint)
         self.set_pid_enabled(False)
-        self.temperature_target = None
+        self.temperature_target = "_"
 
     def hob_off(self):
         logger.debug("hob_off called")
