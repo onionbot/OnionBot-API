@@ -48,6 +48,7 @@ class Control(object):
             "servo_achieved": None,
             "servo_achieved_history": None,
             "temperature_target": None,
+            "pid_enabled": None,
             "p_coefficient": None,
             "i_coefficient": None,
             "d_coefficient": None,
