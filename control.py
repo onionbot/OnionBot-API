@@ -99,6 +99,13 @@ class Control(object):
         self.set_pid_enabled(True)
         self.fixed_setpoint = None
 
+    def hold_temperature(self):
+        setpoint = str(self.temperature)
+        logger.debug("Updating self.temperature_target to hold at %s degrees " % (setpoint))
+        self.temperature_target = float(setpoint)
+        self.set_pid_enabled(True)
+        self.fixed_setpoint = None
+
     def set_pid_enabled(self, enabled):
         pid.set_is_enabled(enabled, last_output=knob.get_setpoint())
 

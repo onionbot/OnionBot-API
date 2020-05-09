@@ -77,6 +77,10 @@ def index():
         logger.debug("set_temperature_target called")
         return bot.set_temperature_target(request.form["value"])
 
+    if request.form["action"] == "set_temperature_hold":
+        logger.debug("set_temperature_hold called")
+        return bot.set_temperature_hold()
+
     if request.form["action"] == "set_hob_off":
         logger.debug("set_hob_off called")
         return bot.set_hob_off()

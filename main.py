@@ -134,17 +134,19 @@ class OnionBot(object):
                 filepaths = queued_filepaths
                 meta = queued_meta
 
-                # Check quit flag
-                if self.quit_event.is_set():
-                    logger.debug("Quitting main thread...")
-                    break
-
                 # Add delay until ready for next loop
                 frame_interval = float(config.get_config("frame_interval"))
                 while True:
                     if (datetime.now() - timer).total_seconds() > frame_interval:
                         break
+                    elif self.quit_event.is_set():
+                        break
                     sleep(0.1)
+
+                # Check quit flag
+                if self.quit_event.is_set():
+                    logger.debug("Quitting main thread...")
+                    break
 
         # Start thread
         self.thread = Thread(target=_worker, daemon=True)
@@ -206,6 +208,11 @@ class OnionBot(object):
     def set_temperature_target(self, value):
         """Command to change temperature target"""
         control.update_temperature_target(value)
+        return "1"
+
+    def set_temperature_hold(self):
+        """Command to hold current temperature"""
+        control.hold_temperature()
         return "1"
 
     def set_hob_off(self):
