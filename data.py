@@ -97,6 +97,9 @@ class Data:
                 "p_coefficient": control_data["p_coefficient"],
                 "i_coefficient": control_data["i_coefficient"],
                 "d_coefficient": control_data["d_coefficient"],
+                "p_component": control_data["p_component"],
+                "i_component": control_data["i_component"],
+                "d_component": control_data["d_component"],
             },
         }
 
