@@ -113,21 +113,22 @@ class OnionBot(object):
                 control.refresh(thermal.data["temperature"])
 
                 # Log to console
-                attributes = meta["attributes"]
-                logger.info(
-                    "Logged %s | session_name %s | Label %s | Interval %0.2f | Temperature %s | PID enabled: %s | PID components: %0.1f, %0.1f, %0.1f "
-                    % (
-                        attributes["measurement_id"],
-                        attributes["session_name"],
-                        attributes["active_label"],
-                        attributes["interval"],
-                        attributes["temperature"],
-                        attributes["pid_enabled"],
-                        attributes["p_component"],
-                        attributes["i_component"],
-                        attributes["d_component"],
+                if meta is not None:
+                    attributes = meta["attributes"]
+                    logger.info(
+                        "Logged %s | session_name %s | Label %s | Interval %0.2f | Temperature %s | PID enabled: %s | PID components: %0.1f, %0.1f, %0.1f "
+                        % (
+                            attributes["measurement_id"],
+                            attributes["session_name"],
+                            attributes["active_label"],
+                            attributes["interval"],
+                            attributes["temperature"],
+                            attributes["pid_enabled"],
+                            attributes["p_component"],
+                            attributes["i_component"],
+                            attributes["d_component"],
+                        )
                     )
-                )
 
                 # Move queue forward one place
                 filepaths = queued_filepaths
