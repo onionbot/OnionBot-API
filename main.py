@@ -142,7 +142,7 @@ class OnionBot(object):
                 # Add delay until ready for next loop
                 frame_interval = float(config.get_config("frame_interval"))
                 while True:
-                    if (datetime.now() - timer).total_seconds() < frame_interval:
+                    if (datetime.now() - timer).total_seconds() > frame_interval:
                         break
                     sleep(0.1)
 
