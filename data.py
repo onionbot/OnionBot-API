@@ -67,7 +67,8 @@ class Data:
             else:
                 return None
 
-        interval = "{:.1f}".format(timer - self.timer)
+        interval = (timer - self.timer).total_seconds()
+        interval = "{:.1f}".format(interval)
         self.timer = timer
         time_stamp = timer.strftime("%Y-%m-%d_%H-%M-%S-%f")
 
