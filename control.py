@@ -22,7 +22,7 @@ pid = PID(
 knob = Knob()
 
 
-DEADBAND_THRESHOLD = 5
+DEADBAND_THRESHOLD = 0
 
 
 class Control(object):
