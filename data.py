@@ -99,15 +99,15 @@ class Data:
             },
         }
 
-        # Remove dictionary elements with 'None' type
-        attributes = data.get("attributes")
-        cleaned_data = {
-            key: value for key, value in attributes.items() if value is not None
-        }
-        cleaned_data = {"attributes": cleaned_data}
-        data.update(cleaned_data)
+        # # Remove dictionary elements with 'None' type
+        # attributes = data.get("attributes")
+        # cleaned_data = {
+        #     key: value for key, value in attributes.items() if value is not None
+        # }
+        # cleaned_data = {"attributes": cleaned_data}
+        # data.update(cleaned_data)
 
-        logger.debug(data)
+        # logger.debug(data)
 
         with open(filepaths["meta"], "w") as write_file:
             json.dump(data, write_file)
