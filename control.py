@@ -155,12 +155,12 @@ class Control(object):
             "servo_achieved_history": list(achieved_history),
             "temperature_target": self.temperature_target,
             "pid_enabled": pid_enabled,
-            "p_coefficient": coefficients[0],
-            "i_coefficient": coefficients[1],
-            "d_coefficient": coefficients[2],
-            "p_component": components[0],
-            "i_component": components[1],
-            "d_component": components[2],
+            "p_coefficient": float(coefficients[0]),
+            "i_coefficient": float(coefficients[1]),
+            "d_coefficient": float(coefficients[2]),
+            "p_component": float(components[0]),
+            "i_component": float(components[1]),
+            "d_component": float(components[2]),
         }
 
     def quit(self):
