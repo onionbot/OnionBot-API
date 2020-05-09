@@ -37,19 +37,37 @@ var chart = new Chart(ctx, {
                 id: 'y-axis-1',
                 type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
                 display: true,
-                position: 'left',
+                position: 'right',
+                scaleLabel: {
+                    display: true,
+                    labelString: 'Temperature [C]',
+                    fontSize: 18,
+                    fontFamily: "'Roboto', sans-serif",
+                    fontColor: '#007bff'
+                },
                 ticks: {
                     min: 0,
                     // max: 250,
+                    fontColor: '#007bff',
+                    fontSize: 18,
                 },
             }, {
                 id: 'y-axis-2',
                 type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
                 display: true,
-                position: 'right',
+                position: 'left',
                 ticks: {
                     min: 0,
                     max: 100,
+                    fontColor: '#6C757D',
+                    fontSize: 18,
+                },
+                scaleLabel: {
+                    display: true,
+                    labelString: 'Hob power [%]',
+                    fontSize: 18,
+                    fontFamily: "'Roboto', sans-serif",
+                    fontColor: '#6C757D',
                 },
                 // grid line settings
                 gridLines: {
