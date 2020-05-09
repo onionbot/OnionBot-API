@@ -134,13 +134,17 @@ class OnionBot(object):
                 filepaths = queued_filepaths
                 meta = queued_meta
 
-                # Add delay until next reading
-                sleep(float(config.get_config("camera_sleep")))
-
                 # Check quit flag
                 if self.quit_event.is_set():
                     logger.debug("Quitting main thread...")
                     break
+
+                # Add delay until ready for next loop
+                frame_interval = float(config.get_config("frame_interval"))
+                while True:
+                    if datetime.now() - timer < frame_interval:
+                        break
+                    sleep(0.1)
 
         # Start thread
         self.thread = Thread(target=_worker, daemon=True)
@@ -209,9 +213,9 @@ class OnionBot(object):
         control.hob_off()
         return "1"
 
-    def set_camera_sleep(self, value):
+    def set_frame_interval(self, value):
         """Command to change camera targe refresh rate"""
-        config.set_config("camera_sleep", value)
+        config.set_config("frame_interval", value)
         return "1"
 
     def get_all_labels(self):

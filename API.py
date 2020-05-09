@@ -101,9 +101,9 @@ def index():
         logger.debug("set_pid_reset called")
         return bot.set_pid_reset()
 
-    if request.form["action"] == "set_camera_sleep":
-        logger.debug("set_camera_sleep called")
-        return bot.set_camera_sleep(request.form["value"])
+    if request.form["action"] == "set_frame_interval":
+        logger.debug("set_frame_interval called")
+        return bot.set_frame_interval(request.form["value"])
 
     if request.form["action"] == "get_all_labels":
         logger.debug("get_all_labels called")
