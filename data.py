@@ -93,6 +93,7 @@ class Data:
                 "servo_achieved": control_data["servo_achieved"],
                 "servo_achieved_history": control_data["servo_achieved_history"],
                 "temperature_target": control_data["temperature_target"],
+                "pid_enabled": control_data["pid_enabled"],
                 "p_coefficient": control_data["p_coefficient"],
                 "i_coefficient": control_data["i_coefficient"],
                 "d_coefficient": control_data["d_coefficient"],
