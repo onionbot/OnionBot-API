@@ -52,9 +52,9 @@ class Control(object):
             "p_coefficient": None,
             "i_coefficient": None,
             "d_coefficient": None,
-            "p_component": None,
-            "i_component": None,
-            "d_component": None,
+            "p_component": 0,
+            "i_component": 0,
+            "d_component": 0,
         }
 
     def _worker(self):
