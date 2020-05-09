@@ -9,9 +9,8 @@ from control import Control
 from data import Data
 from config import Config
 
-import datetime
-import json
-
+from datetime import datetime
+from json import dumps
 import logging
 
 # Fix logging faliure issue
@@ -44,7 +43,6 @@ class OnionBot(object):
         cloud.launch_thermal()
 
         self.latest_meta = " "
-        self.measurement_id = 0
         self.session_name = None
         self.active_label = None
 
@@ -54,30 +52,29 @@ class OnionBot(object):
         def _worker():
             """Threaded to run capture loop in background while allowing other processes to continue"""
 
+            measurement_id = 0
             filepaths = None
             meta = None
 
             while True:
 
                 # Get time stamp
-                timer = datetime.datetime.now()
-                time_stamp = timer.strftime("%Y-%m-%d_%H-%M-%S-%f")
+                timer = datetime.now()
 
                 # Get update on key information
-                self.measurement_id += 1
-                measurement_id = self.measurement_id
+                measurement_id += 1
                 active_label = self.active_label
                 session_name = self.session_name
 
                 # Generate filepaths for logs
                 queued_filepaths = data.generate_filepaths(
-                    session_name, time_stamp, measurement_id, active_label
+                    session_name, timer, measurement_id, active_label
                 )
 
                 # Generate metadata for frontend
                 queued_meta = data.generate_meta(
                     session_name=session_name,
-                    time_stamp=time_stamp,
+                    timer=timer,
                     measurement_id=measurement_id,
                     active_label=active_label,
                     filepaths=queued_filepaths,
@@ -108,7 +105,7 @@ class OnionBot(object):
                     # inference.join()
 
                     # Push meta information to file level for API access
-                    self.latest_meta = json.dumps(meta)
+                    self.latest_meta = dumps(meta)
 
                 # Wait for queued image captures to finish, refresh control data
                 thermal.join()
@@ -116,18 +113,19 @@ class OnionBot(object):
                 control.refresh(thermal.data["temperature"])
 
                 # Log to console
+                attributes = meta["attributes"]
                 logger.info(
                     "Logged %s | session_name %s | Label %s | Interval %0.2f | Temperature %s | PID enabled: %s | PID components: %0.1f, %0.1f, %0.1f "
                     % (
-                        measurement_id,
-                        session_name,
-                        active_label,
-                        (datetime.datetime.now() - timer).total_seconds(),
-                        thermal.data["temperature"],
-                        control.data["pid_enabled"],
-                        control.data["p_component"],
-                        control.data["i_component"],
-                        control.data["d_component"],
+                        attributes["measurement_id"],
+                        attributes["session_name"],
+                        attributes["active_label"],
+                        attributes["interval"],
+                        attributes["temperature"],
+                        attributes["pid_enabled"],
+                        attributes["p_component"],
+                        attributes["i_component"],
+                        attributes["d_component"],
                     )
                 )
 
@@ -218,7 +216,7 @@ class OnionBot(object):
     def get_all_labels(self):
         """Returns available image labels for training"""
         # data = '[{"ID":"0","label":"discard,water_boiling,water_not_boiling"},{"ID":"1","label":"discard,onions_cooked,onions_not_cooked"}]'
-        labels = json.dumps(data.generate_labels())
+        labels = dumps(data.generate_labels())
         return labels
 
     def get_all_models(self):

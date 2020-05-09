@@ -1,6 +1,7 @@
 import json
 from cloud import Cloud
 from os import makedirs, path
+from datetime import datetime
 
 import logging
 
@@ -17,6 +18,7 @@ class Data:
         self.thermal_filepath = None
         self.thermal_history_filepath = None
         self.meta_filepath = None
+        self.timer = datetime.now()
 
     def generate_filepaths(
         self, session_name, time_stamp, measurement_id, active_label
@@ -45,7 +47,7 @@ class Data:
     def generate_meta(
         self,
         session_name,
-        time_stamp,
+        timer,
         measurement_id,
         active_label,
         filepaths,
@@ -57,13 +59,17 @@ class Data:
         def _get_public_path(local_path):
 
             if local_path:
-                local_path.replace(PATH,'')
+                local_path.replace(PATH, "")
                 # Public URL
                 cloud_location = "https://storage.googleapis.com/" + "onionbucket"
 
                 return f"{cloud_location}/{local_path}"
             else:
                 return None
+
+        interval = "{:.1f}".format(timer - self.timer)
+        self.timer = timer
+        time_stamp = timer.strftime("%Y-%m-%d_%H-%M-%S-%f")
 
         camera_filepath = _get_public_path(filepaths["camera"])
         thermal_filepath = _get_public_path(filepaths["thermal"])
@@ -73,6 +79,7 @@ class Data:
             "id": f"{session_name}_{measurement_id}_{str(time_stamp)}",
             "attributes": {
                 "session_name": session_name,
+                "interval": interval,
                 "active_label": active_label,
                 "measurement_id": measurement_id,
                 "time_stamp": time_stamp,
