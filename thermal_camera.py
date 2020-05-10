@@ -17,6 +17,10 @@ logger = logging.getLogger(__name__)
 
 CHESSBOARD_MAX_THRESHOLD = 300
 
+TEMPERATURE_MULTIPLIER = 1.35
+TEMPERATURE_OFFSET = -6
+
+
 INTERPOLATE = 10
 
 MINTEMP = 20.0  # -40 #low range of the sensor (this will be black on the screen)
@@ -127,7 +131,9 @@ class ThermalCamera(object):
                 f[123],
             ]
 
-            temperature = "{:.1f}".format(mean(center_square))
+            temperature = mean(center_square)
+            temperature = (temperature * TEMPERATURE_MULTIPLIER) + TEMPERATURE_OFFSET
+            temperature = "{:.1f}".format(temperature)
 
             self.temperature = temperature
 
