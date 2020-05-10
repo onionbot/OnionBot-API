@@ -10,6 +10,7 @@
     
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.16.0/dist/bootstrap-table.min.css">
+    <link href='https://fonts.googleapis.com/css?family=Roboto Mono' rel='stylesheet'>
     <link href="dashboard.css" rel="stylesheet">
   </head>
   <body>
@@ -103,19 +104,19 @@
           <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-3 pt-2 border-bottom">
             <h1>Live Labelling</h1>
             <div class="btn-toolbar mb-2 mb-md-0">
-              <div class="dropdown d-none">
+              <div id="connected" class="dropdown">
                 <button class="btn btn-outline-secondary dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" style="font-size: 1.1rem">
-                <span data-feather="check-circle" style="color: green; width:" class="mr-2"></span>
+                <span data-feather="check-circle" style="color: green;" class="mr-2"></span>
                 Connected to API
                 </button>
                 <div class="dropdown-menu  dropdown-menu-right">
-                  <a class="dropdown-item" id="api-quit">API Quit</a>
-                  <a class="dropdown-item" id="api-shutdown">API Shutdown</a>
-                  <a class="dropdown-item" id="rpi-shutdown">Raspberry Pi Shutdown</a>
-                  <a class="dropdown-item" id="rpi-restart">Raspberry Pi Restart</a>
+                  <a class="dropdown-item" id="quit">API Quit</a>
+                  <a class="dropdown-item" id="restart">API Hard Restart</a>
+                  <a class="dropdown-item" id="pi-shutdown">Raspberry Pi Shutdown</a>
+                  <a class="dropdown-item" id="pi-restart">Raspberry Pi Restart</a>
                 </div>
               </div>
-              <div class="dropdown">
+              <div id="not-connected" class="dropdown" style="display: none">
                 <button class="btn btn-outline-secondary dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" style="font-size: 1.1rem">
                 <span data-feather="alert-circle" style="color: red;" class="mr-2"></span>
                 Not connected to API
@@ -131,11 +132,11 @@
               <div class="row">
                 <div class="col">
                   <div class="row justify-content-between pl-3 pr-3">
-                    <label>Session ID</span></label>
+                    <label>Labelling session</span></label>
                     <div class="input-group">
-                      <input id="session-id" type="text" class="form-control w-100" placeholder="Session ID" style="border-radius: .25rem;">
+                      <input id="session-id-input" type="text" class="form-control w-100" placeholder="Session ID" style="border-radius: .25rem;">
                       <div class=input-badge style="right: 25px;">
-                        <h5><span class="badge badge-light "><span id="fixed-setpoint-output">None</span></span></h5>
+                        <h5><span class="badge badge-light "><span id="session-id-output">None</span></span></h5>
                       </div>
                     </div>
                     <button id="start" type="button" class="btn btn-outline-secondary supplementary-button"><span data-feather="play-circle"></span>&nbsp;&nbsp;Start</button>

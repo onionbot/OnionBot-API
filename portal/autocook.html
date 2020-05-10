@@ -9,6 +9,7 @@
     <title>Onionbot Control Panel</title>
     
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link href='https://fonts.googleapis.com/css?family=Roboto Mono' rel='stylesheet'>
     <link href="dashboard.css" rel="stylesheet">
   </head>
   <body>
@@ -102,19 +103,19 @@
           <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-3 pt-2 border-bottom">
             <h1>Auto Cook</h1>
             <div class="btn-toolbar mb-2 mb-md-0">
-              <div class="dropdown d-none">
+              <div id="connected" class="dropdown">
                 <button class="btn btn-outline-secondary dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" style="font-size: 1.1rem">
                 <span data-feather="check-circle" style="color: green;" class="mr-2"></span>
                 Connected to API
                 </button>
                 <div class="dropdown-menu  dropdown-menu-right">
-                  <a class="dropdown-item" id="api-quit">API Quit</a>
-                  <a class="dropdown-item" id="api-shutdown">API Shutdown</a>
-                  <a class="dropdown-item" id="rpi-shutdown">Raspberry Pi Shutdown</a>
-                  <a class="dropdown-item" id="rpi-restart">Raspberry Pi Restart</a>
+                  <a class="dropdown-item" id="quit">API Quit</a>
+                  <a class="dropdown-item" id="restart">API Hard Restart</a>
+                  <a class="dropdown-item" id="pi-shutdown">Raspberry Pi Shutdown</a>
+                  <a class="dropdown-item" id="pi-restart">Raspberry Pi Restart</a>
                 </div>
               </div>
-              <div class="dropdown">
+              <div id="not-connected" class="dropdown" style="display: none">
                 <button class="btn btn-outline-secondary dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" style="font-size: 1.1rem">
                 <span data-feather="alert-circle" style="color: red;" class="mr-2"></span>
                 Not connected to API
@@ -125,9 +126,6 @@
               </div>
             </div>
           </div>
-         
-
-         
       </main>
     </div>
   </div>

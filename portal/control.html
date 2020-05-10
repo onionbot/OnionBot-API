@@ -9,6 +9,7 @@
     <title>Onionbot Control Panel</title>
     
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link href='https://fonts.googleapis.com/css?family=Roboto Mono' rel='stylesheet'>
     <link href="dashboard.css" rel="stylesheet">
   </head>
   <body>
@@ -102,19 +103,19 @@
           <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-3 pt-2 border-bottom">
             <h1>Live Control</h1>
             <div class="btn-toolbar mb-2 mb-md-0">
-              <div class="dropdown d-none">
+              <div id="connected" class="dropdown">
                 <button class="btn btn-outline-secondary dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" style="font-size: 1.1rem">
                 <span data-feather="check-circle" style="color: green;" class="mr-2"></span>
                 Connected to API
                 </button>
                 <div class="dropdown-menu  dropdown-menu-right">
-                  <a class="dropdown-item" id="api-quit">API Quit</a>
-                  <a class="dropdown-item" id="api-shutdown">API Shutdown</a>
-                  <a class="dropdown-item" id="rpi-shutdown">Raspberry Pi Shutdown</a>
-                  <a class="dropdown-item" id="rpi-restart">Raspberry Pi Restart</a>
+                  <a class="dropdown-item" id="quit">API Quit</a>
+                  <a class="dropdown-item" id="restart">API Hard Restart</a>
+                  <a class="dropdown-item" id="pi-shutdown">Raspberry Pi Shutdown</a>
+                  <a class="dropdown-item" id="pi-restart">Raspberry Pi Restart</a>
                 </div>
               </div>
-              <div class="dropdown">
+              <div id="not-connected" class="dropdown" style="display: none">
                 <button class="btn btn-outline-secondary dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" style="font-size: 1.1rem">
                 <span data-feather="alert-circle" style="color: red;" class="mr-2"></span>
                 Not connected to API
@@ -129,14 +130,14 @@
             <div class="col-4 pl-5 pr-3">
               <div class="row">
                 <label for="temperature">Temperature reading</label>
-                <h2><span class="badge badge-light"><span id="temperature">00.0</span> &deg;C</span></h2>
+                <h1><span class="badge badge-light"><span id="temperature">0</span>&nbsp;&deg;C</span></h1>
               </div>
               <div class="row justify-content-between">
                 <label>Hob control</span></label>
                 <div class="input-group">
                   <input type="text" class="form-control" id="fixed-setpoint-input" placeholder="Percentage">
                   <div class=input-badge>
-                    <h5><span class="badge badge-light "><span id="fixed-setpoint-output">0.0</span>%</span></h5>
+                    <h5><span class="badge badge-light "><span id="fixed-setpoint-output">0</span>&nbsp;%</span></h5>
                   </div>
                   <div class="input-group-append">
                     <span class="input-group-text">%</span>
@@ -149,9 +150,9 @@
               </div>
               <div class="row justify-content-between mt-2">
                 <div class="input-group">
-                  <input type="text" class="form-control" id="temperature-input" placeholder="Target">
+                  <input type="text" class="form-control" id="temperature-target-input" placeholder="Target">
                   <div class=input-badge>
-                    <h5><span class="badge badge-light "><span id="temperature-output">0.0</span>&deg;C</span></h5>
+                    <h5><span class="badge badge-light "><span id="temperature-target-output">0</span>&nbsp;&deg;C</span></h5>
                   </div>
                   <div class="input-group-append">
                     <span class="input-group-text">&deg;C</span>
@@ -160,14 +161,14 @@
                     <button id="temperature-button" type="button" class="btn btn-outline-primary"><span data-feather="check"></span></button>
                   </div>
                 </div>
-                <button id="hold-temperature-button" type="button" class="btn btn-outline-secondary supplementary-button"><span data-feather="thermometer"></span>&nbsp;&nbsp;Hold</button>
+                <button id="temperature-hold-button" type="button" class="btn btn-outline-secondary supplementary-button"><span data-feather="thermometer"></span>&nbsp;&nbsp;Hold</button>
               </div>
               <div class="row">
                 <label>PID Settings</span></label>
                 <div class="input-group">
                   <input type="text" class="form-control" id="p-coefficient-input" placeholder="Proportional">
                   <div class=input-badge>
-                    <h5><span class="badge badge-light "><span id="p-coefficient-output">0.0</span></span></h5>
+                    <h5><span class="badge badge-light "><span id="p-coefficient-output">0</span></span></h5>
                   </div>
                   <div class="input-group-append">
                     <span class="input-group-text">Kp</span>
@@ -209,9 +210,9 @@
               <div class="row justify-content-between">
                 <label>Frame interval</span></label>
                 <div class="input-group">
-                  <input id="frame-interval" type="text" class="form-control" placeholder="Interval">
+                  <input id="frame-interval-input" type="text" class="form-control" placeholder="Interval">
                   <div class=input-badge>
-                    <h5><span class="badge badge-light "><span id="fixed-setpoint-output">0.0</span>s</span></h5>
+                    <h5><span class="badge badge-light "><span id="frame-interval-output">0.0</span>&nbsp;s</span></h5>
                   </div>
                   <div class="input-group-append">
                     <span class="input-group-text">s</span>

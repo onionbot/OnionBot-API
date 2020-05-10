@@ -117,8 +117,16 @@ def index():
         logger.debug("get_all_models called")
         return bot.get_all_models()
 
+    if request.form["action"] == "pi-restart":
+        os.system("sudo reboot") 
+
+    if request.form["action"] == "pi-shutdown":
+        os.system("sudo shutdown now") 
+
+    if request.form["action"] == "restart":
+        os.system(". ~/onionbot/runonion") 
+
     if request.form["action"] == "quit":
-        logger.debug("quit called")
         bot.quit()
         logger.info("Shutting down server")
         server_quit = request.environ.get("werkzeug.server.shutdown")
