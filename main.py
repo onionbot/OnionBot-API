@@ -184,6 +184,11 @@ class OnionBot(object):
         self.active_label = string
         return "1"
 
+    def set_no_label(self):
+        """Command to set active label to None type"""
+        self.active_label = None
+        return "1"
+
     def set_active_model(self, string):
         """Command to change current active model for predictions"""
 
