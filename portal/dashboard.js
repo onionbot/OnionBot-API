@@ -14,31 +14,29 @@ if (!localStorage.ip_address) {
 var endpoint_url = 'http://' + localStorage.ip_address + ':5000/';
 var update_interval = 100;
 var connected = false;
-var ctx = document.getElementById('myChart').getContext('2d');
+var previous_meta = null;
+// var ctx = document.getElementById('myChart').getContext('2d');
 
-    var $table = $('#table');
-    var mydata = 
-[
-    {
-        "label": "not_boiling",
-        "count": 5
-    },
-    {
-        "label": "boiling",
-        "count": 6
-    },
-    {
-        "label": "test2",
-        "count": 6
-    },
+var $table = $('#table');
+var mydata =
+    [{
+            "label": "not_boiling",
+            "count": 5
+        }, {
+            "label": "boiling",
+            "count": 6
+        }, {
+            "label": "test2",
+            "count": 6
+        },
 
-];
+    ];
 
 function badgeFormatter(value) {
-    return '<span class="badge badge-light" style="font-size: 18px;">'+ value + '</span>'
-  }
+    return '<span class="badge badge-light" style="font-size: 18px;">' + value + '</span>'
+}
 
-$(function () {
+$(function() {
     $('#table').bootstrapTable({
         data: mydata
     });
@@ -81,51 +79,70 @@ function update() {
         // data is a js object 
 
         connection_success()
-        data = JSON.parse(data);
 
-        // Update key information
-        $('#session-name').html(data.attributes.session_name);
-        $('#active-label').html(data.attributes.active_label);
-        $('#measurement-id').html(data.attributes.measurement_id);
-        $('#time-stamp').html(data.attributes.time_stamp);
-        $('#temperature').html(data.attributes.temperature);
+        // Only refresh when new data
+        if (data == previous_meta) {
+            // Update previous meta
+            previous_meta = data
+        }
 
-        // Updata live data
+        else {
+            // Update previous meta
+            previous_meta = data
+
+            console.log("Refreshing")
+
+            // console.log(data)
+
+            // console.log(previous_meta)
+
+            meta = JSON.parse(data);
+
+            // Update key information
+            $('#session-id-output').html(meta.attributes.session_name);
+            $('#active-label').html(meta.attributes.active_label);
+            $('#measurement-id').html(meta.attributes.measurement_id);
+            $('#time-stamp').html(meta.attributes.time_stamp);
 
 
-        // Load new images
-        $('#camera-image').attr("src", data.attributes.camera_filepath);
-        $('#thermal-image').attr("src", data.attributes.thermal_filepath);
-        $('#camera-filepath').html(data.attributes.camera_filepath);
-        $('#thermal-filepath').html(data.attributes.thermal_filepath);
-        $('#camera-filepath').attr("href", data.attributes.camera_filepath);
-        $('#thermal-filepath').attr("href", data.attributes.thermal_filepath);
-
-        // Update chart
-        chart.data.datasets[0].data = data.attributes.thermal_history;
-        chart.data.datasets[1].data = data.attributes.servo_setpoint_history;
-        chart.data.datasets[2].data = data.attributes.servo_achieved_history;
-        chart.update()
+            // Update live data
 
 
-        $('#fixed-setpoint').attr("placeholder", data.attributes.servo_setpoint);
-        $('#temperature-target').attr("placeholder", data.attributes.temperature_target);
-        $('#p-coefficient-output').html(data.attributes.p_coefficient);
-        $('#i-coefficient-output').html(data.attributes.i_coefficient);
-        $('#d-coefficient-output').html(data.attributes.d_coefficient);
+            // Load new images
+            $('#camera-image').attr("src", meta.attributes.camera_filepath);
+            $('#thermal-image').attr("src", meta.attributes.thermal_filepath);
+            $('#camera-filepath').html(meta.attributes.camera_filepath);
+            $('#thermal-filepath').html(meta.attributes.thermal_filepath);
+            $('#camera-filepath').attr("href", meta.attributes.camera_filepath);
+            $('#thermal-filepath').attr("href", meta.attributes.thermal_filepath);
 
-        // $('#camera-sleep').attr("placeholder", data.attributes.camera_sleep);
+            // Update chart
+            // chart.data.datasets[0].data = meta.attributes.thermal_history;
+            // chart.data.datasets[1].data = meta.attributes.servo_setpoint_history;
+            // chart.data.datasets[2].data = meta.attributes.servo_achieved_history;
+            // chart.update()
 
-        if (data.attributes.session_name == undefined) {
-            $("#stop").hide();
-            $("#start").show();
-            $('#session-id').prop("disabled", false);
-            $('#session-id').attr("placeholder", "Enter session ID");
-        } else {
-            $("#start").hide();
-            $("#stop").show();
-            $('#session-id').prop("disabled", true);
-            $('#session-id').attr("placeholder", data.attributes.session_name);
+            // Live control
+            $('#temperature').html(meta.attributes.temperature);
+            $('#fixed-setpoint-output').html(meta.attributes.servo_setpoint);
+            $('#temperature-target-output').html(meta.attributes.temperature_target);
+            $('#p-coefficient-output').html(meta.attributes.p_coefficient);
+            $('#i-coefficient-output').html(meta.attributes.i_coefficient);
+            $('#d-coefficient-output').html(meta.attributes.d_coefficient);
+            $('#frame-interval-output').html(meta.attributes.interval);
+
+
+            if (meta.attributes.session_name == undefined) {
+                $("#stop").hide();
+                $("#start").show();
+                $('#session-id').prop("disabled", false);
+                $('#session-id-output').html("Enter session ID");
+            } else {
+                $("#start").hide();
+                $("#stop").show();
+                $('#session-id').prop("disabled", true);
+                $('#session-id-output').html(meta.attributes.session_name);
+            }
         }
 
     });
@@ -136,17 +153,20 @@ function update() {
 
 
 function connection_success() {
-    $('#connection-monitor').css("background-color", "rgb(0,123,255)");
+    $("#not-connected").hide();
+    $("#connected").show();
     if (connected == false) {
+        // Refresh data on first reconnect
         get_all_labels()
         get_all_models()
         connected = true
-
     }
+
 }
 
 function connection_failed() {
-    $('#connection-monitor').css("background-color", "gray");
+    $("#connected").hide();
+    $("#not-connected").show();
     connected = false
 }
 
@@ -238,72 +258,95 @@ function get_all_models() {
 
 $(document).ready(function() {
 
-    $('#start').on('click', function() {
+    // Live labelling
 
-        set('start', $('#session-id').val());
-        set('set_chosen_labels', $('#select-labels').val());
+    $('#start').on('click', function() {
+        set('start', $('#session-id-input').val());
+        $('#session-id-input').val('');
     });
 
     $('#stop').on('click', function() {
         get("stop", function(foo) {});
     });
 
-    $('#connection-monitor').on('click', function() {
-        get("quit", function(foo) {});
-    });
-
     $('#select-model-button').on('click', function() {
         set('set_active_model', $('#select-model').val());
     });
 
+    $('#quit').on('click', function() {
+        get("quit", function(foo) {});
+    });
+
+    $('#restart').on('click', function() {
+        get("restart", function(foo) {});
+    });
+
+    $('#pi-shutdown').on('click', function() {
+        get("pi_shutdown", function(foo) {});
+    });
+
+    $('#pi-restart').on('click', function() {
+        get("pi_restart", function(foo) {});
+    });
+
+
+    // Live control
+
     $('#fixed-setpoint-button').on('click', function() {
-        set('set_fixed_setpoint', $('#fixed-setpoint').val());
-        $('#fixed-setpoint').attr("placeholder", "Updating...");
-        $('#fixed-setpoint').val('');
+        set('set_fixed_setpoint', $('#fixed-setpoint-input').val());
+        $('#fixed-setpoint-input').val('');
     });
-
-    $('#temperature-target-button').on('click', function() {
-        set('set_temperature_target', $('#temperature-target').val());
-        $('#temperature-target').attr("placeholder", "Updating...");
-        $('#temperature-target').val('');
-    });
-
-    $('#pid-p-button').on('click', function() {
-        set('set_p_coefficient', $('#p-coefficient').val());
-        $('#p-coefficient').attr("placeholder", "Updating...");
-        $('#p-coefficient').val('');
-    });
-
-    $('#pid-i-button').on('click', function() {
-        set('set_i_coefficient', $('#i-coefficient').val());
-        $('#i-coefficient').attr("placeholder", "Updating...");
-        $('#i-coefficient').val('');
-    });
-
-    $('#pid-d-button').on('click', function() {
-        set('set_d_coefficient', $('#d-coefficient').val());
-        $('#d-coefficient').attr("placeholder", "Updating...");
-        $('#d-coefficient').val('');
-    });
-
 
     $('#hob-off-button').on('click', function() {
         set('set_hob_off', "_");
-        $('#fixed-setpoint').attr("placeholder", "Updating...");
-        $('#fixed-setpoint').val('');
+        $('#fixed-setpoint-input').val('');
+    });
+
+    $('#temperature-target-button').on('click', function() {
+        set('set_temperature_target', $('#temperature-target-input').val());
+        $('#temperature-target-input').val('');
+    });
+
+    $('#temperature-hold-button').on('click', function() {
+        set('set_temperature_hold', function(foo) {});
+        $('#temperature-target-input').val('');
+    });
+
+
+    $('#pid-p-button').on('click', function() {
+        set('set_p_coefficient', $('#p-coefficient-input').val());
+        $('#p-coefficient-input').val('');
+    });
+
+    $('#pid-i-button').on('click', function() {
+        set('set_i_coefficient', $('#i-coefficient-input').val());
+        $('#i-coefficient-input').val('');
+    });
+
+    $('#pid-d-button').on('click', function() {
+        set('set_d_coefficient', $('#d-coefficient-input').val());
+        $('#d-coefficient-input').val('');
     });
 
     $('#reset-pid-button').on('click', function() {
         get("set_pid_reset", function(foo) {});
     });
 
+    $('#frame-interval-button').on('click', function() {
+        set('set_frame_interval', $('#frame-interval-input').val());
+        $('#frame-interval-input').val('');
+    });
+
+    $('#min-interval-button').on('click', function() {
+        set('set_frame_interval', 0);
+        $('#frame-interval-input').val('');
+    });
+
+
+
     $('#ip-address-button').on('click', function() {
         localStorage.ip_address = $('#ip-address').val()
         $('#ip-address').attr("placeholder", localStorage.ip_address);
         $('#ip-address').val('');
-    });
-
-    $('#frame-interval-button').on('click', function() {
-        set('set_camera_sleep', $('#frame-interval').val());
     });
 });
