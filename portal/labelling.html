@@ -140,25 +140,35 @@
                       </div>
                     </div>
                     <button id="start" type="button" class="btn btn-outline-secondary supplementary-button"><span data-feather="play-circle"></span>&nbsp;&nbsp;Start</button>
-                    <button id="stop" type="button" class="btn btn-outline-danger supplementary-button d-none"><span data-feather="stop-circle"></span>&nbsp;&nbsp;Stop</button>
+                    <button id="stop" type="button" style="display: none" class="btn btn-outline-danger supplementary-button"><span data-feather="stop-circle"></span>&nbsp;&nbsp;Stop</button>
                   </div>
-                  <div class="row pl-3 pr-3">
-                    <label>Live label</label>
-                    <h2><span class="badge badge-light"><span id="active-label">None</span></span></h2>
+                  <div class="row justify-content-between pl-3 pr-3">
+                    <label>Select label from group</label>
+                    <select id="select-labels" class="custom-select mb-3" style="width: 300px"><option selected="true" disabled>Select label</option></select>
+                    <div id="label-button-group" class="btn-group-vertical" role="group" style="width: 300px">
+                    </div>
+                    <button id="clear-label" style="display: none" type="button" class="btn btn-outline-danger supplementary-button"><span data-feather="tag"></span>&nbsp;&nbsp;None</button>
                   </div>
                 </div>
                 <div class="col">
-                  <div class="row justify-content-between pl-3 pr-3">
-                    <label>Select label</label>
-                    <select id="select-labels" class="custom-select mb-3" style="width: 300px"><option>Loading...</option></select>
-                    <div id="label-button-group" class="btn-group-vertical" role="group" style="width: 300px">
-                      <button type="button" class="btn btn-outline-primary label-button">asdf</button>
+                  <div class="row pl-3 pr-3">
+                    <label>Live label</label>
+                    <h2 class="pr-3"><span class="badge badge-light"><span id="measurement-id">000</span></span></h2>
+                    <h2><span class="badge badge-light"><span id="active-label">None</span></span></h2>
+                  </div>
+                  <div class="row pl-3 pr-3 justify-content-between">
+                    <label style="margin-top: 25px">Type label</label>
+                    <div class="input-group">
+                      <input id="type-label-input" type="text" class="form-control" placeholder="Label">
+                      <div class="input-group-append">
+                        <button id="type-label-button" type="button" class="btn btn-outline-primary"><span data-feather="check"></span></button>
+                      </div>
                     </div>
                     <button id="clear-label" type="button" class="btn btn-outline-danger supplementary-button"><span data-feather="tag"></span>&nbsp;&nbsp;None</button>
                   </div>
                 </div>
               </div>
-              <div class="row mt-3">
+              <div class="row">
                 <div class="col">
                   <label>Session data</label>
                   <table id="table">
