@@ -35,7 +35,7 @@ var mydata =
     ];
 
 function badgeFormatter(value) {
-    return '<span class="badge badge-light" style="font-size: 18px;">' + value + '</span>'
+    return '<span class="badge badge-light" style="font-size: 17px;">' + value + '</span>'
 }
 
 $(function() {
@@ -100,13 +100,13 @@ function update() {
 
             // Update key information
             $('#session-id-output').html(meta.attributes.session_name);
-            $('#active-label').html(meta.attributes.active_label);
             $('#measurement-id').html(meta.attributes.measurement_id);
-            $('#time-stamp').html(meta.attributes.time_stamp);
 
-
-            // Update live data
-
+            if (meta.attributes.active_label) {
+                $('#active-label').html(meta.attributes.active_label);
+            } else {
+                $('#active-label').html("None")
+            }
 
             // Load new images
             $('#camera-image').attr("src", meta.attributes.camera_filepath);
@@ -131,16 +131,17 @@ function update() {
             $('#d-coefficient-output').html(meta.attributes.d_coefficient);
             $('#frame-interval-output').html(meta.attributes.interval);
 
+            console.log(meta.attributes.session_name)
 
             if (meta.attributes.session_name == undefined) {
                 $("#stop").hide();
                 $("#start").show();
-                $('#session-id').prop("disabled", false);
-                $('#session-id-output').html("Enter session ID");
+                $('#session-id-input').prop("disabled", false);
+                $('#session-id-output').html("None");
             } else {
                 $("#start").hide();
                 $("#stop").show();
-                $('#session-id').prop("disabled", true);
+                $('#session-id-input').prop("disabled", true);
                 $('#session-id-output').html(meta.attributes.session_name);
             }
         }
@@ -200,7 +201,7 @@ function get_all_labels() {
         let dropdown = $('#select-labels');
 
         dropdown.empty();
-        dropdown.append('<option selected="true" disabled>Select labels</option>');
+        dropdown.append('<option selected="true" disabled>Select from group</option>');
         dropdown.prop('selectedIndex', 0);
 
         // Populate dropdown 
@@ -222,6 +223,8 @@ function get_all_labels() {
 
                 label_buttons.append($('<button type="button" class="btn btn-outline-primary label-button"></button>').html(entry)); //.html(entry).attr('value', entry)
             });
+
+            $('#clear-label').show()
 
             $('.label-button').on('click', function() {
                 set('set_active_label', $(this).text());
@@ -258,19 +261,13 @@ function get_all_models() {
 
 $(document).ready(function() {
 
-    // Live labelling
+    // API control
 
-    $('#start').on('click', function() {
-        set('start', $('#session-id-input').val());
-        $('#session-id-input').val('');
-    });
-
-    $('#stop').on('click', function() {
-        get("stop", function(foo) {});
-    });
-
-    $('#select-model-button').on('click', function() {
-        set('set_active_model', $('#select-model').val());
+    $('#ip-address-button').on('click', function() {
+        localStorage.ip_address = $('#ip-address-input').val()
+        $('#ip-address-output').html(localStorage.ip_address);
+        $('#ip-address-input').val('');
+        endpoint_url = 'http://192.168.0.' + localStorage.ip_address + ':5000/';
     });
 
     $('#quit').on('click', function() {
@@ -288,6 +285,8 @@ $(document).ready(function() {
     $('#pi-restart').on('click', function() {
         get("pi_restart", function(foo) {});
     });
+
+
 
 
     // Live control
@@ -311,7 +310,6 @@ $(document).ready(function() {
         set('set_temperature_hold', function(foo) {});
         $('#temperature-target-input').val('');
     });
-
 
     $('#pid-p-button').on('click', function() {
         set('set_p_coefficient', $('#p-coefficient-input').val());
@@ -343,15 +341,42 @@ $(document).ready(function() {
     });
 
 
+    // Live labelling
 
-    $('#ip-address-button').on('click', function() {
-        localStorage.ip_address = $('#ip-address-input').val()
-        $('#ip-address-output').html(localStorage.ip_address);
-        $('#ip-address-input').val('');
-        endpoint_url = 'http://192.168.0.' + localStorage.ip_address + ':5000/';
+    $('#start').on('click', function() {
+        var session_id = $('#session-id-input').val();
+        session_id = session_id.trim();
+        if (session_id) {
+            session_id = session_id.replace(/\s+/g, '_');
+            set('start', session_id);
+            $('#session-id-input').val('');
+        }
+    });
+
+    $('#type-label-button').on('click', function() {
+        var new_label = $('#type-label-input').val();
+        new_label = new_label.trim();
+        if (new_label) {
+            new_label = new_label.replace(/\s+/g, '_');
+            set('set_active_label', new_label);
+            $('#type-label-input').val('');
+        }
+    });
+
+    $('#clear-label').on('click', function() {
+        get("set-no-label", function(foo) {});
+    });
+
+    $('#stop').on('click', function() {
+        get("stop", function(foo) {});
     });
 
 
+    // Live inference
+
+    $('#select-model-button').on('click', function() {
+        set('set_active_model', $('#select-model').val());
+    });
 
 
 
