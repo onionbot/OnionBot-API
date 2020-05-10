@@ -102,10 +102,10 @@ function update() {
             $('#session-id-output').html(meta.attributes.session_ID);
             $('#measurement-id').html(meta.attributes.measurement_id);
 
-            if (meta.attributes.active_label) {
-                $('#active-label').html(meta.attributes.active_label);
+            if (meta.attributes.label) {
+                $('#label').html(meta.attributes.label);
             } else {
-                $('#active-label').html("None")
+                $('#label').html("None")
             }
 
             // Load new images
@@ -227,7 +227,7 @@ function get_all_labels() {
             $('#select-label-clear').show()
 
             $('.label-button').on('click', function() {
-                set('set_active_label', $(this).text());
+                set('set_label', $(this).text());
             });
 
         });
@@ -362,7 +362,7 @@ $(document).ready(function() {
         new_label = new_label.trim();
         if (new_label) {
             new_label = new_label.replace(/\s+/g, '_');
-            set('set_active_label', new_label);
+            set('set_label', new_label);
             $('#type-label-input').val('');
         }
     });

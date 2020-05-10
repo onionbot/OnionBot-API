@@ -44,7 +44,7 @@ class OnionBot(object):
 
         self.latest_meta = " "
         self.session_ID = None
-        self.active_label = None
+        self.label = None
 
     def run(self):
         """Start logging"""
@@ -63,12 +63,12 @@ class OnionBot(object):
 
                 # Get update on key information
                 measurement_id += 1
-                active_label = self.active_label
+                label = self.label
                 session_ID = self.session_ID
 
                 # Generate filepaths for logs
                 queued_filepaths = data.generate_filepaths(
-                    session_ID, timer, measurement_id, active_label
+                    session_ID, timer, measurement_id, label
                 )
 
                 # Generate metadata for frontend
@@ -76,7 +76,7 @@ class OnionBot(object):
                     session_ID=session_ID,
                     timer=timer,
                     measurement_id=measurement_id,
-                    active_label=active_label,
+                    label=label,
                     filepaths=queued_filepaths,
                     thermal_data=thermal.data,
                     control_data=control.data,
@@ -120,7 +120,7 @@ class OnionBot(object):
                         % (
                             attributes["measurement_id"],
                             attributes["session_ID"],
-                            attributes["active_label"],
+                            attributes["label"],
                             attributes["interval"],
                             attributes["temperature"],
                             attributes["pid_enabled"],
@@ -179,14 +179,14 @@ class OnionBot(object):
         self.chosen_labels = string
         return "1"
 
-    def set_active_label(self, string):
+    def set_label(self, string):
         """Command to change current active label -  for building training datasets"""
-        self.active_label = string
+        self.label = string
         return "1"
 
     def set_no_label(self):
         """Command to set active label to None type"""
-        self.active_label = None
+        self.label = None
         return "1"
 
     def set_active_model(self, string):

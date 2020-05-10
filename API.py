@@ -53,9 +53,9 @@ def index():
         logger.debug("set_chosen_labels called")
         return bot.set_chosen_labels(request.form["value"])
 
-    if request.form["action"] == "set_active_label":
-        logger.debug("set_active_label called")
-        return bot.set_active_label(request.form["value"])
+    if request.form["action"] == "set_label":
+        logger.debug("set_label called")
+        return bot.set_label(request.form["value"])
 
     if request.form["action"] == "set_no_label":
         logger.debug("set_no_label called")

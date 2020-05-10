@@ -23,38 +23,45 @@ class Data:
         self.timer = datetime.now()
 
     def generate_filepaths(
-        self, session_ID, time_stamp, measurement_id, active_label
+        self, session_ID, time_stamp, measurement_id, label
     ):
         """Generate filepaths for local and cloud storage for all file types"""
 
         filepaths = {}
 
-        path = f"{PATH}/logs/{session_ID}/camera/{active_label}"
+        # Camera filepath
+        path = f"{PATH}/logs/{session_ID}/camera/{label}"
         makedirs(path, exist_ok=True)
-        filename = f"{session_ID}_{str(measurement_id).zfill(5)}_{time_stamp}_camera_{active_label}.jpg"
+        filename = f"{session_ID}_{str(measurement_id).zfill(5)}_{time_stamp}_camera_{label}.jpg"
         filepaths["camera"] = f"{path}/{filename}"
 
+        # Labels file creation
         labels_file_path = f"{PATH}/logs/{session_ID}/camera/labels.csv"
 
         if not path.isfile(labels_file_path):
             with open(labels_file_path, "w") as file:
-                file.write("image_path[,label]")
+                file.write("image_path[,label]\n")
                 file.close()
+                filepaths["labels"] = labels_file_path
 
+
+        # Labels file update
         with open(labels_file_path, "a") as file:
             file.write(
-                f"gs://{BUCKET}/logs/{session_ID}/camera/{active_label}/{filename},{active_label}"
+                f"gs://{BUCKET}/logs/{session_ID}/camera/{label}/{filename},{label}\n"
             )
             file.close()
 
-        path = f"{PATH}/logs/{session_ID}/thermal/{active_label}"
+        # Thermal filepath
+        path = f"{PATH}/logs/{session_ID}/thermal/{label}"
         makedirs(path, exist_ok=True)
-        filename = f"{session_ID}_{str(measurement_id).zfill(5)}_{time_stamp}_thermal_{active_label}.jpg"
+        filename = f"{session_ID}_{str(measurement_id).zfill(5)}_{time_stamp}_thermal_{label}.jpg"
         filepaths["thermal"] = f"{path}/{filename}"
 
-        path = f"{PATH}/logs/{session_ID}/meta/{active_label}"
+        # Meta filepath
+        path = f"{PATH}/logs/{session_ID}/meta/{label}"
         makedirs(path, exist_ok=True)
-        filename = f"{session_ID}_{str(measurement_id).zfill(5)}_{time_stamp}_meta_{active_label}.json"
+        filename = f"{session_ID}_{str(measurement_id).zfill(5)}_{time_stamp}_meta_{label}.json"
         filepaths["meta"] = f"{path}/{filename}"
 
         return filepaths
@@ -64,7 +71,7 @@ class Data:
         session_ID,
         timer,
         measurement_id,
-        active_label,
+        label,
         filepaths,
         thermal_data,
         control_data,
@@ -95,7 +102,7 @@ class Data:
             "attributes": {
                 "session_ID": session_ID,
                 "interval": interval,
-                "active_label": active_label,
+                "label": label,
                 "measurement_id": measurement_id,
                 "time_stamp": time_stamp,
                 "camera_filepath": camera_filepath,
