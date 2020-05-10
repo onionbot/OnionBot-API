@@ -39,6 +39,7 @@ label {
 
 .dropdown-item{
   font-size: 1.1rem;
+  cursor: pointer;
 }
 
 .input-group {
@@ -159,6 +160,11 @@ label {
 .form-control-dark:focus {
   border-color: transparent;
   box-shadow: 0 0 0 3px rgba(255, 255, 255, .25);
+}
+
+
+.label-button {
+  height: 40px;
 }
 
 /*
