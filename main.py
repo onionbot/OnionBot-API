@@ -43,7 +43,7 @@ class OnionBot(object):
         cloud.launch_thermal()
 
         self.latest_meta = " "
-        self.session_name = None
+        self.session_ID = None
         self.active_label = None
 
     def run(self):
@@ -64,16 +64,16 @@ class OnionBot(object):
                 # Get update on key information
                 measurement_id += 1
                 active_label = self.active_label
-                session_name = self.session_name
+                session_ID = self.session_ID
 
                 # Generate filepaths for logs
                 queued_filepaths = data.generate_filepaths(
-                    session_name, timer, measurement_id, active_label
+                    session_ID, timer, measurement_id, active_label
                 )
 
                 # Generate metadata for frontend
                 queued_meta = data.generate_meta(
-                    session_name=session_name,
+                    session_ID=session_ID,
                     timer=timer,
                     measurement_id=measurement_id,
                     active_label=active_label,
@@ -116,10 +116,10 @@ class OnionBot(object):
                 if meta is not None:
                     attributes = meta["attributes"]
                     logger.info(
-                        "Logged %s | session_name %s | Label %s | Interval %0.2f | Temperature %s | PID enabled: %s | PID components: %0.1f, %0.1f, %0.1f "
+                        "Logged %s | session_ID %s | Label %s | Interval %0.2f | Temperature %s | PID enabled: %s | PID components: %0.1f, %0.1f, %0.1f "
                         % (
                             attributes["measurement_id"],
-                            attributes["session_name"],
+                            attributes["session_ID"],
                             attributes["active_label"],
                             attributes["interval"],
                             attributes["temperature"],
@@ -152,13 +152,13 @@ class OnionBot(object):
         self.thread = Thread(target=_worker, daemon=True)
         self.thread.start()
 
-    def start(self, session_name):
-        self.session_name = session_name
+    def start(self, session_ID):
+        self.session_ID = session_ID
         return "1"
 
     def stop(self):
         """Stop logging"""
-        self.session_name = None
+        self.session_ID = None
         return "1"
 
     def get_latest_meta(self):

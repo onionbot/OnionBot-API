@@ -99,7 +99,7 @@ function update() {
             meta = JSON.parse(data);
 
             // Update key information
-            $('#session-id-output').html(meta.attributes.session_name);
+            $('#session-id-output').html(meta.attributes.session_ID);
             $('#measurement-id').html(meta.attributes.measurement_id);
 
             if (meta.attributes.active_label) {
@@ -131,9 +131,9 @@ function update() {
             $('#d-coefficient-output').html(meta.attributes.d_coefficient);
             $('#frame-interval-output').html(meta.attributes.interval);
 
-            console.log(meta.attributes.session_name)
+            console.log(meta.attributes.session_ID)
 
-            if (meta.attributes.session_name == undefined) {
+            if (meta.attributes.session_ID == undefined) {
                 $("#stop").hide();
                 $("#start").show();
                 $('#session-id-input').prop("disabled", false);
@@ -142,7 +142,7 @@ function update() {
                 $("#start").hide();
                 $("#stop").show();
                 $('#session-id-input').prop("disabled", true);
-                $('#session-id-output').html(meta.attributes.session_name);
+                $('#session-id-output').html(meta.attributes.session_ID);
             }
         }
 
@@ -198,7 +198,7 @@ function get_all_labels() {
     get("get_all_labels", function(data) {
         // data is a js object 
 
-        let dropdown = $('#select-labels');
+        let dropdown = $('#select-label');
 
         dropdown.empty();
         dropdown.append('<option selected="true" disabled>Select from group</option>');
@@ -224,7 +224,7 @@ function get_all_labels() {
                 label_buttons.append($('<button type="button" class="btn btn-outline-primary label-button"></button>').html(entry)); //.html(entry).attr('value', entry)
             });
 
-            $('#clear-label').show()
+            $('#select-label-clear').show()
 
             $('.label-button').on('click', function() {
                 set('set_active_label', $(this).text());
@@ -353,6 +353,10 @@ $(document).ready(function() {
         }
     });
 
+    $('#stop').on('click', function() {
+        get("stop", function(foo) {});
+    });
+
     $('#type-label-button').on('click', function() {
         var new_label = $('#type-label-input').val();
         new_label = new_label.trim();
@@ -363,14 +367,13 @@ $(document).ready(function() {
         }
     });
 
-    $('#clear-label').on('click', function() {
-        get("set-no-label", function(foo) {});
+    $('#select-label-clear').on('click', function() {
+        set("set_no_label", function(foo) {});
     });
 
-    $('#stop').on('click', function() {
-        get("stop", function(foo) {});
+    $('#type-label-clear').on('click', function() {
+        set("set_no_label", function(foo) {});
     });
-
 
     // Live inference
 

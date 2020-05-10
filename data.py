@@ -2,6 +2,7 @@ import json
 from cloud import Cloud
 from os import makedirs, path
 from datetime import datetime
+import csv
 
 import logging
 
@@ -9,6 +10,7 @@ logger = logging.getLogger(__name__)
 
 cloud = Cloud()
 
+BUCKET = "onionbucket"
 PATH = path.dirname(__file__)
 
 
@@ -21,32 +23,45 @@ class Data:
         self.timer = datetime.now()
 
     def generate_filepaths(
-        self, session_name, time_stamp, measurement_id, active_label
+        self, session_ID, time_stamp, measurement_id, active_label
     ):
         """Generate filepaths for local and cloud storage for all file types"""
 
         filepaths = {}
 
-        path = f"{PATH}/logs/{session_name}/camera/{active_label}"
+        path = f"{PATH}/logs/{session_ID}/camera/{active_label}"
         makedirs(path, exist_ok=True)
-        filename = f"{session_name}_{str(measurement_id).zfill(5)}_{time_stamp}_camera_{active_label}.jpg"
+        filename = f"{session_ID}_{str(measurement_id).zfill(5)}_{time_stamp}_camera_{active_label}.jpg"
         filepaths["camera"] = f"{path}/{filename}"
 
-        path = f"{PATH}/logs/{session_name}/thermal/{active_label}"
+        labels_file_path = f"{PATH}/logs/{session_ID}/camera/labels.csv"
+
+        if not path.isfile(labels_file_path):
+            with open(labels_file_path, "w") as file:
+                file.write("image_path[,label]")
+                file.close()
+
+        with open(labels_file_path, "a") as file:
+            file.write(
+                f"gs://{BUCKET}/logs/{session_ID}/camera/{active_label}/{filename},{active_label}"
+            )
+            file.close()
+
+        path = f"{PATH}/logs/{session_ID}/thermal/{active_label}"
         makedirs(path, exist_ok=True)
-        filename = f"{session_name}_{str(measurement_id).zfill(5)}_{time_stamp}_thermal_{active_label}.jpg"
+        filename = f"{session_ID}_{str(measurement_id).zfill(5)}_{time_stamp}_thermal_{active_label}.jpg"
         filepaths["thermal"] = f"{path}/{filename}"
 
-        path = f"{PATH}/logs/{session_name}/meta/{active_label}"
+        path = f"{PATH}/logs/{session_ID}/meta/{active_label}"
         makedirs(path, exist_ok=True)
-        filename = f"{session_name}_{str(measurement_id).zfill(5)}_{time_stamp}_meta_{active_label}.json"
+        filename = f"{session_ID}_{str(measurement_id).zfill(5)}_{time_stamp}_meta_{active_label}.json"
         filepaths["meta"] = f"{path}/{filename}"
 
         return filepaths
 
     def generate_meta(
         self,
-        session_name,
+        session_ID,
         timer,
         measurement_id,
         active_label,
@@ -61,7 +76,7 @@ class Data:
             if local_path:
                 local_path.replace(PATH, "")
                 # Public URL
-                cloud_location = "https://storage.googleapis.com/" + "onionbucket"
+                cloud_location = "https://storage.googleapis.com/" + BUCKET
 
                 return f"{cloud_location}/{local_path}"
             else:
@@ -76,9 +91,9 @@ class Data:
 
         data = {
             "type": "meta",
-            "id": f"{session_name}_{measurement_id}_{str(time_stamp)}",
+            "id": f"{session_ID}_{measurement_id}_{str(time_stamp)}",
             "attributes": {
-                "session_name": session_name,
+                "session_ID": session_ID,
                 "interval": interval,
                 "active_label": active_label,
                 "measurement_id": measurement_id,
