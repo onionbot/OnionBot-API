@@ -121,7 +121,7 @@
                 Not connected to API
                 </button>
                 <div class="dropdown-menu  dropdown-menu-right">
-                  <a class="dropdown-item" id="update_ip">Update IP address</a>
+                  <a class="dropdown-item" data-toggle="modal" data-target="#IPmodal">Set Raspberry Pi IP address</a>
                 </div>
               </div>
             </div>
@@ -140,9 +140,6 @@
                     <h5><span class="badge badge-light "><span id="fixed-setpoint-output">0</span>&nbsp;%</span></h5>
                   </div>
                   <div class="input-group-append">
-                    <span class="input-group-text">%</span>
-                  </div>
-                  <div class="input-group-append">
                     <button id="fixed-setpoint-button" type="button" class="btn btn-outline-primary"><span data-feather="check"></span></button>
                   </div>
                 </div>
@@ -153,9 +150,6 @@
                   <input type="text" class="form-control" id="temperature-target-input" placeholder="Target">
                   <div class=input-badge>
                     <h5><span class="badge badge-light "><span id="temperature-target-output">0</span>&nbsp;&deg;C</span></h5>
-                  </div>
-                  <div class="input-group-append">
-                    <span class="input-group-text">&deg;C</span>
                   </div>
                   <div class="input-group-append">
                     <button id="temperature-button" type="button" class="btn btn-outline-primary"><span data-feather="check"></span></button>
@@ -171,9 +165,6 @@
                     <h5><span class="badge badge-light "><span id="p-coefficient-output">0</span></span></h5>
                   </div>
                   <div class="input-group-append">
-                    <span class="input-group-text">Kp</span>
-                  </div>
-                  <div class="input-group-append">
                     <button id="pid-p-button" type="button" class="btn btn-outline-primary"><span data-feather="check"></span></button>
                   </div>
                 </div>
@@ -185,9 +176,6 @@
                     <h5><span class="badge badge-light "><span id="i-coefficient-output">0.0</span></span></h5>
                   </div>
                   <div class="input-group-append">
-                    <span class="input-group-text">Ki</span>
-                  </div>
-                  <div class="input-group-append">
                     <button id="pid-i-button" type="button" class="btn btn-outline-primary"><span data-feather="check"></span></button>
                   </div>
                 </div>
@@ -197,9 +185,6 @@
                   <input type="text" class="form-control" id="d-coefficient-input" placeholder="Derivative">
                   <div class=input-badge>
                     <h5><span class="badge badge-light "><span id="d-coefficient-output">0.0</span></span></h5>
-                  </div>
-                  <div class="input-group-append">
-                    <span class="input-group-text">Kd</span>
                   </div>
                   <div class="input-group-append">
                     <button id="pid-d-button" type="button" class="btn btn-outline-primary"><span data-feather="check"></span></button>
@@ -214,9 +199,7 @@
                   <div class=input-badge>
                     <h5><span class="badge badge-light "><span id="frame-interval-output">0.0</span>&nbsp;s</span></h5>
                   </div>
-                  <div class="input-group-append">
-                    <span class="input-group-text">s</span>
-                  </div>
+
                   <div class="input-group-append">
                     <button id="frame-interval-button" type="button" class="btn btn-outline-primary"><span data-feather="check"></span></button>
                   </div>
@@ -245,6 +228,36 @@
           </div>
         </div>
       </main>
+      <!-- Modal -->
+      <div class="modal fade" id="IPmodal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Set IP address</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div class="input-group w-100">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text">192.168.0.</span>
+                  </div>
+                <input id="ip-address-input" type="text" class="form-control" placeholder="Last 2 digits">
+                <div class=input-badge>
+                  <h5><span id="ip-address-output" class="badge badge-light "><span>00</span></span></h5>
+                </div>
+                <div class="input-group-append">
+                  <button id="ip-address-button" type="button" data-dismiss="modal" class="btn btn-outline-primary"><span data-feather="check"></span></button>
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <label class="text-muted" style="font-size: 13px">Find your Raspberry Pi's IP address using the <span class="badge badge-light ">ifconfig</span> command</label>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>

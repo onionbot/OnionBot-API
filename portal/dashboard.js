@@ -7,11 +7,13 @@
 // -------------------------------------------------------
 // ---------------- APPLICATION VARIABLES ----------------
 
+var endpoint_url = 'http://192.168.0.1:5000/'
 if (!localStorage.ip_address) {
-    localStorage.ip_address = "192.168.0.1";
+    $('#IPmodal').modal('show')
+} else {
+    endpoint_url = 'http://192.168.0.' + localStorage.ip_address + ':5000/';
 }
 
-var endpoint_url = 'http://' + localStorage.ip_address + ':5000/';
 var update_interval = 100;
 var connected = false;
 var previous_meta = null;
@@ -84,9 +86,7 @@ function update() {
         if (data == previous_meta) {
             // Update previous meta
             previous_meta = data
-        }
-
-        else {
+        } else {
             // Update previous meta
             previous_meta = data
 
@@ -345,8 +345,20 @@ $(document).ready(function() {
 
 
     $('#ip-address-button').on('click', function() {
-        localStorage.ip_address = $('#ip-address').val()
-        $('#ip-address').attr("placeholder", localStorage.ip_address);
-        $('#ip-address').val('');
+        localStorage.ip_address = $('#ip-address-input').val()
+        $('#ip-address-output').html(localStorage.ip_address);
+        $('#ip-address-input').val('');
+        endpoint_url = 'http://192.168.0.' + localStorage.ip_address + ':5000/';
     });
+
+
+
+
+
+
+
+
+
+
+
 });

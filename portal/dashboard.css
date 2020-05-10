@@ -56,10 +56,10 @@ label {
   font-size: 22px;
 }
 
-.input-group-text {
+/*.input-group-text {
   width: 45px;
   display: none;
-}
+}*/
 
 .form-control {
   width: 100px;
