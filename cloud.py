@@ -41,8 +41,8 @@ class Cloud(object):
                 blob = bucket.blob(cloud_path)
                 blob.upload_from_filename(local_path)
                 blob.make_public()
-                logger.info("Uploaded camera file to cloud: %s" % (local_path))
-                logger.info("Blob is publicly accessible at %s" % (blob.public_url))
+                logger.debug("Uploaded camera file to cloud: %s" % (local_path))
+                logger.debug("Blob is publicly accessible at %s" % (blob.public_url))
 
                 self.camera_file_queue.task_done()
 
