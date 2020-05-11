@@ -52,7 +52,7 @@ class OnionBot(object):
         def _worker():
             """Threaded to run capture loop in background while allowing other processes to continue"""
 
-            measurement_id = 0
+            measurement_ID = 0
             filepaths = None
             meta = None
 
@@ -62,20 +62,20 @@ class OnionBot(object):
                 timer = datetime.now()
 
                 # Get update on key information
-                measurement_id += 1
+                measurement_ID += 1
                 label = self.label
                 session_ID = self.session_ID
 
                 # Generate filepaths for logs
                 queued_filepaths = data.generate_filepaths(
-                    session_ID, timer, measurement_id, label
+                    session_ID, timer, measurement_ID, label
                 )
 
                 # Generate metadata for frontend
                 queued_meta = data.generate_meta(
                     session_ID=session_ID,
                     timer=timer,
-                    measurement_id=measurement_id,
+                    measurement_ID=measurement_ID,
                     label=label,
                     filepaths=queued_filepaths,
                     thermal_data=thermal.data,
@@ -118,7 +118,7 @@ class OnionBot(object):
                     logger.info(
                         "Logged %s | session_ID %s | Label %s | Interval %0.2f | Temperature %s | PID enabled: %s | PID components: %0.1f, %0.1f, %0.1f "
                         % (
-                            attributes["measurement_id"],
+                            attributes["measurement_ID"],
                             attributes["session_ID"],
                             attributes["label"],
                             attributes["interval"],
