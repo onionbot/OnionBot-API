@@ -1,7 +1,6 @@
 import json
-from os import path
 
-FILE = path.dirname(__file__) + "/config.json"
+FILE = "home/pi/onionbot/config.json"
 
 
 class Config(object):
