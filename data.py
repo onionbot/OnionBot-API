@@ -2,6 +2,7 @@ import json
 from cloud import Cloud
 from os import makedirs, path
 from datetime import datetime
+from collections import Counter
 
 import logging
 
@@ -21,51 +22,87 @@ class Data:
         self.meta_filepath = None
         self.timer = datetime.now()
 
-    def generate_filepaths(self, session_ID, timer, measurement_ID, label):
-        """Generate filepaths for local and cloud storage for all file types"""
+    def start_session(self, session_ID, measurement_ID, label):
 
-        filepaths = {}
+        # Labels file creation
+        labels_file_path = f"{PATH}/{BUCKET}/{session_ID}/camera/labels.csv"
+
+        if not path.isfile(labels_file_path):
+            with open(labels_file_path, "w") as file:
+                file.write("image_path[,label]\n")
+                file.close()
+
+        label_list = []
+        with open(labels_file_path, "r") as file:
+            line = file.readline()  # Deliberately skip header line!
+            while line:
+                line = file.readline()
+                label = ",".join(line.split(",")[1:])  # Isolate labels
+                label = label.strip("\n")
+                label_list.append(label)
+
+        label_count = dict(Counter(label_list))
+        label_count.pop("", None)  # Remove empty labels
+
+        self.label_count = label_count
+
+    def generate_file_data(self, session_ID, timer, measurement_ID, label):
+        """Generate file_data for local and cloud storage for all file types"""
+
+        file_data = {}
         time_stamp = timer.strftime("%Y-%m-%d_%H-%M-%S-%f")
 
         # Camera filepath
         new_path = f"{PATH}/{BUCKET}/{session_ID}/camera/{label}"
         makedirs(new_path, exist_ok=True)
         filename = f"{session_ID}_{str(measurement_ID).zfill(5)}_{time_stamp}_camera_{label}.jpg"
-        filepaths["camera"] = f"{new_path}/{filename}"
+        file_data["camera_file"] = f"{new_path}/{filename}"
 
-        # Labels file creation
-        if session_ID:
+        if not session_ID:
+            file_data["label_file"] = None
+            file_data["label_count"] = None
+        else:
+            # Update labels file
             labels_file_path = f"{PATH}/{BUCKET}/{session_ID}/camera/labels.csv"
 
-            if not path.isfile(labels_file_path):
-                with open(labels_file_path, "w") as file:
-                    file.write("image_path[,label]\n")
-                    file.close()
-
-            # Labels file update
             with open(labels_file_path, "a") as file:
                 file.write(
                     f"gs://{BUCKET}/{session_ID}/camera/{label}/{filename},{label}\n"
                 )
                 file.close()
 
-            filepaths["labels"] = labels_file_path
-        else:
-            filepaths["labels"] = None
+            file_data["label_file"] = labels_file_path
+
+            # Increment labels counter
+            with self.label_count[label] as label_entry:
+                if label_entry:
+                    label_entry += 1
+                    self.label_count[label] = label_entry
+                else:
+                    self.label_count[label] = 1
+
+            # Convert labels counter into json table form for web client
+            label_count_output = []
+            for key, value in self.label_count.items():
+                dictionary = {}
+                dictionary["label"] = key
+                dictionary["count"] = value
+                label_count_output.append(dictionary)
+            file_data["label_count"] = label_count_output
 
         # Thermal filepath
         new_path = f"{PATH}/{BUCKET}/{session_ID}/thermal/{label}"
         makedirs(new_path, exist_ok=True)
         filename = f"{session_ID}_{str(measurement_ID).zfill(5)}_{time_stamp}_thermal_{label}.jpg"
-        filepaths["thermal"] = f"{new_path}/{filename}"
+        file_data["thermal"] = f"{new_path}/{filename}"
 
         # Meta filepath
         new_path = f"{PATH}/{BUCKET}/{session_ID}/meta/{label}"
         makedirs(new_path, exist_ok=True)
         filename = f"{session_ID}_{str(measurement_ID).zfill(5)}_{time_stamp}_meta_{label}.json"
-        filepaths["meta"] = f"{new_path}/{filename}"
+        file_data["meta"] = f"{new_path}/{filename}"
 
-        return filepaths
+        return file_data
 
     def generate_meta(
         self,
@@ -73,7 +110,7 @@ class Data:
         timer,
         measurement_ID,
         label,
-        filepaths,
+        file_data,
         thermal_data,
         control_data,
     ):
@@ -83,8 +120,8 @@ class Data:
         self.timer = timer
         time_stamp = timer.strftime("%Y-%m-%d_%H-%M-%S-%f")
 
-        camera_filepath = cloud.get_public_path(filepaths["camera"])
-        thermal_filepath = cloud.get_public_path(filepaths["thermal"])
+        camera_filepath = cloud.get_public_path(file_data["camera_file"])
+        thermal_filepath = cloud.get_public_path(file_data["thermal"])
 
         data = {
             "type": "meta",
@@ -95,6 +132,7 @@ class Data:
                 "label": label,
                 "measurement_ID": measurement_ID,
                 "time_stamp": time_stamp,
+                "label_count": file_data["label_count"],
                 "camera_filepath": camera_filepath,
                 "thermal_filepath": thermal_filepath,
                 "temperature": thermal_data["temperature"],
@@ -124,7 +162,7 @@ class Data:
 
         # logger.debug(data)
 
-        with open(filepaths["meta"], "w") as write_file:
+        with open(file_data["meta"], "w") as write_file:
             json.dump(data, write_file)
 
         return data
