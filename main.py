@@ -105,6 +105,7 @@ class OnionBot(object):
                     # inference.join()
 
                     # Push meta information to file level for API access
+                    self.labels_csv_filepath = filepaths["labels"]
                     self.latest_meta = dumps(meta)
 
                 # Wait for queued image captures to finish, refresh control data
@@ -159,7 +160,10 @@ class OnionBot(object):
     def stop(self):
         """Stop logging"""
         self.session_ID = None
-        return "1"
+        labels = self.labels_csv_filepath
+        cloud.start_camera(labels)
+        cloud.join_camera()
+        return cloud.get_public_path(labels)
 
     def get_latest_meta(self):
         """Returns cloud filepath of latest meta.json - includes path location of images"""
