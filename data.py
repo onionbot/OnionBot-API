@@ -21,10 +21,11 @@ class Data:
         self.meta_filepath = None
         self.timer = datetime.now()
 
-    def generate_filepaths(self, session_ID, time_stamp, measurement_ID, label):
+    def generate_filepaths(self, session_ID, timer, measurement_ID, label):
         """Generate filepaths for local and cloud storage for all file types"""
 
         filepaths = {}
+        time_stamp = timer.strftime("%Y-%m-%d_%H-%M-%S-%f")
 
         # Camera filepath
         new_path = f"{PATH}/logs/{session_ID}/camera/{label}"
