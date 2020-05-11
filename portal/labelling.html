@@ -51,7 +51,7 @@
               <li class="nav-item">
                 <a class="nav-link" href="/portal/autocook.html">
                   <span data-feather="chevrons-right"></span>
-                  Auto Cook
+                  Sous Chef
                 </a>
               </li>
             </ul>
@@ -169,9 +169,9 @@
                 </div>
               </div>
               <div class="row">
-                <div class="col">
+                <div id="table-div" class="col" style="display: none">
                   <label>Session data</label>
-                  <table id="table">
+                  <table id="label-table">
                     <thead>
                       <tr>
                         <th data-field="label" data-formatter="badgeFormatter"><span data-feather="tag"></span>&nbsp;&nbsp;Label</th>
@@ -253,6 +253,8 @@
     <script>
     feather.replace()
     </script>
+
+
     <script src="dashboard.js"></script>
   </body>
 </html>
