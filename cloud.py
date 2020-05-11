@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/home/pi/onionbot-819a387e4e79.json"
 
-BUCKET = "onionbucketus" 
+BUCKET = "onionbucket" 
 PATH = path.dirname(__file__)
 
 
@@ -35,14 +35,14 @@ class Cloud(object):
         while True:
             try:  # Timeout raises queue.Empty
                 local_path = self.camera_file_queue.get(block=True, timeout=0.1)
-                strip = PATH + "/" + BUCKET + "/"
-                local_path = local_path.replace(strip, "")
+                local_path = local_path.replace(PATH + "/", "")
+                cloud_path = local_path.replace(BUCKET + "/", "")
 
-                blob = bucket.blob(local_path)
+                blob = bucket.blob(cloud_path)
                 blob.upload_from_filename(local_path)
                 blob.make_public()
-                logger.debug("Uploaded camera file to cloud: %s" % (local_path))
-                logger.debug("Blob is publicly accessible at %s" % (blob.public_url))
+                logger.info("Uploaded camera file to cloud: %s" % (local_path))
+                logger.info("Blob is publicly accessible at %s" % (blob.public_url))
 
                 self.camera_file_queue.task_done()
 
@@ -73,13 +73,15 @@ class Cloud(object):
 
         while True:
             try:  # Timeout raises queue.Empty
-                path = self.thermal_file_queue.get(block=True, timeout=0.1)
+                local_path = self.thermal_file_queue.get(block=True, timeout=0.1)
+                local_path = local_path.replace(PATH + "/", "")
+                cloud_path = local_path.replace(BUCKET + "/", "")
 
-                blob = bucket.blob(path)
-                blob.upload_from_filename(path)
+                blob = bucket.blob(cloud_path)
+                blob.upload_from_filename(local_path)
                 blob.make_public()
-                logger.debug("Uploaded to cloud: %s" % (path))
-                logger.debug("Blob is publicly accessible at %s" % (blob.public_url))
+                logger.info("Uploaded camera file to cloud: %s" % (local_path))
+                logger.info("Blob is publicly accessible at %s" % (blob.public_url))
 
                 self.thermal_file_queue.task_done()
 
