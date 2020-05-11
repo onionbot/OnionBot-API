@@ -35,7 +35,8 @@ class Cloud(object):
         while True:
             try:  # Timeout raises queue.Empty
                 local_path = self.camera_file_queue.get(block=True, timeout=0.1)
-                local_path = local_path.replace(PATH + "/", "")
+                strip = PATH + "/" + BUCKET + "/"
+                local_path = local_path.replace(strip, "")
 
                 blob = bucket.blob(local_path)
                 blob.upload_from_filename(local_path)

@@ -28,14 +28,14 @@ class Data:
         time_stamp = timer.strftime("%Y-%m-%d_%H-%M-%S-%f")
 
         # Camera filepath
-        new_path = f"{PATH}/logs/{session_ID}/camera/{label}"
+        new_path = f"{PATH}/{BUCKET}/{session_ID}/camera/{label}"
         makedirs(new_path, exist_ok=True)
         filename = f"{session_ID}_{str(measurement_ID).zfill(5)}_{time_stamp}_camera_{label}.jpg"
         filepaths["camera"] = f"{new_path}/{filename}"
 
         # Labels file creation
         if session_ID:
-            labels_file_path = f"{PATH}/logs/{session_ID}/camera/labels.csv"
+            labels_file_path = f"{PATH}/{BUCKET}/{session_ID}/camera/labels.csv"
 
             if not path.isfile(labels_file_path):
                 with open(labels_file_path, "w") as file:
@@ -45,7 +45,7 @@ class Data:
             # Labels file update
             with open(labels_file_path, "a") as file:
                 file.write(
-                    f"gs://{BUCKET}/logs/{session_ID}/camera/{label}/{filename},{label}\n"
+                    f"gs://{BUCKET}/{session_ID}/camera/{label}/{filename},{label}\n"
                 )
                 file.close()
 
@@ -54,13 +54,13 @@ class Data:
             filepaths["labels"] = None
 
         # Thermal filepath
-        new_path = f"{PATH}/logs/{session_ID}/thermal/{label}"
+        new_path = f"{PATH}/{BUCKET}/{session_ID}/thermal/{label}"
         makedirs(new_path, exist_ok=True)
         filename = f"{session_ID}_{str(measurement_ID).zfill(5)}_{time_stamp}_thermal_{label}.jpg"
         filepaths["thermal"] = f"{new_path}/{filename}"
 
         # Meta filepath
-        new_path = f"{PATH}/logs/{session_ID}/meta/{label}"
+        new_path = f"{PATH}/{BUCKET}/{session_ID}/meta/{label}"
         makedirs(new_path, exist_ok=True)
         filename = f"{session_ID}_{str(measurement_ID).zfill(5)}_{time_stamp}_meta_{label}.json"
         filepaths["meta"] = f"{new_path}/{filename}"
