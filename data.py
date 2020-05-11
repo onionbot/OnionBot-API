@@ -2,7 +2,6 @@ import json
 from cloud import Cloud
 from os import makedirs, path
 from datetime import datetime
-import csv
 
 import logging
 
@@ -10,8 +9,8 @@ logger = logging.getLogger(__name__)
 
 cloud = Cloud()
 
-BUCKET = "onionbucket"
 PATH = path.dirname(__file__)
+BUCKET = cloud.bucket
 
 
 class Data:
@@ -22,9 +21,7 @@ class Data:
         self.meta_filepath = None
         self.timer = datetime.now()
 
-    def generate_filepaths(
-        self, session_ID, time_stamp, measurement_id, label
-    ):
+    def generate_filepaths(self, session_ID, time_stamp, measurement_ID, label):
         """Generate filepaths for local and cloud storage for all file types"""
 
         filepaths = {}
@@ -32,7 +29,7 @@ class Data:
         # Camera filepath
         path = f"{PATH}/logs/{session_ID}/camera/{label}"
         makedirs(path, exist_ok=True)
-        filename = f"{session_ID}_{str(measurement_id).zfill(5)}_{time_stamp}_camera_{label}.jpg"
+        filename = f"{session_ID}_{str(measurement_ID).zfill(5)}_{time_stamp}_camera_{label}.jpg"
         filepaths["camera"] = f"{path}/{filename}"
 
         # Labels file creation
@@ -44,7 +41,6 @@ class Data:
                 file.close()
                 filepaths["labels"] = labels_file_path
 
-
         # Labels file update
         with open(labels_file_path, "a") as file:
             file.write(
@@ -55,13 +51,13 @@ class Data:
         # Thermal filepath
         path = f"{PATH}/logs/{session_ID}/thermal/{label}"
         makedirs(path, exist_ok=True)
-        filename = f"{session_ID}_{str(measurement_id).zfill(5)}_{time_stamp}_thermal_{label}.jpg"
+        filename = f"{session_ID}_{str(measurement_ID).zfill(5)}_{time_stamp}_thermal_{label}.jpg"
         filepaths["thermal"] = f"{path}/{filename}"
 
         # Meta filepath
         path = f"{PATH}/logs/{session_ID}/meta/{label}"
         makedirs(path, exist_ok=True)
-        filename = f"{session_ID}_{str(measurement_id).zfill(5)}_{time_stamp}_meta_{label}.json"
+        filename = f"{session_ID}_{str(measurement_ID).zfill(5)}_{time_stamp}_meta_{label}.json"
         filepaths["meta"] = f"{path}/{filename}"
 
         return filepaths
@@ -70,7 +66,7 @@ class Data:
         self,
         session_ID,
         timer,
-        measurement_id,
+        measurement_ID,
         label,
         filepaths,
         thermal_data,
@@ -78,32 +74,21 @@ class Data:
     ):
         """Generate metadata to be parsed by portal"""
 
-        def _get_public_path(local_path):
-
-            if local_path:
-                local_path.replace(PATH, "")
-                # Public URL
-                cloud_location = "https://storage.googleapis.com/" + BUCKET
-
-                return f"{cloud_location}/{local_path}"
-            else:
-                return None
-
         interval = round((timer - self.timer).total_seconds(), 1)
         self.timer = timer
         time_stamp = timer.strftime("%Y-%m-%d_%H-%M-%S-%f")
 
-        camera_filepath = _get_public_path(filepaths["camera"])
-        thermal_filepath = _get_public_path(filepaths["thermal"])
+        camera_filepath = cloud.get_public_path(filepaths["camera"])
+        thermal_filepath = cloud.get_public_path(filepaths["thermal"])
 
         data = {
             "type": "meta",
-            "id": f"{session_ID}_{measurement_id}_{str(time_stamp)}",
+            "id": f"{session_ID}_{measurement_ID}_{str(time_stamp)}",
             "attributes": {
                 "session_ID": session_ID,
                 "interval": interval,
                 "label": label,
-                "measurement_id": measurement_id,
+                "measurement_ID": measurement_ID,
                 "time_stamp": time_stamp,
                 "camera_filepath": camera_filepath,
                 "thermal_filepath": thermal_filepath,
