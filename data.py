@@ -35,7 +35,7 @@ class Data:
                 file.close()
 
         label_list = []
-        with open(labels_file, "r") as file:
+        with open(labels_file_path, "r") as file:
             line = file.readline()  # Deliberately skip header line!
             while line:
                 line = file.readline()
@@ -47,7 +47,7 @@ class Data:
         label_count.pop("", None)  # Remove empty labels
         label_count.pop("None", None)  # Remove unlabelled images
 
-        self.labels_file_path = labels_file
+        self.labels_file_path = labels_file_path
         self.label_count = label_count
 
     def generate_file_data(self, session_ID, timer, measurement_ID, label):
