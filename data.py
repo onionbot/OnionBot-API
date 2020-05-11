@@ -33,20 +33,23 @@ class Data:
         filepaths["camera"] = f"{new_path}/{filename}"
 
         # Labels file creation
-        labels_file_path = f"{PATH}/logs/{session_ID}/camera/labels.csv"
+        if session_ID:
+            labels_file_path = f"{PATH}/logs/{session_ID}/camera/labels.csv"
 
-        if not path.isfile(labels_file_path):
-            with open(labels_file_path, "w") as file:
-                file.write("image_path[,label]\n")
-                file.close()
+            if not path.isfile(labels_file_path):
+                with open(labels_file_path, "w") as file:
+                    file.write("image_path[,label]\n")
+                    file.close()
                 filepaths["labels"] = labels_file_path
 
-        # Labels file update
-        with open(labels_file_path, "a") as file:
-            file.write(
-                f"gs://{BUCKET}/logs/{session_ID}/camera/{label}/{filename},{label}\n"
-            )
-            file.close()
+            # Labels file update
+            with open(labels_file_path, "a") as file:
+                file.write(
+                    f"gs://{BUCKET}/logs/{session_ID}/camera/{label}/{filename},{label}\n"
+                )
+                file.close()
+        else:
+            filepaths["labels"] = None
 
         # Thermal filepath
         new_path = f"{PATH}/logs/{session_ID}/thermal/{label}"
