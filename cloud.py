@@ -99,7 +99,7 @@ class Cloud(object):
         self.thermal_thread = Thread(target=self._thermal_worker, daemon=True)
         self.thermal_thread.start()
 
-    def get_public_path(local_path):
+    def get_public_path(self, local_path):
         if local_path:
             local_path.replace(PATH, "")
             # Public URL
