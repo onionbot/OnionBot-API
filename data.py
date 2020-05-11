@@ -43,7 +43,9 @@ class Data:
 
         label_count = dict(Counter(label_list))
         label_count.pop("", None)  # Remove empty labels
+        label_count.pop("None", None)  # Remove unlabelled images
 
+        self.labels_file_path = labels_file_path
         self.label_count = label_count
 
     def generate_file_data(self, session_ID, timer, measurement_ID, label):
@@ -63,23 +65,23 @@ class Data:
             file_data["label_count"] = None
         else:
             # Update labels file
-            labels_file_path = f"{PATH}/{BUCKET}/{session_ID}/camera/labels.csv"
 
-            with open(labels_file_path, "a") as file:
+            with open(self.labels_file_path, "a") as file:
                 file.write(
                     f"gs://{BUCKET}/{session_ID}/camera/{label}/{filename},{label}\n"
                 )
                 file.close()
 
-            file_data["label_file"] = labels_file_path
+            file_data["label_file"] = self.labels_file_path
 
-            # Increment labels counter
-            with self.label_count[label] as label_entry:
-                if label_entry:
-                    label_entry += 1
-                    self.label_count[label] = label_entry
-                else:
-                    self.label_count[label] = 1
+            if label:
+                # Increment labels counter
+                with self.label_count[label] as label_entry:
+                    if label_entry:
+                        label_entry += 1
+                        self.label_count[label] = label_entry
+                    else:
+                        self.label_count[label] = 1
 
             # Convert labels counter into json table form for web client
             label_count_output = []
