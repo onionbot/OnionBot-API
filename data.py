@@ -166,18 +166,23 @@ class Data:
         data = {
             "type": "labels",
             "attributes": {
-                "Onion": {
-                    "0": "Discard",
-                    "1": "Raw",
-                    "2": "Browning",
-                    "3": "Brown",
-                    "4": "Overcooked",
+                "pan_on_off": {
+                    "0": "pan_on",
+                    "1": "pan_off",
                 },
-                "Water": {
-                    "0": "Discard",
-                    "1": "Not boiling",
-                    "2": "Simmering",
-                    "3": "Boiling",
+                "pasta": {
+                    "0": "empty_pan",
+                    "1": "add_water",
+                    "2": "water_boiling",
+                    "3": "add_pasta",
+                },
+                "sauce": {
+                    "0": "empty_pan",
+                    "1": "add_oil",
+                    "2": "add_onions",
+                    "3": "onions_cooked",
+                    "4": "add_puree",
+                    "5": "add_tomatoes",
                 },
             },
         }
