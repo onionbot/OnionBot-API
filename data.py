@@ -83,14 +83,7 @@ class Data:
                     else:
                         self.label_count[label] = 1
 
-            # Convert labels counter into json table form for web client
-            label_count_output = []
-            for key, value in self.label_count.items():
-                dictionary = {}
-                dictionary["label"] = key
-                dictionary["count"] = value
-                label_count_output.append(dictionary)
-            file_data["label_count"] = label_count_output
+            file_data["label_count"] = self.label_count
 
         # Thermal filepath
         new_path = f"{PATH}/{BUCKET}/{session_ID}/thermal/{label}"
