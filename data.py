@@ -76,12 +76,10 @@ class Data:
 
             if label:
                 # Increment labels counter
-                with self.label_count[label] as label_entry:
-                    if label_entry:
-                        label_entry += 1
-                        self.label_count[label] = label_entry
-                    else:
-                        self.label_count[label] = 1
+                try:
+                    self.label_count[label] += 1
+                except KeyError:
+                    self.label_count[label] = 1
 
             file_data["label_count"] = self.label_count
 
