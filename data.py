@@ -94,7 +94,7 @@ class Data:
         new_path = f"{PATH}/{BUCKET}/{session_ID}/thermal/{label}"
         makedirs(new_path, exist_ok=True)
         filename = f"{session_ID}_{str(measurement_ID).zfill(5)}_{time_stamp}_thermal_{label}.jpg"
-        file_data["thermal"] = f"{new_path}/{filename}"
+        file_data["thermal_file"] = f"{new_path}/{filename}"
 
         # Meta filepath
         new_path = f"{PATH}/{BUCKET}/{session_ID}/meta/{label}"
@@ -121,7 +121,7 @@ class Data:
         time_stamp = timer.strftime("%Y-%m-%d_%H-%M-%S-%f")
 
         camera_filepath = cloud.get_public_path(file_data["camera_file"])
-        thermal_filepath = cloud.get_public_path(file_data["thermal"])
+        thermal_filepath = cloud.get_public_path(file_data["thermal_file"])
 
         data = {
             "type": "meta",
