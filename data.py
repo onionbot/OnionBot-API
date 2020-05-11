@@ -25,16 +25,17 @@ class Data:
     def start_session(self, session_ID):
 
         # Labels file creation
-        labels_file_path = f"{PATH}/{BUCKET}/{session_ID}/camera"
+        labels_file_dir = f"{PATH}/{BUCKET}/{session_ID}/camera"
+        labels_file_path = labels_file_path + "/labels.csv"
 
         if not path.isfile(labels_file_path):
-            makedirs(labels_file_path, exist_ok=True)
-            with open(labels_file_path + "/labels.csv", "w") as file:
+            makedirs(labels_file_dir, exist_ok=True)
+            with open(labels_file_path, "w") as file:
                 file.write("image_path[,label]\n")
                 file.close()
 
         label_list = []
-        with open(labels_file_path, "r") as file:
+        with open(labels_file, "r") as file:
             line = file.readline()  # Deliberately skip header line!
             while line:
                 line = file.readline()
@@ -46,7 +47,7 @@ class Data:
         label_count.pop("", None)  # Remove empty labels
         label_count.pop("None", None)  # Remove unlabelled images
 
-        self.labels_file_path = labels_file_path
+        self.labels_file_path = labels_file
         self.label_count = label_count
 
     def generate_file_data(self, session_ID, timer, measurement_ID, label):
