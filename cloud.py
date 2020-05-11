@@ -101,7 +101,7 @@ class Cloud(object):
 
     def get_public_path(self, local_path):
         if local_path:
-            local_path.replace(PATH, "")
+            local_path = local_path.replace(PATH, "")
             # Public URL
             cloud_location = "https://storage.googleapis.com/" + BUCKET
 
