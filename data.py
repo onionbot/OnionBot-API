@@ -25,10 +25,11 @@ class Data:
     def start_session(self, session_ID):
 
         # Labels file creation
-        labels_file_path = f"{PATH}/{BUCKET}/{session_ID}/camera/labels.csv"
+        labels_file_path = f"{PATH}/{BUCKET}/{session_ID}/camera"
 
         if not path.isfile(labels_file_path):
-            with open(labels_file_path, "w") as file:
+            makedirs(labels_file_path, exist_ok=True)
+            with open(labels_file_path + "/labels.csv", "w") as file:
                 file.write("image_path[,label]\n")
                 file.close()
 
