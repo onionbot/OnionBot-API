@@ -111,10 +111,8 @@ function update() {
             // Load new images
             $('#camera-image').attr("src", meta.attributes.camera_filepath);
             $('#thermal-image').attr("src", meta.attributes.thermal_filepath);
-            $('#camera-filepath').html(meta.attributes.camera_filepath);
-            $('#thermal-filepath').html(meta.attributes.thermal_filepath);
-            $('#camera-filepath').attr("href", meta.attributes.camera_filepath);
-            $('#thermal-filepath').attr("href", meta.attributes.thermal_filepath);
+            $('#camera-image').attr("href", meta.attributes.camera_filepath);
+            $('#thermal-image').attr("href", meta.attributes.thermal_filepath);
 
             // Update chart
             // chart.data.datasets[0].data = meta.attributes.thermal_history;
