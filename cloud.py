@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/home/pi/onionbot-819a387e4e79.json"
 
-BUCKET = "onionbucketus" 
+BUCKET = "onion_bucket" 
 PATH = path.dirname(__file__)
 
 
