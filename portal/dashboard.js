@@ -11,38 +11,30 @@ var endpoint_url = 'http://192.168.0.1:5000/'
 if (!localStorage.ip_address) {
     $('#IPmodal').modal('show');
 } else {
-    endpoint_url = 'http://192.168.0.' + localStorage.ip_address + ':5000/';
+    var endpoint_url = 'http://192.168.0.' + localStorage.ip_address + ':5000/';
 }
 
 var update_interval = 100;
 var connected = false;
 var previous_meta = null;
-// var ctx = document.getElementById('myChart').getContext('2d');
+var filename = location.href.split("/").slice(-1)[0];
 
-var $table = $('#table');
-var mydata =
-    [{
-            "label": "not_boiling",
-            "count": 5
-        }, {
-            "label": "boiling",
-            "count": 6
-        }, {
-            "label": "test2",
-            "count": 6
-        },
-
-    ];
-
-function badgeFormatter(value) {
-    return '<span class="badge badge-light" style="font-size: 17px;">' + value + '</span>'
+if (filename == "control.html") {
+    var ctx = document.getElementById('myChart').getContext('2d');
 }
 
-$(function() {
-    $('#table').bootstrapTable({
-        data: mydata
+if (filename == "labelling.html") {
+    $('#label-table').bootstrapTable({
+        data: [],
+        formatNoMatches: function() {
+            return 'Ready to start labelling';
+        }
     });
-});
+
+    function badgeFormatter(value) {
+        return '<span class="badge badge-light" style="font-size: 17px;">' + value + '</span>'
+    }
+}
 
 // ------------------ INTERFACE WITH API ----------------
 
@@ -92,6 +84,17 @@ function update() {
 
             meta = JSON.parse(data);
 
+            if (meta.attributes.label_count && filename == "labelling.html") {
+                let table_data = []
+                for (let [key, value] of Object.entries(meta.attributes.label_count)) {
+                    table_data.push({
+                        "label": key,
+                        "count": value
+                    });
+                }
+                $('#label-table').bootstrapTable('load', table_data);
+            }
+
             // Update key information
             $('#session-id-output').html(meta.attributes.session_ID);
             $('#measurement-id').html(meta.attributes.measurement_ID);
@@ -109,11 +112,13 @@ function update() {
             $('#thermal-link').attr("href", meta.attributes.thermal_filepath);
 
             // Update chart
-            // chart.data.datasets[0].data = meta.attributes.thermal_history;
-            // chart.data.datasets[1].data = meta.attributes.servo_setpoint_history;
-            // chart.data.datasets[2].data = meta.attributes.servo_achieved_history;
-            // chart.update()
-
+            if (filename == "control.html") {
+                chart.data.datasets[0].data = meta.attributes.thermal_history;
+                chart.data.datasets[1].data = meta.attributes.servo_setpoint_history;
+                chart.data.datasets[2].data = meta.attributes.servo_achieved_history;
+                chart.update()
+            }
+            
             // Live control
             $('#temperature').html(meta.attributes.temperature);
             $('#fixed-setpoint-output').html(meta.attributes.servo_setpoint);
@@ -125,11 +130,13 @@ function update() {
 
             if (meta.attributes.session_ID == undefined) {
                 $("#stop").hide();
+                $("#table-div").hide();
                 $("#start").show();
                 $('#session-id-input').prop("disabled", false);
                 $('#session-id-output').html("None");
             } else {
                 $("#start").hide();
+                $("#table-div").show();
                 $("#stop").show();
                 $('#session-id-input').prop("disabled", true);
                 $('#session-id-output').html(meta.attributes.session_ID);
@@ -183,6 +190,9 @@ $(document).ready(function() {
 
 
 // --------------------- FUNCTIONS  ----------------------
+
+
+
 
 function get_all_labels() {
     get("get_all_labels", function(data) {
@@ -346,8 +356,9 @@ $(document).ready(function() {
 
     $('#stop').on('click', function() {
         get("stop", function(data) {
-            $('#cloud-location').html(data);
             $('#cloud-location').attr("href", data);
+            data = data.replace("https://storage.googleapis.com/", "");
+            $('#cloud-location').html(data);
             $('#stopModal').modal('show');
         });
     });
@@ -376,13 +387,5 @@ $(document).ready(function() {
     $('#select-model-button').on('click', function() {
         set('set_active_model', $('#select-model').val());
     });
-
-
-
-
-
-
-
-
 
 });
