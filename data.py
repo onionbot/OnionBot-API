@@ -26,7 +26,7 @@ class Data:
 
         # Labels file creation
         labels_file_dir = f"{PATH}/{BUCKET}/{session_ID}/camera"
-        labels_file_path = labels_file_path + "/labels.csv"
+        labels_file_path = labels_file_dir + "/labels.csv"
 
         if not path.isfile(labels_file_path):
             makedirs(labels_file_dir, exist_ok=True)
