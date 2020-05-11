@@ -9,7 +9,7 @@
 
 var endpoint_url = 'http://192.168.0.1:5000/'
 if (!localStorage.ip_address) {
-    $('#IPmodal').modal('show')
+    $('#IPmodal').modal('show');
 } else {
     endpoint_url = 'http://192.168.0.' + localStorage.ip_address + ':5000/';
 }
@@ -90,29 +90,23 @@ function update() {
             // Update previous meta
             previous_meta = data
 
-            console.log("Refreshing")
-
-            // console.log(data)
-
-            // console.log(previous_meta)
-
             meta = JSON.parse(data);
 
             // Update key information
             $('#session-id-output').html(meta.attributes.session_ID);
-            $('#measurement-id').html(meta.attributes.measurement_id);
+            $('#measurement-id').html(meta.attributes.measurement_ID);
 
             if (meta.attributes.label) {
                 $('#label').html(meta.attributes.label);
             } else {
-                $('#label').html("None")
+                $('#label').html("None");
             }
 
             // Load new images
             $('#camera-image').attr("src", meta.attributes.camera_filepath);
             $('#thermal-image').attr("src", meta.attributes.thermal_filepath);
-            $('#camera-image').attr("href", meta.attributes.camera_filepath);
-            $('#thermal-image').attr("href", meta.attributes.thermal_filepath);
+            $('#camera-link').attr("href", meta.attributes.camera_filepath);
+            $('#thermal-link').attr("href", meta.attributes.thermal_filepath);
 
             // Update chart
             // chart.data.datasets[0].data = meta.attributes.thermal_history;
@@ -128,8 +122,6 @@ function update() {
             $('#i-coefficient-output').html(meta.attributes.i_coefficient);
             $('#d-coefficient-output').html(meta.attributes.d_coefficient);
             $('#frame-interval-output').html(meta.attributes.interval);
-
-            console.log(meta.attributes.session_ID)
 
             if (meta.attributes.session_ID == undefined) {
                 $("#stop").hide();
@@ -222,7 +214,7 @@ function get_all_labels() {
                 label_buttons.append($('<button type="button" class="btn btn-outline-primary label-button"></button>').html(entry)); //.html(entry).attr('value', entry)
             });
 
-            $('#select-label-clear').show()
+            $('#select-label-clear').show();
 
             $('.label-button').on('click', function() {
                 set('set_label', $(this).text());
@@ -262,7 +254,7 @@ $(document).ready(function() {
     // API control
 
     $('#ip-address-button').on('click', function() {
-        localStorage.ip_address = $('#ip-address-input').val()
+        localStorage.ip_address = $('#ip-address-input').val();
         $('#ip-address-output').html(localStorage.ip_address);
         $('#ip-address-input').val('');
         endpoint_url = 'http://192.168.0.' + localStorage.ip_address + ':5000/';
@@ -346,13 +338,18 @@ $(document).ready(function() {
         session_id = session_id.trim();
         if (session_id) {
             session_id = session_id.replace(/\s+/g, '_');
+            session_id = encodeURIComponent(session_id);
             set('start', session_id);
             $('#session-id-input').val('');
         }
     });
 
     $('#stop').on('click', function() {
-        get("stop", function(foo) {});
+        get("stop", function(data) {
+            $('#cloud-location').html(data);
+            $('#cloud-location').attr("href", data);
+            $('#stopModal').modal('show');
+        });
     });
 
     $('#type-label-button').on('click', function() {
@@ -360,6 +357,7 @@ $(document).ready(function() {
         new_label = new_label.trim();
         if (new_label) {
             new_label = new_label.replace(/\s+/g, '_');
+            new_label = encodeURIComponent(new_label);
             set('set_label', new_label);
             $('#type-label-input').val('');
         }
