@@ -154,6 +154,7 @@ class OnionBot(object):
         self.thread.start()
 
     def start(self, session_ID):
+        data.start_session(session_ID)
         self.session_ID = session_ID
         return "1"
 

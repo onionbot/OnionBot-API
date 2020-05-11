@@ -22,7 +22,7 @@ class Data:
         self.meta_filepath = None
         self.timer = datetime.now()
 
-    def start_session(self, session_ID, measurement_ID, label):
+    def start_session(self, session_ID):
 
         # Labels file creation
         labels_file_path = f"{PATH}/{BUCKET}/{session_ID}/camera/labels.csv"
