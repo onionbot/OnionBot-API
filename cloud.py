@@ -34,12 +34,13 @@ class Cloud(object):
 
         while True:
             try:  # Timeout raises queue.Empty
-                path = self.camera_file_queue.get(block=True, timeout=0.1)
+                local_path = self.camera_file_queue.get(block=True, timeout=0.1)
+                local_path = local_path.replace(PATH + "/", "")
 
-                blob = bucket.blob(path)
-                blob.upload_from_filename(path)
+                blob = bucket.blob(local_path)
+                blob.upload_from_filename(local_path)
                 blob.make_public()
-                logger.debug("Uploaded camera file to cloud: %s" % (path))
+                logger.debug("Uploaded camera file to cloud: %s" % (local_path))
                 logger.debug("Blob is publicly accessible at %s" % (blob.public_url))
 
                 self.camera_file_queue.task_done()
@@ -101,8 +102,7 @@ class Cloud(object):
 
     def get_public_path(self, local_path):
         if local_path:
-            local_path = local_path.replace(PATH, "")
-            # Public URL
+            local_path = local_path.replace(PATH + "/", "")
             cloud_location = "https://storage.googleapis.com/" + BUCKET
 
             return f"{cloud_location}/{local_path}"
