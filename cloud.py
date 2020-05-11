@@ -35,7 +35,7 @@ class Cloud(object):
         while True:
             try:  # Timeout raises queue.Empty
                 local_path = self.camera_file_queue.get(block=True, timeout=0.1)
-                cloud_path = local_path.replace(BUCKET + "/" + PATH + "/", "")
+                cloud_path = local_path.replace(PATH + "/" + BUCKET + "/", "")
 
                 blob = bucket.blob(cloud_path)
                 blob.upload_from_filename(local_path)
@@ -73,7 +73,7 @@ class Cloud(object):
         while True:
             try:  # Timeout raises queue.Empty
                 local_path = self.thermal_file_queue.get(block=True, timeout=0.1)
-                cloud_path = local_path.replace(BUCKET + "/" + PATH + "/", "")
+                cloud_path = local_path.replace(PATH + "/" + BUCKET + "/", "")
 
                 blob = bucket.blob(cloud_path)
                 blob.upload_from_filename(local_path)
