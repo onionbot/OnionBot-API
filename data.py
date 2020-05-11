@@ -40,7 +40,6 @@ class Data:
                 with open(labels_file_path, "w") as file:
                     file.write("image_path[,label]\n")
                     file.close()
-                filepaths["labels"] = labels_file_path
 
             # Labels file update
             with open(labels_file_path, "a") as file:
@@ -48,6 +47,8 @@ class Data:
                     f"gs://{BUCKET}/logs/{session_ID}/camera/{label}/{filename},{label}\n"
                 )
                 file.close()
+
+            filepaths["labels"] = labels_file_path
         else:
             filepaths["labels"] = None
 
