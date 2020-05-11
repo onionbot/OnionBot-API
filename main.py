@@ -53,7 +53,7 @@ class OnionBot(object):
             """Threaded to run capture loop in background while allowing other processes to continue"""
 
             measurement_ID = 0
-            filepaths = None
+            file_data = None
             meta = None
 
             while True:
@@ -66,8 +66,8 @@ class OnionBot(object):
                 label = self.label
                 session_ID = self.session_ID
 
-                # Generate filepaths for logs
-                queued_filepaths = data.generate_filepaths(
+                # Generate file_data for logs
+                queued_file_data = data.generate_file_data(
                     session_ID, timer, measurement_ID, label
                 )
 
@@ -77,20 +77,20 @@ class OnionBot(object):
                     timer=timer,
                     measurement_ID=measurement_ID,
                     label=label,
-                    filepaths=queued_filepaths,
+                    file_data=queued_file_data,
                     thermal_data=thermal.data,
                     control_data=control.data,
                 )
 
                 # Start sensor capture
-                camera.start(queued_filepaths["camera"])
-                thermal.start(queued_filepaths["thermal"])
+                camera.start(queued_file_data["camera_file"])
+                thermal.start(queued_file_data["thermal_file"])
 
                 # While taking a picture, process previous data in meantime
-                if filepaths:
+                if file_data:
 
-                    cloud.start_camera(filepaths["camera"])
-                    cloud.start_thermal(filepaths["thermal"])
+                    cloud.start_camera(file_data["camera_file"])
+                    cloud.start_thermal(file_data["thermal_file"])
 
                     # inference.start(previous_meta)
 
@@ -105,7 +105,7 @@ class OnionBot(object):
                     # inference.join()
 
                     # Push meta information to file level for API access
-                    self.labels_csv_filepath = filepaths["labels"]
+                    self.labels_csv_filepath = file_data["label_file"]
                     self.latest_meta = dumps(meta)
 
                 # Wait for queued image captures to finish, refresh control data
@@ -132,7 +132,7 @@ class OnionBot(object):
                     )
 
                 # Move queue forward one place
-                filepaths = queued_filepaths
+                file_data = queued_file_data
                 meta = queued_meta
 
                 # Add delay until ready for next loop
