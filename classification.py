@@ -16,26 +16,20 @@ class Classify(object):
     def __init__(self):
 
         self.tests = {
-            {
-                "pasta": {
-                    "labels": "models/pasta.txt",
-                    "model": "models/pasta.tflite",
-                    "threshold": 0.8,
-                }
+            "pasta": {
+                "labels": "models/pasta.txt",
+                "model": "models/pasta.tflite",
+                "threshold": 0.8,
             },
-            {
-                "sauce": {
-                    "labels": "models/sauce.txt",
-                    "model": "models/sauce.tflite",
-                    "threshold": 0.8,
-                }
+            "sauce": {
+                "labels": "models/sauce.txt",
+                "model": "models/sauce.tflite",
+                "threshold": 0.8,
             },
-            {
-                "pan_on_off": {
-                    "labels": "models/pan_on_off.txt",
-                    "model": "models/pan_on_off.tflite",
-                    "threshold": 0.5,
-                }
+            "pan_on_off": {
+                "labels": "models/pan_on_off.txt",
+                "model": "models/pan_on_off.tflite",
+                "threshold": 0.5,
             },
         }
 
