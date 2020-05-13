@@ -4,7 +4,7 @@ from time import sleep
 from thermal_camera import ThermalCamera
 from camera import Camera
 from cloud import Cloud
-from inference import Classify
+from classification import Classify
 from control import Control
 from data import Data
 from config import Config
@@ -27,6 +27,7 @@ thermal = ThermalCamera()
 camera = Camera()
 control = Control()
 data = Data()
+classify = Classify()
 
 
 class OnionBot(object):
@@ -80,6 +81,7 @@ class OnionBot(object):
                     file_data=queued_file_data,
                     thermal_data=thermal.data,
                     control_data=control.data,
+                    classification_data=classify.data,
                 )
 
                 # Start sensor capture
@@ -91,6 +93,7 @@ class OnionBot(object):
 
                     cloud.start_camera(file_data["camera_file"])
                     cloud.start_thermal(file_data["thermal_file"])
+                    classify.start(file_data["camera_file"])
 
                     # inference.start(previous_meta)
 
@@ -98,6 +101,7 @@ class OnionBot(object):
 
                     cloud.join_camera()
                     cloud.join_thermal()
+                    classify.join()
 
                     # if not cloud.join():
                     #     meta["attributes"]["camera_filepath"] = "placeholder.png"
@@ -194,21 +198,21 @@ class OnionBot(object):
         self.label = None
         return "1"
 
-    def set_active_model(self, string):
-        """Command to change current active model for predictions"""
+    # def set_active_model(self, string):
+    #     """Command to change current active model for predictions"""
 
-        if string == "tflite_water_boiling_1":
-            self.camera_classifier = Classify(
-                labels="models/tflite-boiling_water_1_20200111094256-2020-01-11T11_51_24.886Z_dict.txt",
-                model="models/tflite-boiling_water_1_20200111094256-2020-01-11T11_51_24.886Z_model.tflite",
-            )
-            self.thermal_classifier = Classify(
-                labels="models/tflite-boiling_1_thermal_20200111031542-2020-01-11T18_45_13.068Z_dict.txt",
-                model="models/tflite-boiling_1_thermal_20200111031542-2020-01-11T18_45_13.068Z_model.tflite",
-            )
-            self.active_model = string
+    #     if string == "tflite_water_boiling_1":
+    #         self.camera_classifier = Classify(
+    #             labels="models/tflite-boiling_water_1_20200111094256-2020-01-11T11_51_24.886Z_dict.txt",
+    #             model="models/tflite-boiling_water_1_20200111094256-2020-01-11T11_51_24.886Z_model.tflite",
+    #         )
+    #         self.thermal_classifier = Classify(
+    #             labels="models/tflite-boiling_1_thermal_20200111031542-2020-01-11T18_45_13.068Z_dict.txt",
+    #             model="models/tflite-boiling_1_thermal_20200111031542-2020-01-11T18_45_13.068Z_model.tflite",
+    #         )
+    #         self.active_model = string
 
-        return "1"
+    #     return "1"
 
     def set_fixed_setpoint(self, value):
         """Command to change fixed setpoint"""

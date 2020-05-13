@@ -16,13 +16,32 @@ class Classify(object):
     def __init__(self):
 
         self.tests = (
-            {"pasta": {"labels": "labels", "model": "Model", "threshold": 0.8}},
-            {"sauce": {"labels": "labels", "model": "Model", "threshold": 0.8}},
-            {"pan_on": {"labels": "labels", "model": "Model", "threshold": 0.5}},
+            {
+                "pasta": {
+                    "labels": "models/pasta.txt",
+                    "model": "models/pasta.tflite",
+                    "threshold": 0.8,
+                }
+            },
+            {
+                "sauce": {
+                    "labels": "models/sauce.txt",
+                    "model": "models/sauce.tflite",
+                    "threshold": 0.8,
+                }
+            },
+            {
+                "pan_on_off": {
+                    "labels": "models/pan_on_off.txt",
+                    "model": "models/pan_on_off.tflite",
+                    "threshold": 0.5,
+                }
+            },
         )
 
         self.quit_event = Event()
         self.file_queue = Queue()
+        self.data = None
 
     def _worker(self):
 
@@ -33,6 +52,8 @@ class Classify(object):
 
                 image = self.file_queue.get(block=True, timeout=0.1)
                 image = Image.open(image)
+
+                output = {}
 
                 for test in self.tests:
 
@@ -46,8 +67,14 @@ class Classify(object):
                         result = engine.classify_with_image(
                             image, top_k=1, threshold=threshold
                         )
-                        print(labels[result[0]])
-                        print("Score : ", result[1])
+
+                        logger.info(result)
+
+                        output["t"] = {
+                            "label": labels[result[0]],
+                            "confidence": result[1],
+                        }
+                self.data = output
 
             except Empty:
                 if self.quit_event.is_set():

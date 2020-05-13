@@ -108,6 +108,7 @@ class Data:
         file_data,
         thermal_data,
         control_data,
+        classification_data,
     ):
         """Generate metadata to be parsed by portal"""
 
@@ -128,6 +129,7 @@ class Data:
                 "measurement_ID": measurement_ID,
                 "time_stamp": time_stamp,
                 "label_count": file_data["label_count"],
+                "classification_data": classification_data,
                 "camera_filepath": camera_filepath,
                 "thermal_filepath": thermal_filepath,
                 "temperature": thermal_data["temperature"],
@@ -168,10 +170,7 @@ class Data:
         data = {
             "type": "labels",
             "attributes": {
-                "pan_on_off": {
-                    "0": "pan_on",
-                    "1": "pan_off",
-                },
+                "pan_on_off": {"0": "pan_on", "1": "pan_off",},
                 "pasta": {
                     "0": "empty_pan",
                     "1": "add_water",
