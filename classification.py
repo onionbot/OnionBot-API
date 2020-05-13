@@ -74,6 +74,7 @@ class Classify(object):
                         logger.info("IndexError")
 
                 self.data = output
+                self.file_queue.task_done()
 
             except Empty:
                 if self.quit_event.is_set():
