@@ -68,8 +68,10 @@ class Classify(object):
                             "label": labels[result[0]],
                             "confidence": result[1],
                         }
+                    except TypeError:
+                        logger.info("TypeError")
                     except IndexError:
-                        pass
+                        logger.info("IndexError")
 
                 self.data = output
 
