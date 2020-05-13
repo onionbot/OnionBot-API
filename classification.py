@@ -17,18 +17,18 @@ class Classify(object):
 
         self.tests = {
             "pasta": {
-                "labels": "models/pasta.txt",
-                "model": "models/pasta.tflite",
+                "labels": dataset_utils.read_label_file("models/pasta.txt"),
+                "model": ClassificationEngine("models/pasta.tflite"),
                 "threshold": 0.8,
             },
             "sauce": {
-                "labels": "models/sauce.txt",
-                "model": "models/sauce.tflite",
+                "labels": dataset_utils.read_label_file("models/sauce.txt"),
+                "model": ClassificationEngine("models/sauce.tflite"),
                 "threshold": 0.8,
             },
             "pan_on_off": {
-                "labels": "models/pan_on_off.txt",
-                "model": "models/pan_on_off.tflite",
+                "labels": dataset_utils.read_label_file("models/pan_on_off.txt"),
+                "model": ClassificationEngine("models/pan_on_off.tflite"),
                 "threshold": 0.5,
             },
         }
@@ -53,17 +53,17 @@ class Classify(object):
 
                     logger.info("Starting test %s " % (name))
 
-                    engine = ClassificationEngine(t["model"])
-                    labels = dataset_utils.read_label_file(t["labels"])
+                    engine = t["model"]
+                    labels = t["labels"]
                     threshold = t["threshold"]
 
                     result = engine.classify_with_image(
                         image, top_k=1, threshold=threshold
                     )
-                    result = result[0]
                     logger.info(result)
 
                     try:
+                        result = result[0]
                         output[name] = {
                             "label": labels[result[0]],
                             "confidence": result[1],
