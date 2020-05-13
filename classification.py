@@ -60,7 +60,7 @@ class Classify(object):
                     result = engine.classify_with_image(
                         image, top_k=1, threshold=threshold
                     )
-
+                    result = result[0]
                     logger.info(result)
 
                     try:
@@ -70,7 +70,7 @@ class Classify(object):
                         }
                     except IndexError:
                         pass
-                    
+
                 self.data = output
 
             except Empty:
