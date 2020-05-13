@@ -47,7 +47,7 @@ class Classify(object):
                 image = self.file_queue.get(block=True, timeout=0.1)
                 image = Image.open(image)
 
-                output = {}
+                output = None
 
                 for name, t in self.tests.items():
 
@@ -63,10 +63,14 @@ class Classify(object):
 
                     logger.info(result)
 
-                    output["t"] = {
-                        "label": labels[result[0]],
-                        "confidence": result[1],
-                    }
+                    try:
+                        output[name] = {
+                            "label": labels[result[0]],
+                            "confidence": result[1],
+                        }
+                    except IndexError:
+                        pass
+                    
                 self.data = output
 
             except Empty:
