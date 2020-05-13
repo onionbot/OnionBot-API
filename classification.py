@@ -15,7 +15,7 @@ class Classify(object):
 
     def __init__(self):
 
-        self.tests = (
+        self.tests = {
             {
                 "pasta": {
                     "labels": "models/pasta.txt",
@@ -37,7 +37,7 @@ class Classify(object):
                     "threshold": 0.5,
                 }
             },
-        )
+        }
 
         self.quit_event = Event()
         self.file_queue = Queue()
