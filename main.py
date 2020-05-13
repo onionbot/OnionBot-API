@@ -42,6 +42,7 @@ class OnionBot(object):
         control.launch()
         cloud.launch_camera()
         cloud.launch_thermal()
+        classify.launch()
 
         self.latest_meta = " "
         self.session_ID = None
