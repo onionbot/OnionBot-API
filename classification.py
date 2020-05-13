@@ -47,7 +47,7 @@ class Classify(object):
                 image = self.file_queue.get(block=True, timeout=0.1)
                 image = Image.open(image)
 
-                output = None
+                output = {}
 
                 for name, t in self.tests.items():
 
@@ -66,13 +66,13 @@ class Classify(object):
                         result = result[0]
                         output[name] = {
                             "label": labels[result[0]],
-                            "confidence": result[1],
+                            "confidence": str(result[1]),
                         }
                     except TypeError:
                         logger.info("TypeError")
                     except IndexError:
                         logger.info("IndexError")
-
+                logger.info(output)
                 self.data = output
                 self.file_queue.task_done()
 
