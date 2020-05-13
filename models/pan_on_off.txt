@@ -1,0 +1,2 @@
+pan_off
+pan_on
