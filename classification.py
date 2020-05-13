@@ -45,7 +45,7 @@ class Classify(object):
 
     def _worker(self):
 
-        logger.debug("Initialising upload worker")
+        logger.info("Initialising upload worker")
 
         while True:
             try:  # Timeout raises queue.Empty
@@ -55,46 +55,45 @@ class Classify(object):
 
                 output = {}
 
-                for test in self.tests:
+                for name, t in self.tests.items():
 
-                    with self.tests[test] as t:
+                    logger.info("Starting test %s " % (name))
 
-                        # Initialize engine.
-                        engine = ClassificationEngine(t["model"])
-                        labels = dataset_utils.read_label_file(t["labels"])
-                        threshold = t["threshold"]
+                    engine = ClassificationEngine(t["model"])
+                    labels = dataset_utils.read_label_file(t["labels"])
+                    threshold = t["threshold"]
 
-                        result = engine.classify_with_image(
-                            image, top_k=1, threshold=threshold
-                        )
+                    result = engine.classify_with_image(
+                        image, top_k=1, threshold=threshold
+                    )
 
-                        logger.info(result)
+                    logger.info(result)
 
-                        output["t"] = {
-                            "label": labels[result[0]],
-                            "confidence": result[1],
-                        }
+                    output["t"] = {
+                        "label": labels[result[0]],
+                        "confidence": result[1],
+                    }
                 self.data = output
 
             except Empty:
                 if self.quit_event.is_set():
-                    logger.debug("Quitting thread...")
+                    logger.info("Quitting thread...")
                     break
 
     def start(self, file_path):
-        logger.debug("Calling start")
+        logger.info("Calling start")
         self.file_queue.put(file_path)
 
     def join(self):
-        logger.debug("Calling join")
+        logger.info("Calling join")
         self.file_queue.join()
 
     def launch(self):
-        logger.debug("Initialising worker")
+        logger.info("Initialising worker")
         self.thread = Thread(target=self._worker, daemon=True)
         self.thread.start()
 
     def quit(self):
         self.quit_event.set()
-        logger.debug("Waiting for classification thread to finish uploading")
+        logger.info("Waiting for classification thread to finish uploading")
         self.thread.join()
