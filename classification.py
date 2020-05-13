@@ -57,7 +57,7 @@ class Classify(object):
 
                 for test in self.tests:
 
-                    with self.test[test] as t:
+                    with self.tests[test] as t:
 
                         # Initialize engine.
                         engine = ClassificationEngine(t["model"])
