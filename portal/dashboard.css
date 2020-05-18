@@ -184,9 +184,9 @@ label {
 }
 
 .touchscreen-feather {
-  width: 40px;
-  height: 40px;
-  color: #bbb;
+  width: 50px;
+  height: 50px;
+  color: #ddd;
 }
 
 .fit {
@@ -199,6 +199,8 @@ label {
 }
 
 #current-instruction{
+  padding-top: 10px;
+  padding-bottom: 10px;
 }
 
 #next-instruction {
@@ -207,14 +209,14 @@ label {
 }
 
 .fade-box {
-  height: 100px; 
+  height: 80px; 
   position: relative;
   overflow: hidden;
 }
 
 #top_fade {
   width: 800px;
-  height: 100px;
+  height: 75px;
   /*max-height: 80% !important;*/
   z-index: 99;
   position: absolute;
@@ -224,7 +226,7 @@ label {
 
 #bottom_fade {
   width: 800px;
-  height: 100px;
+  height: 75px;
   /*max-height: 80% !important;*/
   z-index: 99;
   position: absolute;

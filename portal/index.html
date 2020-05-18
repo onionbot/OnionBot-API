@@ -37,17 +37,17 @@
                         </div>
                     </div>
                 </nav>
-                <main class="container mt-2">
+                <main class="container">
                     
                     <div class="fade-box">
                         <div id="top_fade"></div>
-                        <div style="position: absolute; bottom: 0; left: 0;"><h3 id="previous-instruction">Previous instructio Previous in</h3></div>
+                        <div style="position: absolute; bottom: 0; left: 0;"><h3 id="previous-instruction">Add the chopped onions to the pan</h3></div>
                     </div>
                     <div>
-                        <h2 id="current-instruction">Current instruction on Curr </h2>
+                        <h2 id="current-instruction">Frying onions on a low heat until soft</h2>
                     </div>
                     <div class="fade-box">
-                        <div style="position: absolute; top: 0; left: 0;"><h3 id="next-instruction">Next instruction Next iruction </h3></div>
+                        <div style="position: absolute; top: 0; left: 0;"><h3 id="next-instruction">Add the garlic and tomato purée.</h3></div>
                         <div id="bottom_fade"></div>
                     </div>
                     
@@ -62,15 +62,15 @@
             </script>
             <script src="https://cdn.jsdelivr.net/npm/fitty@2.3.0/dist/fitty.min.js"></script>
             <script>fitty('#previous-instruction', {
-            minSize: 36,
+            minSize: 32,
             maxSize: 50
             });</script>
             <script>fitty('#current-instruction', {
-            minSize: 36,
-            maxSize: 300
+            minSize: 50,
+            maxSize: 100
             });</script>
             <script>fitty('#next-instruction', {
-            minSize: 36,
+            minSize: 32,
             maxSize: 50
             });</script>
             <script src="dashboard.js"></script>
