@@ -20,9 +20,9 @@
                 <h1 class="col-8 pt-4" href="#">Onionbot Sous Chef</h1>
                 <ul id="connected" class="navbar-nav px-3 pt-3">
                     <li class="nav-item">
-                        <a href="#"><span data-feather="arrow-left-circle" class="touchscreen-feather"></span></a>
-                        <a href="#"><span data-feather="arrow-right-circle" class="touchscreen-feather"></span></a>
-                        <a href="#"><span data-feather="stop-circle" class="touchscreen-feather"></span></a>
+                        <a href="#"><span data-feather="skip-back" class="touchscreen-feather"></span></a>
+                        <a href="#"><span data-feather="skip-forward" class="touchscreen-feather"></span></a>
+                        <a href="#"><span data-feather="square" class="touchscreen-feather"></span></a>
                     </ul>
                     <div id="not-connected" class="input-group mr-3" style="width: 250px; display: none">
                         <div class="input-group-prepend">
@@ -41,13 +41,13 @@
                     
                     <div class="fade-box">
                         <div id="top_fade"></div>
-                        <div style="position: absolute; bottom: 0; left: 0;"><h3 id="previous-instruction">Add the chopped onions to the pan</h3></div>
+                        <div style="position: absolute; bottom: 0; left: 0;"><h3 id="previous-instruction">Add the chopped onions to the pan&nbsp;&nbsp;<span data-feather="check-circle" style="height: 1.1em; width: 1.1em"></span></h3></div>
                     </div>
-                    <div>
-                        <h2 id="current-instruction">Frying onions on a low heat until soft</h2>
+                    <div style="position: relative;">
+                        <h2 id="current-instruction" class="pt-2 pb-2">  Frying onions on a low heat until soft <span data-feather="skip-forward" style="height: 1em; width: 1em;"></span></h2>
                     </div>
                     <div class="fade-box">
-                        <div style="position: absolute; top: 0; left: 0;"><h3 id="next-instruction">Add the garlic and tomato purée.</h3></div>
+                        <div style="position: absolute; top: 0; left: 0;"><h3 id="next-instruction">Add the garlic and tomato purée</h3></div>
                         <div id="bottom_fade"></div>
                     </div>
                     
@@ -63,15 +63,15 @@
             <script src="https://cdn.jsdelivr.net/npm/fitty@2.3.0/dist/fitty.min.js"></script>
             <script>fitty('#previous-instruction', {
             minSize: 32,
-            maxSize: 50
+            maxSize: 60
             });</script>
             <script>fitty('#current-instruction', {
-            minSize: 50,
-            maxSize: 100
+            minSize: 60,
+            maxSize: 120
             });</script>
             <script>fitty('#next-instruction', {
             minSize: 32,
-            maxSize: 50
+            maxSize: 60
             });</script>
             <script src="dashboard.js"></script>
         </body>

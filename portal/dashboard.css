@@ -194,7 +194,7 @@ label {
   white-space: nowrap;
 }
 
-#previous-instruction{
+/*#previous-instruction{
   color: #aaa;
 }
 
@@ -206,12 +206,13 @@ label {
 #next-instruction {
   color: #aaa;
 
-}
+}*/
 
 .fade-box {
   height: 80px; 
   position: relative;
   overflow: hidden;
+  color: #aaa;
 }
 
 #top_fade {
