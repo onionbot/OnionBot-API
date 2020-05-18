@@ -10,6 +10,7 @@
 var endpoint_url = 'http://192.168.0.1:5000/'
 if (!localStorage.ip_address) {
     $('#IPmodal').modal('show');
+    $('#IPbox').show();
 } else {
     var endpoint_url = 'http://192.168.0.' + localStorage.ip_address + ':5000/';
 }
@@ -35,6 +36,21 @@ if (filename == "labelling.html") {
         return '<span class="badge badge-light" style="font-size: 17px;">' + value + '</span>'
     }
 }
+
+if (filename == "inference.html") {
+    $('#inference-table').bootstrapTable({
+        data: [],
+        formatNoMatches: function() {
+            return 'Ready to start inference';
+        }
+    });
+
+    function badgeFormatter(value) {
+        return '<span class="badge badge-light" style="font-size: 17px;">' + value + '</span>'
+    }
+}
+
+
 
 // ------------------ INTERFACE WITH API ----------------
 
@@ -95,6 +111,19 @@ function update() {
                 $('#label-table').bootstrapTable('load', table_data);
             }
 
+            if (meta.attributes.classification_data && filename == "inference.html") {
+                let table_data = []
+                for (let [key, value] of Object.entries(meta.attributes.classification_data)) {
+                    console.log(key, value)
+                    table_data.push({
+                        "model": key,
+                        "result": value.label,
+                        "probability": value.confidence,
+                    });
+                }
+                $('#inference-table').bootstrapTable('load', table_data);
+            }
+
             // Update key information
             $('#session-id-output').html(meta.attributes.session_ID);
             $('#measurement-id').html(meta.attributes.measurement_ID);
@@ -104,6 +133,7 @@ function update() {
             } else {
                 $('#label').html("None");
             }
+
 
             // Load new images
             $('#camera-image').attr("src", meta.attributes.camera_filepath);
@@ -268,6 +298,7 @@ $(document).ready(function() {
         $('#ip-address-output').html(localStorage.ip_address);
         $('#ip-address-input').val('');
         endpoint_url = 'http://192.168.0.' + localStorage.ip_address + ':5000/';
+        IPbox.hide();
     });
 
     $('#quit').on('click', function() {
