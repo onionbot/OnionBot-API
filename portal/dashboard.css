@@ -176,23 +176,59 @@ label {
 
 
 .touchscreen-nav {
-  color: #ddd;
+  color: #bbb;
 }
 
 .touchscreen-nav h1{
-  font-size: 24px;
+  font-size: 28px;
 }
 
 .touchscreen-feather {
-  width: 32px;
-  height: 32px;
+  width: 40px;
+  height: 40px;
+  color: #bbb;
+}
+
+.fit {
+  display: inline-block;
+  white-space: nowrap;
 }
 
 #previous-instruction{
-  color: gray;
+  color: #aaa;
+}
+
+#current-instruction{
 }
 
 #next-instruction {
-  color: gray;
+  color: #aaa;
 
 }
+
+.fade-box {
+  height: 100px; 
+  position: relative;
+  overflow: hidden;
+}
+
+#top_fade {
+  width: 800px;
+  height: 100px;
+  /*max-height: 80% !important;*/
+  z-index: 99;
+  position: absolute;
+  top: 0px;
+  background: url("top-fade.png") top center no-repeat;
+}
+
+#bottom_fade {
+  width: 800px;
+  height: 100px;
+  /*max-height: 80% !important;*/
+  z-index: 99;
+  position: absolute;
+  bottom: 0px;
+  background: url("bottom-fade.png") bottom center no-repeat;
+}
+

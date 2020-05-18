@@ -17,12 +17,12 @@
     <body>
         <div style="width: 100%; height: 100%;">
             <nav class="navbar sticky-top flex-md-nowrap p-0 touchscreen-nav">
-                <h1 class="col-8 pt-3" href="#">Onionbot Sous Chef</h1>
+                <h1 class="col-8 pt-4" href="#">Onionbot Sous Chef</h1>
                 <ul id="connected" class="navbar-nav px-3 pt-3">
                     <li class="nav-item">
-                        <span data-feather="arrow-left-circle" class="touchscreen-feather"></span>
-                        <span data-feather="arrow-right-circle" class="touchscreen-feather"></span>
-                        <span data-feather="stop-circle" class="touchscreen-feather"></span>
+                        <a href="#"><span data-feather="arrow-left-circle" class="touchscreen-feather"></span></a>
+                        <a href="#"><span data-feather="arrow-right-circle" class="touchscreen-feather"></span></a>
+                        <a href="#"><span data-feather="stop-circle" class="touchscreen-feather"></span></a>
                     </ul>
                     <div id="not-connected" class="input-group mr-3" style="width: 250px; display: none">
                         <div class="input-group-prepend">
@@ -37,16 +37,20 @@
                         </div>
                     </div>
                 </nav>
-                <main class="container mt-3">
-                    <div style="min-height: 100px">
-                        <h3 id="previous-instruction">Previous instruction</h3>
+                <main class="container mt-2">
+                    
+                    <div class="fade-box">
+                        <div id="top_fade"></div>
+                        <div style="position: absolute; bottom: 0; left: 0;"><h3 id="previous-instruction">Previous instructio Previous in</h3></div>
                     </div>
-                    <div style="min-height: 100px">
-                        <h2 id="current-instruction">Current instruction</h2>
+                    <div>
+                        <h2 id="current-instruction">Current instruction on Curr </h2>
                     </div>
-                    <div style="min-height: 100px">
-                        <h3 id="next-instruction">Next instruction</h3>
+                    <div class="fade-box">
+                        <div style="position: absolute; top: 0; left: 0;"><h3 id="next-instruction">Next instruction Next iruction </h3></div>
+                        <div id="bottom_fade"></div>
                     </div>
+                    
                 </main>
             </div>
             <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
@@ -56,6 +60,19 @@
             <script>
             feather.replace()
             </script>
+            <script src="https://cdn.jsdelivr.net/npm/fitty@2.3.0/dist/fitty.min.js"></script>
+            <script>fitty('#previous-instruction', {
+            minSize: 36,
+            maxSize: 50
+            });</script>
+            <script>fitty('#current-instruction', {
+            minSize: 36,
+            maxSize: 300
+            });</script>
+            <script>fitty('#next-instruction', {
+            minSize: 36,
+            maxSize: 50
+            });</script>
             <script src="dashboard.js"></script>
         </body>
     </html>

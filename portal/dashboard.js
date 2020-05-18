@@ -86,6 +86,7 @@ function get(function_name, callback) {
 function update() {
 
     $('#ip-address-output').html(localStorage.ip_address);
+    // fitty.fitAll()
 
     get("get_latest_meta", function(data) {
         // data is a js object 
