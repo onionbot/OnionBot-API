@@ -14,41 +14,48 @@
         <link href='https://fonts.googleapis.com/css?family=Roboto Mono' rel='stylesheet'>
         <link href="dashboard.css" rel="stylesheet">
     </head>
-    <body style="background-color: black">
-        <div style="width: 100%; height: 100%; background-color: white">
-            <nav class="navbar sticky-top flex-md-nowrap p-0">
-                <p class="col-6 pt-3" href="#">Onionbot Sous Chef</p>
-                <ul class="navbar-nav px-3">
+    <body>
+        <div style="width: 100%; height: 100%;">
+            <nav class="navbar sticky-top flex-md-nowrap p-0 touchscreen-nav">
+                <h1 class="col-8 pt-3" href="#">Onionbot Sous Chef</h1>
+                <ul id="connected" class="navbar-nav px-3 pt-3">
                     <li class="nav-item">
-                        <span data-feather="arrow-left-circle"></span>
-                        <span data-feather="arrow-right-circle"></span>
-                        <span data-feather="stop-circle"></span>
-                </ul>
-            </nav>
-            <main class="container">
-                <h2>Current instruction</h2>
-                <h2>Next instruction</h2>
-                <div id="IPbox" class="input-group w-100" style="display: none">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">192.168.0.</span>
+                        <span data-feather="arrow-left-circle" class="touchscreen-feather"></span>
+                        <span data-feather="arrow-right-circle" class="touchscreen-feather"></span>
+                        <span data-feather="stop-circle" class="touchscreen-feather"></span>
+                    </ul>
+                    <div id="not-connected" class="input-group mr-3" style="width: 250px; display: none">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">192.168.0.</span>
+                        </div>
+                        <input id="ip-address-input" type="text" class="form-control" style="border-width: 1px">
+                        <div class=input-badge>
+                            <h5><span id="ip-address-output" class="badge badge-light "><span>00</span></span></h5>
+                        </div>
+                        <div class="input-group-append">
+                            <button id="ip-address-button" type="button" data-dismiss="modal" class="btn btn-outline-primary"><span data-feather="check"></span></button>
+                        </div>
                     </div>
-                    <input id="ip-address-input" type="text" class="form-control" placeholder="Last 2 digits">
-                    <div class=input-badge>
-                        <h5><span id="ip-address-output" class="badge badge-light "><span>00</span></span></h5>
+                </nav>
+                <main class="container mt-3">
+                    <div style="min-height: 100px">
+                        <h3 id="previous-instruction">Previous instruction</h3>
                     </div>
-                    <div class="input-group-append">
-                        <button id="ip-address-button" type="button" data-dismiss="modal" class="btn btn-outline-primary"><span data-feather="check"></span></button>
+                    <div style="min-height: 100px">
+                        <h2 id="current-instruction">Current instruction</h2>
                     </div>
-                </div>
-            </main>
-        </div>
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-        <script src="https://unpkg.com/feather-icons/dist/feather.min.js"></script>
-        <script>
-        feather.replace()
-        </script>
-        <script src="dashboard.js"></script>
-    </body>
-</html>
+                    <div style="min-height: 100px">
+                        <h3 id="next-instruction">Next instruction</h3>
+                    </div>
+                </main>
+            </div>
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+            <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+            <script src="https://unpkg.com/feather-icons/dist/feather.min.js"></script>
+            <script>
+            feather.replace()
+            </script>
+            <script src="dashboard.js"></script>
+        </body>
+    </html>

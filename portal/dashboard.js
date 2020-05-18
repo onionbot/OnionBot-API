@@ -7,7 +7,6 @@
 // -------------------------------------------------------
 // ---------------- APPLICATION VARIABLES ----------------
 
-$('#IPbox').show();
 
 var endpoint_url = 'http://192.168.0.1:5000/'
 if (!localStorage.ip_address) {
@@ -86,9 +85,10 @@ function get(function_name, callback) {
 
 function update() {
 
+    $('#ip-address-output').html(localStorage.ip_address);
+
     get("get_latest_meta", function(data) {
         // data is a js object 
-
         connection_success()
 
         // Only refresh when new data
@@ -183,7 +183,7 @@ function update() {
 
 function connection_success() {
     $("#not-connected").hide();
-    $("#connected").show();
+    $('#recipe-control-buttons').show();
     if (connected == false) {
         // Refresh data on first reconnect
         get_all_labels()
@@ -194,6 +194,7 @@ function connection_success() {
 }
 
 function connection_failed() {
+    console.log("failed")
     $("#connected").hide();
     $("#not-connected").show();
     connected = false
@@ -299,7 +300,7 @@ $(document).ready(function() {
         $('#ip-address-output').html(localStorage.ip_address);
         $('#ip-address-input').val('');
         endpoint_url = 'http://192.168.0.' + localStorage.ip_address + ':5000/';
-        IPbox.hide();
+        console.log(endpoint_url)
     });
 
     $('#quit').on('click', function() {

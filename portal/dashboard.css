@@ -173,3 +173,26 @@ label {
 
 .border-top { border-top: 1px solid #e5e5e5; }
 .border-bottom { border-bottom: 1px solid #e5e5e5; }
+
+
+.touchscreen-nav {
+  color: #ddd;
+}
+
+.touchscreen-nav h1{
+  font-size: 24px;
+}
+
+.touchscreen-feather {
+  width: 32px;
+  height: 32px;
+}
+
+#previous-instruction{
+  color: gray;
+}
+
+#next-instruction {
+  color: gray;
+
+}
