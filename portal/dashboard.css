@@ -180,7 +180,7 @@ label {
 }
 
 .touchscreen-nav h1{
-  font-size: 28px;
+  font-size: 18px;
 }
 
 .touchscreen-feather {
@@ -209,15 +209,15 @@ label {
 }*/
 
 .fade-box {
-  height: 80px; 
+  height: 60px; 
   position: relative;
   overflow: hidden;
-  color: #aaa;
+  color: gray;
 }
 
 #top_fade {
   width: 800px;
-  height: 75px;
+  height:50px;
   /*max-height: 80% !important;*/
   z-index: 99;
   position: absolute;
@@ -227,7 +227,7 @@ label {
 
 #bottom_fade {
   width: 800px;
-  height: 75px;
+  height:50px;
   /*max-height: 80% !important;*/
   z-index: 99;
   position: absolute;
