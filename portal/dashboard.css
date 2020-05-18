@@ -209,7 +209,7 @@ label {
 }*/
 
 .fade-box {
-  height: 100px; 
+  height: 80px; 
   position: relative;
   overflow: hidden;
   color: gray;
