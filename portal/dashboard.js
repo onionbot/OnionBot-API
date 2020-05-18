@@ -7,10 +7,11 @@
 // -------------------------------------------------------
 // ---------------- APPLICATION VARIABLES ----------------
 
+$('#IPbox').show();
+
 var endpoint_url = 'http://192.168.0.1:5000/'
 if (!localStorage.ip_address) {
     $('#IPmodal').modal('show');
-    $('#IPbox').show();
 } else {
     var endpoint_url = 'http://192.168.0.' + localStorage.ip_address + ':5000/';
 }
