@@ -1,7 +1,7 @@
 ![alt text](https://github.com/bencobley/onionbot/blob/master/img/portal.png)
 
-# onionbot | DE4 SOLO and SIOT projects
-A streamlined data collection, labelling and training platform for cooking data. Built with Raspberry Pi. 
+# OnionBot
+An assistive stove-top cooking device with machine vision - for domestic automation research
 [See it in action](https://youtu.be/l-FsY-qU2Vw)
 
 <p float="left">
