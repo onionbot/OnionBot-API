@@ -30,4 +30,4 @@ Script will run on boot. Otherwise SSH into Pi
 5. [Servo driver install](http://parallax.com/product/900-00008)
 
 ### Implementation
-![alt text](https://github.com/bencobley/onionbot/blob/master/img/hardware.jpg)
+![alt text](https://github.com/bencobley/onionbot/blob/master/img/device.png)
