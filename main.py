@@ -4,14 +4,13 @@ from time import sleep
 from thermal_camera import ThermalCamera
 from camera import Camera
 from cloud import Cloud
-from inference import Classify
+from classification import Classify
 from control import Control
 from data import Data
 from config import Config
 
-import datetime
-import json
-
+from datetime import datetime
+from json import dumps
 import logging
 
 # Fix logging faliure issue
@@ -28,6 +27,7 @@ thermal = ThermalCamera()
 camera = Camera()
 control = Control()
 data = Data()
+classify = Classify()
 
 
 class OnionBot(object):
@@ -42,11 +42,11 @@ class OnionBot(object):
         control.launch()
         cloud.launch_camera()
         cloud.launch_thermal()
+        classify.launch()
 
         self.latest_meta = " "
-        self.measurement_id = 0
-        self.session_name = None
-        self.active_label = None
+        self.session_ID = None
+        self.label = None
 
     def run(self):
         """Start logging"""
@@ -54,46 +54,47 @@ class OnionBot(object):
         def _worker():
             """Threaded to run capture loop in background while allowing other processes to continue"""
 
-            filepaths = None
+            measurement_ID = 0
+            file_data = None
             meta = None
 
             while True:
 
                 # Get time stamp
-                timer = datetime.datetime.now()
-                time_stamp = timer.strftime("%Y-%m-%d_%H-%M-%S-%f")
+                timer = datetime.now()
 
                 # Get update on key information
-                self.measurement_id += 1
-                measurement_id = self.measurement_id
-                active_label = self.active_label
-                session_name = self.session_name
+                measurement_ID += 1
+                label = self.label
+                session_ID = self.session_ID
 
-                # Generate filepaths for logs
-                queued_filepaths = data.generate_filepaths(
-                    session_name, time_stamp, measurement_id, active_label
+                # Generate file_data for logs
+                queued_file_data = data.generate_file_data(
+                    session_ID, timer, measurement_ID, label
                 )
 
                 # Generate metadata for frontend
                 queued_meta = data.generate_meta(
-                    session_name=session_name,
-                    time_stamp=time_stamp,
-                    measurement_id=measurement_id,
-                    active_label=active_label,
-                    filepaths=queued_filepaths,
+                    session_ID=session_ID,
+                    timer=timer,
+                    measurement_ID=measurement_ID,
+                    label=label,
+                    file_data=queued_file_data,
                     thermal_data=thermal.data,
                     control_data=control.data,
+                    classification_data=classify.data,
                 )
 
                 # Start sensor capture
-                camera.start(queued_filepaths["camera"])
-                thermal.start(queued_filepaths["thermal"])
+                camera.start(queued_file_data["camera_file"])
+                thermal.start(queued_file_data["thermal_file"])
 
                 # While taking a picture, process previous data in meantime
-                if filepaths:
+                if file_data:
 
-                    cloud.start_camera(filepaths["camera"])
-                    cloud.start_thermal(filepaths["thermal"])
+                    cloud.start_camera(file_data["camera_file"])
+                    cloud.start_thermal(file_data["thermal_file"])
+                    classify.start(file_data["camera_file"])
 
                     # inference.start(previous_meta)
 
@@ -101,6 +102,7 @@ class OnionBot(object):
 
                     cloud.join_camera()
                     cloud.join_thermal()
+                    classify.join()
 
                     # if not cloud.join():
                     #     meta["attributes"]["camera_filepath"] = "placeholder.png"
@@ -108,7 +110,8 @@ class OnionBot(object):
                     # inference.join()
 
                     # Push meta information to file level for API access
-                    self.latest_meta = json.dumps(meta)
+                    self.labels_csv_filepath = file_data["label_file"]
+                    self.latest_meta = dumps(meta)
 
                 # Wait for queued image captures to finish, refresh control data
                 thermal.join()
@@ -116,27 +119,35 @@ class OnionBot(object):
                 control.refresh(thermal.data["temperature"])
 
                 # Log to console
-                logger.info(
-                    "Logged %s | session_name %s | Label %s | Interval %0.2f | Temperature %s | PID enabled: %s | PID components: %0.1f, %0.1f, %0.1f "
-                    % (
-                        measurement_id,
-                        session_name,
-                        active_label,
-                        (datetime.datetime.now() - timer).total_seconds(),
-                        thermal.data["temperature"],
-                        control.data["pid_enabled"],
-                        control.data["p_component"],
-                        control.data["i_component"],
-                        control.data["d_component"],
+                if meta is not None:
+                    attributes = meta["attributes"]
+                    logger.info(
+                        "Logged %s | session_ID %s | Label %s | Interval %0.2f | Temperature %s | PID enabled: %s | PID components: %0.1f, %0.1f, %0.1f "
+                        % (
+                            attributes["measurement_ID"],
+                            attributes["session_ID"],
+                            attributes["label"],
+                            attributes["interval"],
+                            attributes["temperature"],
+                            attributes["pid_enabled"],
+                            attributes["p_component"],
+                            attributes["i_component"],
+                            attributes["d_component"],
+                        )
                     )
-                )
 
                 # Move queue forward one place
-                filepaths = queued_filepaths
+                file_data = queued_file_data
                 meta = queued_meta
 
-                # Add delay until next reading
-                sleep(float(config.get_config("camera_sleep")))
+                # Add delay until ready for next loop
+                frame_interval = float(config.get_config("frame_interval"))
+                while True:
+                    if (datetime.now() - timer).total_seconds() > frame_interval:
+                        break
+                    elif self.quit_event.is_set():
+                        break
+                    sleep(0.1)
 
                 # Check quit flag
                 if self.quit_event.is_set():
@@ -147,14 +158,18 @@ class OnionBot(object):
         self.thread = Thread(target=_worker, daemon=True)
         self.thread.start()
 
-    def start(self, session_name):
-        self.session_name = session_name
+    def start(self, session_ID):
+        data.start_session(session_ID)
+        self.session_ID = session_ID
         return "1"
 
     def stop(self):
         """Stop logging"""
-        self.session_name = None
-        return "1"
+        self.session_ID = None
+        labels = self.labels_csv_filepath
+        cloud.start_camera(labels)
+        cloud.join_camera()
+        return cloud.get_public_path(labels)
 
     def get_latest_meta(self):
         """Returns cloud filepath of latest meta.json - includes path location of images"""
@@ -174,26 +189,31 @@ class OnionBot(object):
         self.chosen_labels = string
         return "1"
 
-    def set_active_label(self, string):
+    def set_label(self, string):
         """Command to change current active label -  for building training datasets"""
-        self.active_label = string
+        self.label = string
         return "1"
 
-    def set_active_model(self, string):
-        """Command to change current active model for predictions"""
-
-        if string == "tflite_water_boiling_1":
-            self.camera_classifier = Classify(
-                labels="models/tflite-boiling_water_1_20200111094256-2020-01-11T11_51_24.886Z_dict.txt",
-                model="models/tflite-boiling_water_1_20200111094256-2020-01-11T11_51_24.886Z_model.tflite",
-            )
-            self.thermal_classifier = Classify(
-                labels="models/tflite-boiling_1_thermal_20200111031542-2020-01-11T18_45_13.068Z_dict.txt",
-                model="models/tflite-boiling_1_thermal_20200111031542-2020-01-11T18_45_13.068Z_model.tflite",
-            )
-            self.active_model = string
-
+    def set_no_label(self):
+        """Command to set active label to None type"""
+        self.label = None
         return "1"
+
+    # def set_active_model(self, string):
+    #     """Command to change current active model for predictions"""
+
+    #     if string == "tflite_water_boiling_1":
+    #         self.camera_classifier = Classify(
+    #             labels="models/tflite-boiling_water_1_20200111094256-2020-01-11T11_51_24.886Z_dict.txt",
+    #             model="models/tflite-boiling_water_1_20200111094256-2020-01-11T11_51_24.886Z_model.tflite",
+    #         )
+    #         self.thermal_classifier = Classify(
+    #             labels="models/tflite-boiling_1_thermal_20200111031542-2020-01-11T18_45_13.068Z_dict.txt",
+    #             model="models/tflite-boiling_1_thermal_20200111031542-2020-01-11T18_45_13.068Z_model.tflite",
+    #         )
+    #         self.active_model = string
+
+    #     return "1"
 
     def set_fixed_setpoint(self, value):
         """Command to change fixed setpoint"""
@@ -205,20 +225,25 @@ class OnionBot(object):
         control.update_temperature_target(value)
         return "1"
 
+    def set_temperature_hold(self):
+        """Command to hold current temperature"""
+        control.hold_temperature()
+        return "1"
+
     def set_hob_off(self):
         """Command to turn hob off"""
         control.hob_off()
         return "1"
 
-    def set_camera_sleep(self, value):
+    def set_frame_interval(self, value):
         """Command to change camera targe refresh rate"""
-        config.set_config("camera_sleep", value)
+        config.set_config("frame_interval", value)
         return "1"
 
     def get_all_labels(self):
         """Returns available image labels for training"""
         # data = '[{"ID":"0","label":"discard,water_boiling,water_not_boiling"},{"ID":"1","label":"discard,onions_cooked,onions_not_cooked"}]'
-        labels = json.dumps(data.generate_labels())
+        labels = dumps(data.generate_labels())
         return labels
 
     def get_all_models(self):

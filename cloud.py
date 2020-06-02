@@ -1,4 +1,4 @@
-import os
+from os import environ, path
 from google.cloud import storage
 from threading import Thread, Event
 from queue import Queue, Empty
@@ -7,9 +7,10 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/home/pi/onionbot-819a387e4e79.json"
+environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/home/pi/onionbot-819a387e4e79.json"
 
-BUCKET_NAME = "onionbucket"  # NOTE: Hard coded in data file
+BUCKET = "onion_bucket" 
+PATH = path.dirname(__file__)
 
 
 class Cloud(object):
@@ -22,22 +23,24 @@ class Cloud(object):
         self.quit_event = Event()
         self.thermal_file_queue = Queue()
         self.camera_file_queue = Queue()
+        self.bucket = BUCKET
 
     def _camera_worker(self):
 
         logger.debug("Initialising upload worker for camera")
 
         client = storage.Client()
-        bucket = client.get_bucket(BUCKET_NAME)
+        bucket = client.get_bucket(BUCKET)
 
         while True:
             try:  # Timeout raises queue.Empty
-                path = self.camera_file_queue.get(block=True, timeout=0.1)
+                local_path = self.camera_file_queue.get(block=True, timeout=0.1)
+                cloud_path = local_path.replace(PATH + "/" + BUCKET + "/", "")
 
-                blob = bucket.blob(path)
-                blob.upload_from_filename(path)
+                blob = bucket.blob(cloud_path)
+                blob.upload_from_filename(local_path)
                 blob.make_public()
-                logger.debug("Uploaded camera file to cloud: %s" % (path))
+                logger.debug("Uploaded camera file to cloud: %s" % (local_path))
                 logger.debug("Blob is publicly accessible at %s" % (blob.public_url))
 
                 self.camera_file_queue.task_done()
@@ -65,16 +68,17 @@ class Cloud(object):
         logger.debug("Initialising upload worker for thermal")
 
         client = storage.Client()
-        bucket = client.get_bucket(BUCKET_NAME)
+        bucket = client.get_bucket(BUCKET)
 
         while True:
             try:  # Timeout raises queue.Empty
-                path = self.thermal_file_queue.get(block=True, timeout=0.1)
+                local_path = self.thermal_file_queue.get(block=True, timeout=0.1)
+                cloud_path = local_path.replace(PATH + "/" + BUCKET + "/", "")
 
-                blob = bucket.blob(path)
-                blob.upload_from_filename(path)
+                blob = bucket.blob(cloud_path)
+                blob.upload_from_filename(local_path)
                 blob.make_public()
-                logger.debug("Uploaded to cloud: %s" % (path))
+                logger.debug("Uploaded thermal file to cloud: %s" % (local_path))
                 logger.debug("Blob is publicly accessible at %s" % (blob.public_url))
 
                 self.thermal_file_queue.task_done()
@@ -96,6 +100,15 @@ class Cloud(object):
         logger.debug("Initialising worker for thermal")
         self.thermal_thread = Thread(target=self._thermal_worker, daemon=True)
         self.thermal_thread.start()
+
+    def get_public_path(self, local_path):
+        if local_path:
+            local_path = local_path.replace(PATH + "/", "")
+            cloud_location = "https://storage.googleapis.com"
+
+            return f"{cloud_location}/{local_path}"
+        else:
+            return None
 
     def quit(self):
         self.quit_event.set()

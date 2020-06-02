@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="Ben Cobley">
+    <link rel="icon" href="ico.png" type="image/png" sizes="16x16">
+    <title>Onionbot Control Panel</title>
+    
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link href='https://fonts.googleapis.com/css?family=Roboto Mono' rel='stylesheet'>
+    <link href="dashboard.css" rel="stylesheet">
+  </head>
+  <body>
+    <nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0">
+      <b class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">Onionbot Control Panel</b>
+      <ul class="navbar-nav px-3">
+        <li class="nav-item text-nowrap">
+          <a class="nav-link" href="#">Version 0.3</a>
+        </li>
+      </ul>
+    </nav>
+    <div class="container-fluid">
+      <div class="row">
+        <nav class="col-md-2 d-none d-md-block bg-light sidebar pl-2">
+          <div class="sidebar-sticky ">
+            <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+            <span>Control Panel</span>
+            </h6>
+            <ul class="nav flex-column">
+              <li class="nav-item">
+                <a class="nav-link active" href="/portal/control.html">
+                  <span data-feather="bar-chart-2"></span>
+                  Live Control <span class="sr-only">(current)</span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/portal/labelling.html">
+                  <span data-feather="tag"></span>
+                  Live Labelling
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/portal/inference.html">
+                  <span data-feather="server"></span>
+                  Live Inference
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/portal/souschef.html">
+                  <span data-feather="chevrons-right"></span>
+                  Sous Chef
+                </a>
+              </li>
+            </ul>
+            <div class="fixed-bottom pb-3 pl-2">
+              <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+              <span>Links</span>
+              </h6>
+              <ul class="nav flex-column mb-2">
+                <li class="nav-item">
+                  <a class="nav-link text-muted" href="https://github.com/bencobley/onionbot">
+                    <span data-feather="github"></span>
+                    Project Home
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link text-muted" href="https://github.com/bencobley/onionbot">
+                    <span data-feather="code"></span>
+                    Source Code
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link text-muted" href="https://github.com/bencobley/onionbot/releases">
+                    <span data-feather="git-commit"></span>
+                    Releases
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link text-muted" href="https://github.com/bencobley/onionbot">
+                    <span data-feather="heart"></span>
+                    Open Source License
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link text-muted" href="https://github.com/bencobley/onionbot">
+                    <span data-feather="file-text"></span>
+                    Onionbot Research Paper
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link text-muted" href="https://www.bencobley.com">
+                    <span data-feather="user"></span>
+                    bencobley.com
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </nav>
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+          <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-3 pt-2 border-bottom">
+            <h1>Live Control</h1>
+            <div class="btn-toolbar mb-2 mb-md-0">
+              <div id="connected" class="dropdown">
+                <button class="btn btn-outline-secondary dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" style="font-size: 1.1rem">
+                <span data-feather="check-circle" style="color: green;" class="mr-2"></span>
+                Connected to API
+                </button>
+                <div class="dropdown-menu  dropdown-menu-right">
+                  <a class="dropdown-item" id="quit">API Quit</a>
+                  <a class="dropdown-item" id="restart">API Hard Restart</a>
+                  <a class="dropdown-item" id="pi-shutdown">Raspberry Pi Shutdown</a>
+                  <a class="dropdown-item" id="pi-restart">Raspberry Pi Restart</a>
+                </div>
+              </div>
+              <div id="not-connected" class="dropdown" style="display: none">
+                <button class="btn btn-outline-secondary dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" style="font-size: 1.1rem">
+                <span data-feather="alert-circle" style="color: red;" class="mr-2"></span>
+                Not connected to API
+                </button>
+                <div class="dropdown-menu  dropdown-menu-right">
+                  <a class="dropdown-item" data-toggle="modal" data-target="#IPmodal">Set Raspberry Pi IP address</a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-4 pl-5 pr-3">
+              <div class="row">
+                <label for="temperature">Temperature reading</label>
+                <h1><span class="badge badge-light"><span id="temperature">00.0</span>&nbsp;&deg;C</span></h1>
+              </div>
+              <div class="row justify-content-between">
+                <label>Hob control</span></label>
+                <div class="input-group">
+                  <input type="text" class="form-control" id="fixed-setpoint-input" placeholder="Percentage">
+                  <div class=input-badge>
+                    <h5><span class="badge badge-light "><span id="fixed-setpoint-output">0</span>&nbsp;%</span></h5>
+                  </div>
+                  <div class="input-group-append">
+                    <button id="fixed-setpoint-button" type="button" class="btn btn-outline-primary"><span data-feather="check"></span></button>
+                  </div>
+                </div>
+                <button id="hob-off-button" type="button" class="btn btn-outline-danger supplementary-button"><span data-feather="power"></span>&nbsp;&nbsp;Hob Off</button>
+              </div>
+              <div class="row justify-content-between mt-2">
+                <div class="input-group">
+                  <input type="text" class="form-control" id="temperature-target-input" placeholder="Target">
+                  <div class=input-badge>
+                    <h5><span class="badge badge-light "><span id="temperature-target-output">0</span>&nbsp;&deg;C</span></h5>
+                  </div>
+                  <div class="input-group-append">
+                    <button id="temperature-button" type="button" class="btn btn-outline-primary"><span data-feather="check"></span></button>
+                  </div>
+                </div>
+                <button id="temperature-hold-button" type="button" class="btn btn-outline-secondary supplementary-button"><span data-feather="thermometer"></span>&nbsp;&nbsp;Hold</button>
+              </div>
+              <div class="row">
+                <label>PID Settings</span></label>
+                <div class="input-group">
+                  <input type="text" class="form-control" id="p-coefficient-input" placeholder="Proportional">
+                  <div class=input-badge>
+                    <h5><span class="badge badge-light "><span id="p-coefficient-output">0</span></span></h5>
+                  </div>
+                  <div class="input-group-append">
+                    <button id="pid-p-button" type="button" class="btn btn-outline-primary"><span data-feather="check"></span></button>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="input-group mt-2 mb-2">
+                  <input type="text" class="form-control" id="i-coefficient-input" placeholder="Integral">
+                  <div class=input-badge>
+                    <h5><span class="badge badge-light "><span id="i-coefficient-output">0.0</span></span></h5>
+                  </div>
+                  <div class="input-group-append">
+                    <button id="pid-i-button" type="button" class="btn btn-outline-primary"><span data-feather="check"></span></button>
+                  </div>
+                </div>
+              </div>
+              <div class="row justify-content-between">
+                <div class="input-group">
+                  <input type="text" class="form-control" id="d-coefficient-input" placeholder="Derivative">
+                  <div class=input-badge>
+                    <h5><span class="badge badge-light "><span id="d-coefficient-output">0.0</span></span></h5>
+                  </div>
+                  <div class="input-group-append">
+                    <button id="pid-d-button" type="button" class="btn btn-outline-primary"><span data-feather="check"></span></button>
+                  </div>
+                </div>
+                <button id="reset-pid-button" type="button" class="btn btn-outline-secondary supplementary-button"><span data-feather="refresh-ccw"></span>&nbsp;&nbsp;Reset PID</button>
+              </div>
+              <div class="row justify-content-between">
+                <label>Frame interval</span></label>
+                <div class="input-group">
+                  <input id="frame-interval-input" type="text" class="form-control" placeholder="Interval">
+                  <div class=input-badge>
+                    <h5><span class="badge badge-light "><span id="frame-interval-output">0.0</span>&nbsp;s</span></h5>
+                  </div>
+
+                  <div class="input-group-append">
+                    <button id="frame-interval-button" type="button" class="btn btn-outline-primary"><span data-feather="check"></span></button>
+                  </div>
+                </div>
+                <button id="min-interval-button" type="button" class="btn btn-outline-secondary supplementary-button"><span data-feather="fast-forward"></span>&nbsp;&nbsp;Minimum</button>
+              </div>
+            </div>
+            <div class="col-8 pr-5 pl-5">
+              <div class="row">
+                <div class="col-6">
+                  <label for="thermal-image">Thermal imaging feed</label>
+                  <a id="thermal-link"><img id="thermal-image" src="placeholder.png" style="width: 100%"></a>
+                </div>
+                <div class="col-6">
+                  <label for="camera-image">Camera feed</label>
+                  <a id="camera-link"><img id="camera-image" src="placeholder.png" style="width: 100%"></a>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col">
+                  <label for="myChart">Temperature feed</label>
+                  <canvas id="myChart" style="width: 100%; height: 275px;"></canvas>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+      <!-- Modal -->
+      <div class="modal fade" id="IPmodal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Set IP address</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div class="input-group w-100">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text">192.168.0.</span>
+                  </div>
+                <input id="ip-address-input" type="text" class="form-control" placeholder="Last 2 digits">
+                <div class=input-badge>
+                  <h5><span id="ip-address-output" class="badge badge-light "><span>00</span></span></h5>
+                </div>
+                <div class="input-group-append">
+                  <button id="ip-address-button" type="button" data-dismiss="modal" class="btn btn-outline-primary"><span data-feather="check"></span></button>
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <label class="text-muted" style="font-size: 13px">Find your Raspberry Pi's IP address using the <span class="badge badge-light ">ifconfig</span> command</label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+  <script src="https://unpkg.com/feather-icons/dist/feather.min.js"></script>
+  <script>
+  feather.replace()
+  </script>
+  <script src="dashboard.js"></script>
+  <script src="charts.js"></script>
+</body>
+</html>

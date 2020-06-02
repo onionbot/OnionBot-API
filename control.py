@@ -22,7 +22,7 @@ pid = PID(
 knob = Knob()
 
 
-DEADBAND_THRESHOLD = 5
+DEADBAND_THRESHOLD = 0
 
 
 class Control(object):
@@ -48,12 +48,13 @@ class Control(object):
             "servo_achieved": None,
             "servo_achieved_history": None,
             "temperature_target": None,
+            "pid_enabled": None,
             "p_coefficient": None,
             "i_coefficient": None,
             "d_coefficient": None,
-            "p_component": None,
-            "i_component": None,
-            "d_component": None,
+            "p_component": 0,
+            "i_component": 0,
+            "d_component": 0,
         }
 
     def _worker(self):
@@ -94,6 +95,13 @@ class Control(object):
 
     def update_temperature_target(self, setpoint):
         logger.debug("Updating self.temperature_target to %s degrees " % (setpoint))
+        self.temperature_target = float(setpoint)
+        self.set_pid_enabled(True)
+        self.fixed_setpoint = None
+
+    def hold_temperature(self):
+        setpoint = str(self.temperature)
+        logger.debug("Updating self.temperature_target to hold at %s degrees " % (setpoint))
         self.temperature_target = float(setpoint)
         self.set_pid_enabled(True)
         self.fixed_setpoint = None

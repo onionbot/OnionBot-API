@@ -1,7 +1,6 @@
 import json
-from os import path
 
-FILE = path.dirname(__file__) + "/config.json"
+FILE = "/home/pi/onionbot/config.json"
 
 
 class Config(object):
@@ -24,7 +23,7 @@ class Config(object):
 
                 # Close file then dump new version of config
                 json_data_file.close()
-                with open("config.json", "w") as outfile:
+                with open(FILE, "w") as outfile:
                     json.dump(config, outfile)
             else:
                 raise KeyError("Config key not found")

@@ -1,0 +1,6 @@
+add_onions
+add_tomatoes
+add_oil
+empty_pan
+onions_cooked
+add_puree

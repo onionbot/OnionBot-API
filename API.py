@@ -53,9 +53,13 @@ def index():
         logger.debug("set_chosen_labels called")
         return bot.set_chosen_labels(request.form["value"])
 
-    if request.form["action"] == "set_active_label":
-        logger.debug("set_active_label called")
-        return bot.set_active_label(request.form["value"])
+    if request.form["action"] == "set_label":
+        logger.debug("set_label called")
+        return bot.set_label(request.form["value"])
+
+    if request.form["action"] == "set_no_label":
+        logger.debug("set_no_label called")
+        return bot.set_no_label()
 
     if request.form["action"] == "set_active_model":
         logger.debug("set_active_model called")
@@ -76,6 +80,10 @@ def index():
     if request.form["action"] == "set_temperature_target":
         logger.debug("set_temperature_target called")
         return bot.set_temperature_target(request.form["value"])
+
+    if request.form["action"] == "set_temperature_hold":
+        logger.debug("set_temperature_hold called")
+        return bot.set_temperature_hold()
 
     if request.form["action"] == "set_hob_off":
         logger.debug("set_hob_off called")
@@ -101,9 +109,9 @@ def index():
         logger.debug("set_pid_reset called")
         return bot.set_pid_reset()
 
-    if request.form["action"] == "set_camera_sleep":
-        logger.debug("set_camera_sleep called")
-        return bot.set_camera_sleep(request.form["value"])
+    if request.form["action"] == "set_frame_interval":
+        logger.debug("set_frame_interval called")
+        return bot.set_frame_interval(request.form["value"])
 
     if request.form["action"] == "get_all_labels":
         logger.debug("get_all_labels called")
@@ -113,8 +121,16 @@ def index():
         logger.debug("get_all_models called")
         return bot.get_all_models()
 
+    if request.form["action"] == "pi-restart":
+        os.system("sudo reboot") 
+
+    if request.form["action"] == "pi-shutdown":
+        os.system("sudo shutdown now") 
+
+    if request.form["action"] == "restart":
+        os.system(". ~/onionbot/runonion") 
+
     if request.form["action"] == "quit":
-        logger.debug("quit called")
         bot.quit()
         logger.info("Shutting down server")
         server_quit = request.environ.get("werkzeug.server.shutdown")
