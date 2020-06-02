@@ -69,7 +69,7 @@ class Control(object):
                 target_setpoint = self.fixed_setpoint
 
             delta = abs(target_setpoint - current_setpoint)
-            logger.debug("Servo setpoint delta: {:.1f}".format(delta))
+            #logger.debug("Servo setpoint delta: {:.1f}".format(delta))
 
             if delta >= DEADBAND_THRESHOLD:
                 knob.update_setpoint(target_setpoint)
