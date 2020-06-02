@@ -79,13 +79,13 @@ class Knob(object):
 
     def _worker(self, target_angle):
 
-        logger.debug("Starting thread")
+        #logger.debug("Starting thread")
 
         target_angle = float(target_angle)
 
         safe_target = max(min(target_angle, MAX_SAFE_ANGLE), MIN_SAFE_ANGLE)
 
-        logger.debug("Worker called with target %s " % (safe_target))
+        #logger.debug("Worker called with target %s " % (safe_target))
 
         target_angle = float(360 - target_angle)
 
@@ -107,7 +107,7 @@ class Knob(object):
 
         list_ticks = []
 
-        logger.debug("Starting while loop")
+        #logger.debug("Starting while loop")
 
         while True:
             #  DEBUGGING OPTION:
@@ -194,14 +194,14 @@ class Knob(object):
                 if reached_sp_counter >= wait_after_reach_sp:
                     self._set_speed(0.0)
                     self.stop_event.set()
-                    logger.debug("At position")
+                    #logger.debug("At position")
                 elif time.time() - start_time >= TIMEOUT_PERIOD:
                     self._set_speed(0.0)
                     self.stop_event.set()
-                    logger.debug("Timed out, position not reached")
+                    #logger.debug("Timed out, position not reached")
 
             if self.stop_event.is_set():
-                logger.debug("Thread closing")
+                #logger.debug("Thread closing")
                 break
 
             #  Pause control loop for chosen sample time
@@ -241,7 +241,7 @@ class Knob(object):
         except AttributeError:
             logger.debug("No thread to join")
 
-        logger.debug("Initialising worker with target_angle %s " % (target_angle))
+        #logger.debug("Initialising worker with target_angle %s " % (target_angle))
         self.stop_event.clear()
         self.thread = Thread(target=self._worker, args=(target_angle,), daemon=True)
         self.thread.start()
