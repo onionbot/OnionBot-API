@@ -60,7 +60,7 @@ class Classify(object):
                         logger.debug("Starting classifier %s " % (name))
                         engine = self.loaded[name]["model"]
                         labels = self.loaded[name]["labels"]
-                        results = engine.classify_with_image(image, top_k=3)
+                        results = engine.classify_with_image(image, top_k=3, threshold=0)
                         logger.debug(results)
 
                         # Convert results into nicely formatted dictionary
@@ -88,13 +88,15 @@ class Classify(object):
                             average = round(sum(queue) / 10, 2)
                             result_data["average"] = average
 
-                        # Remove items from database not in top k
+                        # Remove items from database not in top 
+                        print(dict_results)
+                        print(labels)
                         print(dict_results.keys())
                         print(labels.values())
-                        print(dict(dict_results.keys() ^ labels.values()))
-                        remove_me = dict(dict_results.keys() ^ labels.values())
-                        for label in remove_me.items():
-                            del database[name][label]
+                        remove_me = dict_results.keys() ^ labels.values()
+                        for label in remove_me:
+                            print(database[name])
+                            database[name].pop(label, None)
 
                     elif name in database:
                         # Remove classifiers in database that are not active
