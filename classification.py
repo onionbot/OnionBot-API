@@ -8,6 +8,7 @@ from queue import Queue, Empty
 import logging
 
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 
 
 class Classify(object):
@@ -53,7 +54,7 @@ class Classify(object):
 
                 for name, t in self.tests.items():
 
-                    logger.info("Starting test %s " % (name))
+                    logger.debug("Starting test %s " % (name))
 
                     engine = t["model"]
                     labels = t["labels"]
@@ -62,7 +63,7 @@ class Classify(object):
                     result = engine.classify_with_image(
                         image, top_k=1, threshold=threshold
                     )
-                    logger.info(result)
+                    logger.debug(result)
 
                     try:
                         result = result[0]
@@ -71,24 +72,24 @@ class Classify(object):
                             "confidence": str(result[1]),
                         }
                     except TypeError:
-                        logger.info("TypeError")
+                        logger.debug("TypeError")
                     except IndexError:
-                        logger.info("IndexError")
-                logger.info(output)
+                        logger.debug("IndexError")
+                logger.debug(output)
                 self.data = output
                 self.file_queue.task_done()
 
             except Empty:
                 if self.quit_event.is_set():
-                    logger.info("Quitting thread...")
+                    logger.debug("Quitting thread...")
                     break
 
     def start(self, file_path):
-        logger.info("Calling start")
+        logger.debug("Calling start")
         self.file_queue.put(file_path)
 
     def join(self):
-        logger.info("Calling join")
+        logger.debug("Calling join")
         self.file_queue.join()
 
     def launch(self):
@@ -98,5 +99,5 @@ class Classify(object):
 
     def quit(self):
         self.quit_event.set()
-        logger.info("Waiting for classification thread to finish uploading")
+        logger.debug("Waiting for classification thread to finish")
         self.thread.join()
