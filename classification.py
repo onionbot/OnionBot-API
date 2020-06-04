@@ -44,22 +44,22 @@ class Classify(object):
 
                 for name in self.active:
 
-                    c = self.loaded[name]
-
                     logger.debug("Starting classifier %s " % (name))
 
+                    c = self.loaded[name]
                     engine = c["model"]
                     labels = c["labels"]
 
-                    result = engine.classify_with_image(image, top_k=1)
-                    logger.debug(result)
+                    results = engine.classify_with_image(image, top_k=3)
+                    logger.debug(results)
 
                     try:
-                        result = result[0]
-                        output[name] = {
-                            "label": labels[result[0]],
-                            "confidence": str(result[1]),
-                        }
+                        for result in results:
+                            name_pos = name + result[0]
+                            output[name_pos] = {
+                                "label": labels[result[0]],
+                                "confidence": str(result[1]),
+                            }
                     except TypeError:
                         logger.debug("TypeError")
                     except IndexError:
