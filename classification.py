@@ -21,14 +21,15 @@ class Classify(object):
 
         logger.info("Initialising classifier...")
 
-        self.classifiers = classifiers.get_classifiers()
+        self.all = classifiers.get_classifiers()
         self.loaded = {}
 
         self.quit_event = Event()
         self.file_queue = Queue()
         self.data = None
 
-        self.load_classifiers(["pasta", "sauce", "pan_on_off"])
+        self.load_classifiers("pasta,sauce,pan_on_off")
+        self.set_classifiers("pasta,sauce")
 
     def _worker(self):
 
@@ -71,17 +72,14 @@ class Classify(object):
                     logger.debug("Quitting thread...")
                     break
 
-    def load_classifiers(self, classifiers):
-
-        for name in self.classifiers:
+    def load_classifiers(self, input_string):
+        for name in input_string.split(","):
             if name not in self.loaded:
                 try:
-                    attributes = self.classifiers[name]
+                    attr = self.all[name]
                     output = {}
-                    output["labels"] = dataset_utils.read_label_file(
-                        attributes["labels"]
-                    )
-                    output["model"] = ClassificationEngine(attributes["model"])
+                    output["labels"] = dataset_utils.read_label_file(attr["labels"])
+                    output["model"] = ClassificationEngine(attr["model"])
                     self.loaded[name] = output
                 except KeyError:
                     raise KeyError("Model name not found in database")
@@ -89,6 +87,9 @@ class Classify(object):
                     raise FileNotFoundError(
                         "Model or labels not found in models folder"
                     )
+
+    def set_classifiers(self, input_string):
+        self.active = input_string.split(",")
 
     def start(self, file_path):
         logger.debug("Calling start")

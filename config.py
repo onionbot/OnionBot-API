@@ -48,5 +48,5 @@ class Classifiers(object):
 
         with open(FILE) as json_data_file:
             config = load(json_data_file)
-            labels = config["classifiers"]
-            return dump(labels)
+            classifiers = config["classifiers"]
+            return classifiers
