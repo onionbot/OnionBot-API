@@ -11,16 +11,16 @@ import sys
 import logging
 
 
-# Fix logging faliure issue
-for handler in logging.root.handlers[:]:
-    logging.root.removeHandler(handler)
+# # Fix logging faliure issue
+# for handler in logging.root.handlers[:]:
+#     logging.root.removeHandler(handler)
 
 FORMAT = "%(relativeCreated)6d %(levelname)-8s %(name)s %(process)d %(message)s"
 logging.basicConfig(format=FORMAT, level=logging.INFO)
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("API")
 
-# logger = logging.getLogger("werkzeug")
-# logger.setLevel(logging.ERROR)
+werkzeug_logger = logging.getLogger("werkzeug")
+werkzeug_logger.setLevel(logging.ERROR)
 
 
 logger.info("Initialising web server...")
