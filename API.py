@@ -10,12 +10,16 @@ import sys
 import logging
 
 # Silence Flask werkzeug logger
-logging.getLogger("werkzeug").setLevel(logging.ERROR)
+# logging.getLogger("werkzeug").setLevel(logging.ERROR)
+logger = logging.getLogger("werkzeug")
+logger.setLevel(logging.ERROR)
 
-# Initialise custom logging format
-FORMAT = "%(relativeCreated)6d %(levelname)-8s %(name)s %(process)d %(message)s"
-logging.basicConfig(format=FORMAT, level=logging.INFO)
-logger = logging.getLogger("API")
+# Initialise flask server
+# logger.info("Initialising web server...")
+app = Flask(__name__)
+CORS(app)
+logger.info("Web server is ready. Go to 0.0.0.0:8888/portal to connect")
+
 
 # Initialise OnionBot
 bot = OnionBot()
@@ -24,12 +28,6 @@ logger.info("OnionBot is ready")
 # Start main script
 logger.info("Starting main script")
 bot.run()
-
-# Initialise flask server
-logger.info("Initialising web server...")
-app = Flask(__name__)
-CORS(app)
-logger.info("Web server is ready. Go to 0.0.0.0:8888/portal to connect")
 
 
 @app.route("/", methods=["GET", "POST"])
