@@ -7,7 +7,7 @@ from cloud import Cloud
 from classification import Classify
 from control import Control
 from data import Data
-from config import Settings
+from config import Settings, Labels 
 
 from datetime import datetime
 from json import dumps
@@ -15,7 +15,8 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-config = Settings()
+settings = Settings()
+labels = Labels()
 camera = Camera()
 thermal = ThermalCamera()
 cloud = Cloud()
@@ -126,7 +127,7 @@ class OnionBot(object):
                 meta = queued_meta
 
                 # Add delay until ready for next loop
-                frame_interval = float(config.get_config("frame_interval"))
+                frame_interval = float(settings.get_setting("frame_interval"))
                 while True:
                     if (datetime.now() - timer).total_seconds() > frame_interval:
                         break
@@ -195,17 +196,15 @@ class OnionBot(object):
 
     def set_frame_interval(self, value):
         """Command to change camera target refresh rate"""
-        config.set_config("frame_interval", value)
+        settings.set_setting("frame_interval", value)
 
     def get_all_labels(self):
         """Returns available image labels for training"""
-        labels = dumps(data.generate_labels())
-        return labels
+        return labels.get_labels()
 
     def get_all_models(self):
         """Returns available models for prediction"""
-        data = '[{"ID":"0","label":"tflite_water_boiling_1"}]'
-        return data
+        return '[{"ID":"0","label":"tflite_water_boiling_1"}]'
 
     def set_pid_enabled(self, enabled):
         """Command to start PID controller"""

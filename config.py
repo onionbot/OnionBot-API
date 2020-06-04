@@ -1,13 +1,13 @@
-import json
+from json import dumps, dump, load
 
 FILE = "/home/pi/onionbot/config.json"
 
 
 class Settings(object):
-    def get_config(self, key):
+    def get_setting(self, key):
 
         with open(FILE) as json_data_file:
-            config = json.load(json_data_file)
+            config = load(json_data_file)
 
             settings = config["settings"]
 
@@ -16,10 +16,10 @@ class Settings(object):
             except KeyError:
                 raise KeyError("Settings key not found")
 
-    def set_config(self, key, value):
+    def set_setting(self, key, value):
 
         with open(FILE) as json_data_file:
-            config = json.load(json_data_file)
+            config = load(json_data_file)
 
             settings = config["settings"]
 
@@ -29,6 +29,15 @@ class Settings(object):
 
             # dump new version of config
             with open(FILE, "w") as outfile:
-                json.dump(config, outfile, indent=4)
+                dump(config, outfile, indent=4)
         else:
             raise KeyError("Settings key not found")
+
+
+class Labels(object):
+    def get_labels(self):
+
+        with open(FILE) as json_data_file:
+            config = load(json_data_file)
+            labels = config["labels"]
+            dumps(labels)
