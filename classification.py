@@ -64,7 +64,8 @@ class Classify(object):
                         # Iterate over classifier results
                         for result in results:
                             label = labels[result[0]]
-                            confidence = round(result[1], 2)
+                            confidence = result[1].item()
+                            confidence = round(confidence, 2)
 
                             # Ensure label is in classifier database entry
                             if label not in database[name]:
@@ -82,6 +83,9 @@ class Classify(object):
                             result_data["queue"] = list(queue)
                             average = round(sum(queue) / 10, 2)
                             result_data["average"] = average
+
+                            for key, value in result_data:
+                                print(type(result_data[key]))
 
                     elif name in database:
                         # Remove classifiers in database that are not active
