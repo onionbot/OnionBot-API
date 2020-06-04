@@ -10,18 +10,29 @@ import sys
 
 import logging
 
-logger = logging.getLogger("werkzeug")
-logger.setLevel(logging.ERROR)
+
+# Fix logging faliure issue
+for handler in logging.root.handlers[:]:
+    logging.root.removeHandler(handler)
+
+FORMAT = "%(relativeCreated)6d %(levelname)-8s %(name)s %(process)d %(message)s"
+logging.basicConfig(format=FORMAT, level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+# logger = logging.getLogger("werkzeug")
+# logger.setLevel(logging.ERROR)
 
 
-logger.info("Initialising web server")
+logger.info("Initialising web server...")
 app = Flask(__name__)
 CORS(app)
 
 bot = OnionBot()
+logger.info("OnionBot is ready")
 
-logger.info("Web server ready. Go to 0.0.0.0:8888/portal to connect")
+logger.info("Web server is ready. Go to 0.0.0.0:8888/portal to connect")
 
+logger.info("Starting main script")
 bot.run()
 
 

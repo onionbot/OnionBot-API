@@ -13,12 +13,6 @@ from datetime import datetime
 from json import dumps
 import logging
 
-# Fix logging faliure issue
-for handler in logging.root.handlers[:]:
-    logging.root.removeHandler(handler)
-
-FORMAT = "%(relativeCreated)6d %(levelname)-8s %(name)s %(process)d %(message)s"
-logging.basicConfig(format=FORMAT, level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 config = Config()
@@ -36,7 +30,7 @@ class OnionBot(object):
         self.quit_event = Event()
 
         # Launch multiprocessing threads
-        logger.info("Launching worker threads")
+        logger.info("Launching worker threads...")
         camera.launch()
         thermal.launch()
         control.launch()
