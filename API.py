@@ -10,23 +10,19 @@ import sys
 import logging
 
 # Silence Flask werkzeug logger
-# logging.getLogger("werkzeug").setLevel(logging.ERROR)
 logger = logging.getLogger("werkzeug")
 logger.setLevel(logging.ERROR)
 
-# Initialise flask server
-# logger.info("Initialising web server...")
-app = Flask(__name__)
-CORS(app)
-logger.info("Web server is ready. Go to 0.0.0.0:8888/portal to connect")
-
 # Initialise OnionBot
 bot = OnionBot()
-logger.info("OnionBot is ready")
-
-# Start main script
-logger.info("Starting main script")
 bot.run()
+
+# Initialise flask server
+app = Flask(__name__)
+CORS(app)
+logger.setLevel(logging.INFO)
+logger.info("Web server is ready. Go to 0.0.0.0:8888/portal to connect")
+logger.setLevel(logging.ERROR)
 
 
 @app.route("/", methods=["GET", "POST"])

@@ -50,6 +50,8 @@ class OnionBot(object):
         self.session_ID = None
         self.label = None
 
+        logger.info("OnionBot is ready")
+
     def run(self):
         """Start logging"""
 
@@ -148,6 +150,7 @@ class OnionBot(object):
                     break
 
         # Start thread
+        logger.info("Starting main script")
         self.thread = Thread(target=_worker, daemon=True)
         self.thread.start()
 
