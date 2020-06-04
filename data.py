@@ -16,6 +16,9 @@ BUCKET = cloud.bucket
 
 class Data:
     def __init__(self):
+
+        logger.info("Initialising data management...")
+
         self.camera_filepath = None
         self.thermal_filepath = None
         self.thermal_history_filepath = None

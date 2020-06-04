@@ -31,7 +31,8 @@ def index():
 
     if request.form["action"] == "start":
         logger.debug("start called")
-        return bot.start(request.form["value"])
+        bot.start(request.form["value"])
+        return "1"
 
     if request.form["action"] == "stop":
         logger.debug("stop called")
@@ -45,25 +46,20 @@ def index():
         logger.debug("get_thermal_history called")
         return bot.get_thermal_history()
 
-    if request.form["action"] == "get_chosen_labels":
-        logger.debug("get_chosen_labels called")
-        return bot.get_chosen_labels()
-
-    if request.form["action"] == "set_chosen_labels":
-        logger.debug("set_chosen_labels called")
-        return bot.set_chosen_labels(request.form["value"])
-
     if request.form["action"] == "set_label":
         logger.debug("set_label called")
-        return bot.set_label(request.form["value"])
+        bot.set_label(request.form["value"])
+        return "1"
 
     if request.form["action"] == "set_no_label":
         logger.debug("set_no_label called")
-        return bot.set_no_label()
+        bot.set_no_label()
+        return "1"
 
     if request.form["action"] == "set_active_model":
         logger.debug("set_active_model called")
-        return bot.set_active_model(request.form["value"])
+        bot.set_active_model(request.form["value"])
+        return "1"
 
     if request.form["action"] == "get_temperature_setpoint":
         logger.debug("get_temperature_setpoint called")
@@ -75,43 +71,53 @@ def index():
 
     if request.form["action"] == "set_fixed_setpoint":
         logger.debug("set_fixed_setpoint called")
-        return bot.set_fixed_setpoint(request.form["value"])
+        bot.set_fixed_setpoint(request.form["value"])
+        return "1"
 
     if request.form["action"] == "set_temperature_target":
         logger.debug("set_temperature_target called")
-        return bot.set_temperature_target(request.form["value"])
+        bot.set_temperature_target(request.form["value"])
+        return "1"
 
     if request.form["action"] == "set_temperature_hold":
         logger.debug("set_temperature_hold called")
-        return bot.set_temperature_hold()
+        bot.set_temperature_hold()
+        return "1"
 
     if request.form["action"] == "set_hob_off":
         logger.debug("set_hob_off called")
-        return bot.set_hob_off()
+        bot.set_hob_off()
+        return "1"
 
     if request.form["action"] == "set_pid_enabled":
         logger.debug("set_pid_enabled called")
-        return bot.set_pid_enabled(request.form["value"])
+        bot.set_pid_enabled(request.form["value"])
+        return "1"
 
     if request.form["action"] == "set_p_coefficient":
         logger.debug("set_p_coefficient called")
-        return bot.set_p_coefficient(request.form["value"])
+        bot.set_p_coefficient(request.form["value"])
+        return "1"
 
     if request.form["action"] == "set_i_coefficient":
         logger.debug("set_i_coefficient called")
-        return bot.set_i_coefficient(request.form["value"])
+        bot.set_i_coefficient(request.form["value"])
+        return "1"
 
     if request.form["action"] == "set_d_coefficient":
         logger.debug("set_d_coefficient called")
-        return bot.set_d_coefficient(request.form["value"])
+        bot.set_d_coefficient(request.form["value"])
+        return "1"
 
     if request.form["action"] == "set_pid_reset":
         logger.debug("set_pid_reset called")
-        return bot.set_pid_reset()
+        bot.set_pid_reset()
+        return "1"
 
     if request.form["action"] == "set_frame_interval":
         logger.debug("set_frame_interval called")
-        return bot.set_frame_interval(request.form["value"])
+        bot.set_frame_interval(request.form["value"])
+        return "1"
 
     if request.form["action"] == "get_all_labels":
         logger.debug("get_all_labels called")
@@ -122,13 +128,13 @@ def index():
         return bot.get_all_models()
 
     if request.form["action"] == "pi-restart":
-        os.system("sudo reboot") 
+        os.system("sudo reboot")
 
     if request.form["action"] == "pi-shutdown":
-        os.system("sudo shutdown now") 
+        os.system("sudo shutdown now")
 
     if request.form["action"] == "restart":
-        os.system(". ~/onionbot/runonion") 
+        os.system(". ~/onionbot/runonion")
 
     if request.form["action"] == "quit":
         bot.quit()

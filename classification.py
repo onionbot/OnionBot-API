@@ -15,6 +15,8 @@ class Classify(object):
 
     def __init__(self):
 
+        logger.info("Initialising classifier...")
+
         self.tests = {
             "pasta": {
                 "labels": dataset_utils.read_label_file("models/pasta.txt"),
@@ -39,7 +41,7 @@ class Classify(object):
 
     def _worker(self):
 
-        logger.info("Initialising upload worker")
+        logger.debug("Initialising classification worker")
 
         while True:
             try:  # Timeout raises queue.Empty
@@ -90,7 +92,7 @@ class Classify(object):
         self.file_queue.join()
 
     def launch(self):
-        logger.info("Initialising worker")
+        logger.debug("Initialising classification worker")
         self.thread = Thread(target=self._worker, daemon=True)
         self.thread.start()
 

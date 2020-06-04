@@ -17,7 +17,7 @@ class Camera(object):
 
     def _worker(self):
 
-        logger.info("Initialising camera")
+        logger.info("Initialising camera...")
 
         camera = PiCamera()
         camera.rotation = 180

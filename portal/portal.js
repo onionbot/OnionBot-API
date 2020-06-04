@@ -211,9 +211,7 @@ function get_all_models() {
 $(document).ready(function() {
 
     $('#start').on('click', function() {
-
         set('start', $('#session-id').val());
-        set('set_chosen_labels', $('#select-labels').val());
     });
 
     $('#stop').on('click', function() {

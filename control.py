@@ -28,7 +28,7 @@ DEADBAND_THRESHOLD = 0
 class Control(object):
     def __init__(self):
 
-        logger.info("Initialising control script")
+        logger.info("Initialising control script...")
 
         self.quit_event = Event()
 
