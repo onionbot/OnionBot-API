@@ -29,9 +29,6 @@ class Classify(object):
         self.file_queue = Queue()
         self.data = None
 
-        self.load_classifiers("pasta")
-        self.set_classifiers("pasta,sauce")
-
     def _worker(self):
 
         logger.debug("Initialising classification worker")
@@ -102,7 +99,10 @@ class Classify(object):
         self.active = input_string.split(",")
 
     def get_classifiers(self):
-        return ','.join(self.all)
+        output = ""
+        for name in self.all:
+            output = output + name + ","
+        return output
 
     def start(self, file_path):
         logger.debug("Calling start")
