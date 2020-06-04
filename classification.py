@@ -5,6 +5,7 @@ from threading import Thread, Event
 from queue import Queue, Empty
 
 from config import Classifiers
+from json import dumps
 
 import logging
 
@@ -99,10 +100,7 @@ class Classify(object):
         self.active = input_string.split(",")
 
     def get_classifiers(self):
-        output = ""
-        for name in self.all:
-            output = output + name + ","
-        return output
+        return dumps(self.all)
 
     def start(self, file_path):
         logger.debug("Calling start")
