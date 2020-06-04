@@ -80,7 +80,7 @@ class Classify(object):
                             queue.append(confidence)
                             queue.popleft()
                             result_data["queue"] = queue
-                            average = round(mean(list(queue)), 2)
+                            average = round(sum(queue) / 10, 2)
                             result["average"] = average
 
                     elif name in database:
