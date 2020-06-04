@@ -6,6 +6,8 @@ from queue import Queue, Empty
 
 from config import Classifiers
 from json import dumps
+from collections import deque
+from statistics import mean
 
 import logging
 
@@ -22,13 +24,13 @@ class Classify(object):
 
         logger.info("Initialising classifier...")
 
-        self.all = classifiers.get_classifiers()
+        self.library = classifiers.get_classifiers()
         self.loaded = {}
         self.active = []
 
         self.quit_event = Event()
         self.file_queue = Queue()
-        self.data = None
+        self.database = {}
 
     def _worker(self):
 
@@ -40,32 +42,51 @@ class Classify(object):
                 image = self.file_queue.get(block=True, timeout=0.1)
                 image = Image.open(image)
 
-                output = {}
+                library = self.library
+                active = self.active
+                database = self.database
 
-                for name in self.active:
+                for name in library:
 
-                    logger.debug("Starting classifier %s " % (name))
+                    if name in active:
+                        # Only classify active classifiers
 
-                    c = self.loaded[name]
-                    engine = c["model"]
-                    labels = c["labels"]
+                        logger.debug("Starting classifier %s " % (name))
+                        engine = self.loaded[name]["model"]
+                        labels = self.loaded[name]["labels"]
+                        results = engine.classify_with_image(image, top_k=3)
+                        logger.debug(results)
 
-                    results = engine.classify_with_image(image, top_k=3)
-                    logger.debug(results)
+                        # Ensure classifer is in database
+                        if name not in database:
+                            database[name] = {}
 
-                    try:
+                        # Iterate over classifier results
                         for result in results:
-                            name_pos = name + result[0]
-                            output[name_pos] = {
-                                "label": labels[result[0]],
-                                "confidence": str(result[1]),
-                            }
-                    except TypeError:
-                        logger.debug("TypeError")
-                    except IndexError:
-                        logger.debug("IndexError")
-                logger.debug(output)
-                self.data = output
+                            label = labels[result[0]]
+                            confidence = round(result[1], 2)
+
+                            # Ensure label is in classifier database entry
+                            if label not in database[name]:
+                                database[name][label] = {}
+                                database[name][label]["queue"] = deque([0] * 10)
+
+                            # Update nested database dictionary
+                            database[name][label]["confidence"] = str(confidence)
+                            database[name][label]["queue"].append(confidence)
+                            queue = database[name][label]["queue"].popleft()
+                            database[name][label]["average"] = str(
+                                round(mean(queue), 2)
+                            )
+
+                    elif name in database:
+                        # Remove classifiers in database that are not active
+                        del database[name]
+
+                self.database = database
+
+                logger.critical(database)
+
                 self.file_queue.task_done()
 
             except Empty:
@@ -95,12 +116,12 @@ class Classify(object):
     def set_classifiers(self, input_string):
         for name in input_string.split(","):
             if name not in self.loaded:
-                logger.debug("Classifier not loaded %s " % (name))
+                logger.debug("Classifier not loaded %s: loading " % (name))
                 self.load_classifiers(name)
         self.active = input_string.split(",")
 
     def get_classifiers(self):
-        return dumps(self.all)
+        return dumps(self.library)
 
     def start(self, file_path):
         logger.debug("Calling start")

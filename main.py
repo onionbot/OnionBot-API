@@ -85,7 +85,7 @@ class OnionBot(object):
                     file_data=queued_file_data,
                     thermal_data=thermal.data,
                     control_data=control.data,
-                    classification_data=classify.data,
+                    classification_data=classify.database,
                 )
 
                 # Start sensor capture
@@ -157,7 +157,6 @@ class OnionBot(object):
     def start(self, session_ID):
         data.start_session(session_ID)
         self.session_ID = session_ID
-        return "1"
 
     def stop(self):
         """Stop logging"""
@@ -178,15 +177,15 @@ class OnionBot(object):
         return self.thermal_history
 
     def set_label(self, string):
-        """Command to change current active label -  for building training datasets"""
+        """Command to change current label -  for building training datasets"""
         self.label = string
 
     def set_no_label(self):
-        """Command to set active label to None type"""
+        """Command to set label to None type"""
         self.label = None
 
     def set_classifiers(self, string):
-        """Command to change current active model for predictions"""
+        """Command to change current classifier for predictions"""
         classify.set_classifiers(string)
 
     def set_fixed_setpoint(self, value):
