@@ -1,6 +1,5 @@
 from flask import Flask
 from flask import request
-
 from flask_cors import CORS
 
 from main import OnionBot
@@ -10,28 +9,26 @@ import sys
 
 import logging
 
-
-# # Fix logging faliure issue
-# for handler in logging.root.handlers[:]:
-#     logging.root.removeHandler(handler)
-
+# Initialise custom logging format
 FORMAT = "%(relativeCreated)6d %(levelname)-8s %(name)s %(process)d %(message)s"
 logging.basicConfig(format=FORMAT, level=logging.INFO)
 logger = logging.getLogger("API")
 
+# Silence flask logs
 werkzeug_logger = logging.getLogger("werkzeug")
 werkzeug_logger.setLevel(logging.ERROR)
 
-
-logger.info("Initialising web server...")
-app = Flask(__name__)
-CORS(app)
-
+# Initialise OnionBot
 bot = OnionBot()
 logger.info("OnionBot is ready")
 
+# Initialise flask server
+logger.info("Initialising web server...")
+app = Flask(__name__)
+CORS(app)
 logger.info("Web server is ready. Go to 0.0.0.0:8888/portal to connect")
 
+# Start main script
 logger.info("Starting main script")
 bot.run()
 
