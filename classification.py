@@ -46,26 +46,30 @@ class Classify(object):
                 active = self.active
                 database = self.database
 
+                # Iterate over all classifiers
                 for name in library:
 
+                    # Only classify active classifiers
                     if name in active:
-                        # Only classify active classifiers
 
+                        # Ensure classifer is in database
+                        if name not in database:
+                            database[name] = {}
+
+                        # Run inference
                         logger.debug("Starting classifier %s " % (name))
                         engine = self.loaded[name]["model"]
                         labels = self.loaded[name]["labels"]
                         results = engine.classify_with_image(image, top_k=3)
                         logger.debug(results)
 
-                        # Ensure classifer is in database
-                        if name not in database:
-                            database[name] = {}
-
-                        # Iterate over classifier results
+                        # Convert results into nicely formatted dictionary
+                        dict_results = {}
                         for result in results:
-                            label = labels[result[0]]
-                            confidence = result[1].item()
-                            confidence = round(confidence, 2)
+                            dict_results[labels[result[0]]] = round(result[1].item(), 2)
+
+                        # Iterate over the dictionary
+                        for label, confidence in dict_results:
 
                             # Ensure label is in classifier database entry
                             if label not in database[name]:
@@ -84,8 +88,10 @@ class Classify(object):
                             average = round(sum(queue) / 10, 2)
                             result_data["average"] = average
 
-                            for key, value in result_data:
-                                print(type(result_data[key]))
+                        # Remove items from database not in top 3
+                        remove_me = dict(dict_results.keys() & labels.items())
+                        for label in remove_me:
+                            del database[name][label]
 
                     elif name in database:
                         # Remove classifiers in database that are not active
