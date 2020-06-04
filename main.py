@@ -7,7 +7,7 @@ from cloud import Cloud
 from classification import Classify
 from control import Control
 from data import Data
-from config import Config
+from config import Settings
 
 from datetime import datetime
 from json import dumps
@@ -15,7 +15,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-config = Config()
+config = Settings()
 camera = Camera()
 thermal = ThermalCamera()
 cloud = Cloud()

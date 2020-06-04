@@ -1,4 +1,4 @@
-import json
+from json import dump, dumps
 from cloud import Cloud
 from os import makedirs, path
 from datetime import datetime
@@ -163,7 +163,7 @@ class Data:
         # logger.debug(data)
 
         with open(file_data["meta"], "w") as write_file:
-            json.dump(data, write_file)
+            dump(data, write_file)
 
         return data
 
@@ -173,7 +173,7 @@ class Data:
         data = {
             "type": "labels",
             "attributes": {
-                "pan_on_off": {"0": "pan_on", "1": "pan_off",},
+                "pan_on_off": {"0": "pan_on", "1": "pan_off", },
                 "pasta": {
                     "0": "empty_pan",
                     "1": "add_water",
@@ -191,4 +191,4 @@ class Data:
             },
         }
 
-        return data
+        return dumps(data)

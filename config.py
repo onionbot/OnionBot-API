@@ -3,27 +3,32 @@ import json
 FILE = "/home/pi/onionbot/config.json"
 
 
-class Config(object):
+class Settings(object):
     def get_config(self, key):
 
-        with open(FILE) as json_data_file:
+        with open(FILE, "r") as json_data_file:
             config = json.load(json_data_file)
+
+            settings = config["settings"]
+
             try:
-                return config[key]
+                return settings[key]
             except KeyError:
-                raise KeyError("Config key not found")
+                raise KeyError("Settings key not found")
 
     def set_config(self, key, value):
 
-        with open(FILE) as json_data_file:
+        with open(FILE, "w") as json_data_file:
             config = json.load(json_data_file)
 
-            if key in config:
-                config[key] = value
+            settings = config["settings"]
+
+            if key in settings:
+                settings[key] = value
 
                 # Close file then dump new version of config
                 json_data_file.close()
                 with open(FILE, "w") as outfile:
-                    json.dump(config, outfile)
+                    json.dump(settings, outfile)
             else:
-                raise KeyError("Config key not found")
+                raise KeyError("Settings key not found")

@@ -1,7 +1,7 @@
 from threading import Thread, Event
 from collections import deque
 
-from config import Config
+from config import Settings
 from pid import PID
 from knob import Knob
 
@@ -9,7 +9,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-config = Config()
+config = Settings()
 pid = PID(
     Kp=config.get_config("Kp"),
     Ki=config.get_config("Ki"),
