@@ -7,7 +7,7 @@ from cloud import Cloud
 from classification import Classify
 from control import Control
 from data import Data
-from config import Settings, Labels 
+from config import Settings, Labels
 
 from datetime import datetime
 from json import dumps
