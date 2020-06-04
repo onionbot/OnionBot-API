@@ -152,43 +152,7 @@ class Data:
             },
         }
 
-        # # Remove dictionary elements with 'None' type
-        # attributes = data.get("attributes")
-        # cleaned_data = {
-        #     key: value for key, value in attributes.items() if value is not None
-        # }
-        # cleaned_data = {"attributes": cleaned_data}
-        # data.update(cleaned_data)
-
-        # logger.debug(data)
-
         with open(file_data["meta"], "w") as write_file:
             dump(data, write_file)
 
         return data
-
-    def generate_labels(self):
-        """Generate labels for live labelling functionality"""
-
-        data = {
-            "type": "labels",
-            "attributes": {
-                "pan_on_off": {"0": "pan_on", "1": "pan_off", },
-                "pasta": {
-                    "0": "empty_pan",
-                    "1": "add_water",
-                    "2": "water_boiling",
-                    "3": "add_pasta",
-                },
-                "sauce": {
-                    "0": "empty_pan",
-                    "1": "add_oil",
-                    "2": "add_onions",
-                    "3": "onions_cooked",
-                    "4": "add_puree",
-                    "5": "add_tomatoes",
-                },
-            },
-        }
-
-        return dumps(data)
