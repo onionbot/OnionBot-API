@@ -116,7 +116,6 @@ function update() {
             if (meta.attributes.classification_data && filename == "inference.html") {
                 let table_data = []
                 for (let [key, value] of Object.entries(meta.attributes.classification_data)) {
-                    console.log(key, value)
                     table_data.push({
                         "model": key,
                         "result": value.label,
@@ -195,7 +194,6 @@ function connection_success() {
 }
 
 function connection_failed() {
-    console.log("failed")
     $("#connected").hide();
     $("#not-connected").show();
     connected = false
@@ -272,18 +270,20 @@ function get_all_classifiers() {
     get("get_all_classifiers", function(data) {
         // data is a js object 
 
-        let dropdown = $('#select-classifier');
+        console.log(data)
+
+        let dropdown = $('#select-classifiers');
 
         dropdown.empty();
 
-        dropdown.append('<option selected="true" disabled>Select classifier</option>');
+        dropdown.append('<option selected="true" disabled>Select from list</option>');
         dropdown.prop('selectedIndex', 0);
 
         // Populate dropdown
         var dataJSON = JSON.parse(data);
 
-        $.each(dataJSON, function(key, entry) {
-            dropdown.append($('<option></option>').attr('value', entry.label).text(entry.label));
+        $.each(dataJSON, function(key) {
+            dropdown.append($('<option></option>').attr('value', key).text(key));
         });
     });
 }
@@ -301,7 +301,6 @@ $(document).ready(function() {
         $('#ip-address-output').html(localStorage.ip_address);
         $('#ip-address-input').val('');
         endpoint_url = 'http://192.168.0.' + localStorage.ip_address + ':5000/';
-        console.log(endpoint_url)
     });
 
     $('#quit').on('click', function() {
@@ -418,8 +417,8 @@ $(document).ready(function() {
 
     // Live inference
 
-    $('#select-classifier-button').on('click', function() {
-        set('set_classifiers', $('#select-classifier').val());
+    $('#select-classifiers-button').on('click', function() {
+        set('set_classifiers', $('#select-classifiers').val());
     });
 
 });
