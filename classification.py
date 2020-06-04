@@ -79,7 +79,9 @@ class Classify(object):
                             queue = deque(result_data["queue"])
                             queue.append(confidence)
                             queue.popleft()
-                            result["average"] = round(mean(queue), 2)
+                            result_data["queue"] = queue
+                            average = round(mean(list(queue)), 2)
+                            result["average"] = average
 
                     elif name in database:
                         # Remove classifiers in database that are not active
