@@ -56,9 +56,9 @@ def index():
         bot.set_no_label()
         return "1"
 
-    if request.form["action"] == "set_active_model":
-        logger.debug("set_active_model called")
-        bot.set_active_model(request.form["value"])
+    if request.form["action"] == "set_classifiers":
+        logger.debug("set_classifier called")
+        bot.set_classifiers(request.form["value"])
         return "1"
 
     if request.form["action"] == "get_temperature_setpoint":
@@ -123,9 +123,9 @@ def index():
         logger.debug("get_all_labels called")
         return bot.get_all_labels()
 
-    if request.form["action"] == "get_all_models":
-        logger.debug("get_all_models called")
-        return bot.get_all_models()
+    if request.form["action"] == "get_all_classifiers":
+        logger.debug("get_all_classifiers called")
+        return bot.get_all_classifiers()
 
     if request.form["action"] == "pi-restart":
         os.system("sudo reboot")

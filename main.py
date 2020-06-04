@@ -185,8 +185,9 @@ class OnionBot(object):
         """Command to set active label to None type"""
         self.label = None
 
-    # def set_active_model(self, string):
-    #     """Command to change current active model for predictions"""
+    def set_classifiers(self, string):
+        """Command to change current active model for predictions"""
+        classify.set_classifiers(string)
 
     def set_fixed_setpoint(self, value):
         """Command to change fixed setpoint"""
@@ -212,9 +213,9 @@ class OnionBot(object):
         """Returns available image labels for training"""
         return labels.get_labels()
 
-    def get_all_models(self):
+    def get_all_classifiers(self):
         """Returns available models for prediction"""
-        return '[{"ID":"0","label":"tflite_water_boiling_1"}]'
+        return classify.get_classifiers()
 
     def set_pid_enabled(self, enabled):
         """Command to start PID controller"""

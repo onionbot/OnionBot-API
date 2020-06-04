@@ -29,7 +29,7 @@ class Classify(object):
         self.file_queue = Queue()
         self.data = None
 
-        self.load_classifiers("pasta,sauce,pan_on_off")
+        self.load_classifiers("pasta")
         self.set_classifiers("pasta,sauce")
 
     def _worker(self):
@@ -78,6 +78,7 @@ class Classify(object):
     def load_classifiers(self, input_string):
         for name in input_string.split(","):
             if name not in self.loaded:
+                logger.debug("Loading classifier %s " % (name))
                 try:
                     attr = self.all[name]
                     output = {}
@@ -85,17 +86,23 @@ class Classify(object):
                     output["model"] = ClassificationEngine(attr["model"])
                     self.loaded[name] = output
                 except KeyError:
-                    raise KeyError("Model name not found in database")
+                    raise KeyError("Classifier name not found in database")
                 except FileNotFoundError:
                     raise FileNotFoundError(
                         "Model or labels not found in models folder"
                     )
+            else:
+                logger.debug("Classifier already loaded %s " % (name))
 
     def set_classifiers(self, input_string):
         for name in input_string.split(","):
             if name not in self.loaded:
-                raise KeyError("Set classifier failed. Classifier has not been loaded")
+                logger.debug("Classifier not loaded %s " % (name))
+                self.load_classifiers(name)
         self.active = input_string.split(",")
+
+    def get_classifiers(self):
+        return ','.join(self.all)
 
     def start(self, file_path):
         logger.debug("Calling start")

@@ -188,7 +188,7 @@ function connection_success() {
     if (connected == false) {
         // Refresh data on first reconnect
         get_all_labels()
-        get_all_models()
+        get_all_classifiers()
         connected = true
     }
 
@@ -214,7 +214,7 @@ $(document).ready(function() {
     $("#stop").hide();
 
     get_all_labels()
-    get_all_models()
+    get_all_classifiers()
 
     // Refresh page
     setInterval(update, update_interval);
@@ -268,15 +268,15 @@ function get_all_labels() {
     });
 }
 
-function get_all_models() {
-    get("get_all_models", function(data) {
+function get_all_classifiers() {
+    get("get_all_classifiers", function(data) {
         // data is a js object 
 
-        let dropdown = $('#select-model');
+        let dropdown = $('#select-classifier');
 
         dropdown.empty();
 
-        dropdown.append('<option selected="true" disabled>Select model</option>');
+        dropdown.append('<option selected="true" disabled>Select classifier</option>');
         dropdown.prop('selectedIndex', 0);
 
         // Populate dropdown
@@ -418,8 +418,8 @@ $(document).ready(function() {
 
     // Live inference
 
-    $('#select-model-button').on('click', function() {
-        set('set_active_model', $('#select-model').val());
+    $('#select-classifier-button').on('click', function() {
+        set('set_classifiers', $('#select-classifier').val());
     });
 
 });
