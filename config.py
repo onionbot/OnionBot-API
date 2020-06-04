@@ -41,3 +41,12 @@ class Labels(object):
             config = load(json_data_file)
             labels = config["labels"]
             return dumps(labels)
+
+
+class Classifiers(object):
+    def get_classifiers(self):
+
+        with open(FILE) as json_data_file:
+            config = load(json_data_file)
+            labels = config["classifiers"]
+            return dump(labels)

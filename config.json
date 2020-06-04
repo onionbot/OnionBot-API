@@ -29,5 +29,19 @@
                 "5": "add_tomatoes"
             }
         }
+    },
+    "classifiers": {
+        "pasta": {
+            "labels": "models/pasta.txt",
+            "model": "models/pasta.tflite"
+        },
+        "sauce": {
+            "labels": "models/sauce.txt",
+            "model": "models/sauce.tflite"
+        },
+        "pan_on_off": {
+            "labels": "models/pan_on_off.txt",
+            "model": "models/pan_on_off.tflite"
+        }
     }
 }
