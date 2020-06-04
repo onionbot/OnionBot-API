@@ -18,28 +18,13 @@ class Classify(object):
 
         logger.info("Initialising classifier...")
 
-        models = {
-            "pasta": {"labels": "models/pasta.txt", "model": "models/pasta.tflite", },
-            "sauce": {"labels": "models/sauce.txt", "model": "models/sauce.tflite", },
-            "pan_on_off": {
-                "labels": "models/pan_on_off.txt",
-                "model": "models/pan_on_off.tflite",
-            },
-        }
-
-        # get models from config python
-
         self.classifiers = {}
-
-        for name, attributes in models.items():
-            output = {}
-            output["labels"] = dataset_utils.read_label_file(attributes["labels"])
-            output["models"] = ClassificationEngine(attributes["model"])
-            self.classifiers[name] = output
 
         self.quit_event = Event()
         self.file_queue = Queue()
         self.data = None
+
+        self.load_classifiers("pasta", "sauce", "pan_on_off")
 
     def _worker(self):
 
@@ -81,6 +66,30 @@ class Classify(object):
                 if self.quit_event.is_set():
                     logger.debug("Quitting thread...")
                     break
+
+    def load_classifiers(self, classifiers):
+
+        available_classifiers = {
+            "pasta": {"labels": "models/pasta.txt", "model": "models/pasta.tflite"},
+            "sauce": {"labels": "models/sauce.txt", "model": "models/sauce.tflite"},
+            "pan_on_off": {
+                "labels": "models/pan_on_off.txt",
+                "model": "models/pan_on_off.tflite"
+            },
+        }
+
+        for name in classifiers:
+            if name not in self.classifiers:
+                try:
+                    attributes = available_classifiers[name]
+                    output = {}
+                    output["labels"] = dataset_utils.read_label_file(attributes["labels"])
+                    output["model"] = ClassificationEngine(attributes["model"])
+                    self.classifiers[name] = output
+                except KeyError:
+                    raise KeyError("Model name not found in database")
+                except FileNotFoundError:
+                    raise FileNotFoundError("Model or labels not found in models folder")
 
     def start(self, file_path):
         logger.debug("Calling start")
