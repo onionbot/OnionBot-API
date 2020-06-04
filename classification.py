@@ -23,6 +23,7 @@ class Classify(object):
 
         self.all = classifiers.get_classifiers()
         self.loaded = {}
+        self.active = []
 
         self.quit_event = Event()
         self.file_queue = Queue()
@@ -43,7 +44,9 @@ class Classify(object):
 
                 output = {}
 
-                for name, c in self.loaded.items():
+                for name in self.active:
+
+                    c = self.loaded[name]
 
                     logger.debug("Starting classifier %s " % (name))
 
@@ -89,6 +92,9 @@ class Classify(object):
                     )
 
     def set_classifiers(self, input_string):
+        for name in input_string.split(","):
+            if name not in self.loaded:
+                raise KeyError("Set classifier failed. Classifier has not been loaded")
         self.active = input_string.split(",")
 
     def start(self, file_path):
