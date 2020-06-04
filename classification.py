@@ -31,7 +31,7 @@ class Classify(object):
 
         self.classifiers = {}
 
-        for name, attributes in models:
+        for name, attributes in models.items():
             output = {}
             output["labels"] = dataset_utils.read_label_file(attributes["labels"])
             output["models"] = ClassificationEngine(attributes["model"])
