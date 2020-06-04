@@ -23,14 +23,12 @@ class Settings(object):
 
             settings = config["settings"]
 
-            if key in settings:
-                settings[key] = value
+        if key in settings:
+            settings[key] = value
+            config["settings"] = settings
 
-                config["settings"] = settings
-
-                # Close file then dump new version of config
-                json_data_file.close()
-                with open(FILE) as outfile:
-                    json.dump(settings, outfile)
-            else:
-                raise KeyError("Settings key not found")
+            # dump new version of config
+            with open(FILE, "w") as outfile:
+                json.dump(config, outfile)
+        else:
+            raise KeyError("Settings key not found")
