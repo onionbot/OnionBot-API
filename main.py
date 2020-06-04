@@ -13,6 +13,13 @@ from datetime import datetime
 from json import dumps
 import logging
 
+# Fix logging faliure issue
+for handler in logging.root.handlers[:]:
+    logging.root.removeHandler(handler)
+    
+# Initialise custom logging format
+FORMAT = "%(relativeCreated)6d %(levelname)-8s %(name)s %(process)d %(message)s"
+logging.basicConfig(format=FORMAT, level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 settings = Settings()

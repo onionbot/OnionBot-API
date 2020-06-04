@@ -20,16 +20,6 @@ app = Flask(__name__)
 CORS(app)
 logger.info("Web server is ready. Go to 0.0.0.0:8888/portal to connect")
 
-
-# Fix logging faliure issue
-for handler in logging.root.handlers[:]:
-    logging.root.removeHandler(handler)
-    
-# Initialise custom logging format
-FORMAT = "%(relativeCreated)6d %(levelname)-8s %(name)s %(process)d %(message)s"
-logging.basicConfig(format=FORMAT, level=logging.INFO)
-logger = logging.getLogger(__name__)
-
 # Initialise OnionBot
 bot = OnionBot()
 logger.info("OnionBot is ready")
