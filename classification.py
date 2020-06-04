@@ -63,13 +63,16 @@ class Classify(object):
                         results = engine.classify_with_image(image, top_k=3)
                         logger.debug(results)
 
+                        # Convert labels into nicely formatted dictionary
+                        dict_labels = dict(labels)
+
                         # Convert results into nicely formatted dictionary
                         dict_results = {}
                         for result in results:
                             dict_results[labels[result[0]]] = round(result[1].item(), 2)
 
                         # Iterate over the dictionary
-                        for label, confidence in dict_results:
+                        for label, confidence in dict_results.items():
 
                             # Ensure label is in classifier database entry
                             if label not in database[name]:
@@ -88,9 +91,12 @@ class Classify(object):
                             average = round(sum(queue) / 10, 2)
                             result_data["average"] = average
 
-                        # Remove items from database not in top 3
-                        remove_me = dict(dict_results.keys() & labels.items())
-                        for label in remove_me:
+                        # Remove items from database not in top k
+                        print(dict_results.keys())
+                        print(dict_labels.items())
+                        print(dict(dict_results.keys() ^ dict_labels.items()))
+                        remove_me = dict(dict_results.keys() ^ dict_labels.items())
+                        for label in remove_me.items():
                             del database[name][label]
 
                     elif name in database:
