@@ -69,15 +69,17 @@ class Classify(object):
                             # Ensure label is in classifier database entry
                             if label not in database[name]:
                                 database[name][label] = {}
-                                database[name][label]["queue"] = deque([0] * 10)
+                                database[name][label]["queue"] = [0] * 10
 
                             # Update nested database dictionary
-                            database[name][label]["confidence"] = str(confidence)
-                            database[name][label]["queue"].append(confidence)
-                            queue = database[name][label]["queue"].popleft()
-                            database[name][label]["average"] = str(
-                                round(mean(queue), 2)
-                            )
+                            result_data = database[name][label]
+                            result_data["confidence"] = confidence
+
+                            # Use deque to update average
+                            queue = deque(result_data["queue"])
+                            queue.append(confidence)
+                            queue.popleft()
+                            result["average"] = round(mean(queue), 2)
 
                     elif name in database:
                         # Remove classifiers in database that are not active
@@ -96,10 +98,14 @@ class Classify(object):
 
     def load_classifiers(self, input_string):
         for name in input_string.split(","):
+
+            # Check if classifier has already been loaded
             if name not in self.loaded:
                 logger.debug("Loading classifier %s " % (name))
+
+                # Read attributes from library and initialise
                 try:
-                    attr = self.all[name]
+                    attr = self.library[name]
                     output = {}
                     output["labels"] = dataset_utils.read_label_file(attr["labels"])
                     output["model"] = ClassificationEngine(attr["model"])
@@ -110,11 +116,14 @@ class Classify(object):
                     raise FileNotFoundError(
                         "Model or labels not found in models folder"
                     )
+
             else:
                 logger.debug("Classifier already loaded %s " % (name))
 
     def set_classifiers(self, input_string):
         for name in input_string.split(","):
+
+            # Check if classifier has already been loaded
             if name not in self.loaded:
                 logger.debug("Classifier not loaded %s: loading " % (name))
                 self.load_classifiers(name)
