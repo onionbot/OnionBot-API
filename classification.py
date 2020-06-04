@@ -90,9 +90,9 @@ class Classify(object):
 
                         # Remove items from database not in top k
                         print(dict_results.keys())
-                        print(labels)
-                        print(dict(dict_results.keys() ^ labels))
-                        remove_me = dict(dict_results.keys() ^ labels)
+                        print(labels.values())
+                        print(dict(dict_results.keys() ^ labels.values()))
+                        remove_me = dict(dict_results.keys() ^ labels.values())
                         for label in remove_me.items():
                             del database[name][label]
 
