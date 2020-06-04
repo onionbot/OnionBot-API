@@ -29,6 +29,6 @@ class Settings(object):
 
             # dump new version of config
             with open(FILE, "w") as outfile:
-                json.dump(config, outfile)
+                json.dump(config, outfile, indent=4)
         else:
             raise KeyError("Settings key not found")
