@@ -18,23 +18,24 @@ class Classify(object):
 
         logger.info("Initialising classifier...")
 
-        self.tests = {
-            "pasta": {
-                "labels": dataset_utils.read_label_file("models/pasta.txt"),
-                "model": ClassificationEngine("models/pasta.tflite"),
-                "threshold": 0.8,
-            },
-            "sauce": {
-                "labels": dataset_utils.read_label_file("models/sauce.txt"),
-                "model": ClassificationEngine("models/sauce.tflite"),
-                "threshold": 0.8,
-            },
+        models = {
+            "pasta": {"labels": "models/pasta.txt", "model": "models/pasta.tflite", },
+            "sauce": {"labels": "models/sauce.txt", "model": "models/sauce.tflite", },
             "pan_on_off": {
-                "labels": dataset_utils.read_label_file("models/pan_on_off.txt"),
-                "model": ClassificationEngine("models/pan_on_off.tflite"),
-                "threshold": 0.5,
+                "labels": "models/pan_on_off.txt",
+                "model": "models/pan_on_off.tflite",
             },
         }
+
+        # get models from config python
+
+        self.classifiers = {}
+
+        for name, attributes in models:
+            output = {}
+            output["labels"] = dataset_utils.read_label_file(attributes["labels"])
+            output["models"] = ClassificationEngine(attributes["model"])
+            self.classifiers[name] = output
 
         self.quit_event = Event()
         self.file_queue = Queue()
@@ -52,17 +53,14 @@ class Classify(object):
 
                 output = {}
 
-                for name, t in self.tests.items():
+                for name, c in self.classifiers.items():
 
-                    logger.debug("Starting test %s " % (name))
+                    logger.debug("Starting classifier %s " % (name))
 
-                    engine = t["model"]
-                    labels = t["labels"]
-                    threshold = t["threshold"]
+                    engine = c["model"]
+                    labels = c["labels"]
 
-                    result = engine.classify_with_image(
-                        image, top_k=1, threshold=threshold
-                    )
+                    result = engine.classify_with_image(image, top_k=1)
                     logger.debug(result)
 
                     try:
