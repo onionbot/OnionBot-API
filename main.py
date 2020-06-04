@@ -142,7 +142,7 @@ class OnionBot(object):
                         break
                     elif self.quit_event.is_set():
                         break
-                    sleep(0.1)
+                    sleep(0.01)
 
                 # Check quit flag
                 if self.quit_event.is_set():
