@@ -63,9 +63,6 @@ class Classify(object):
                         results = engine.classify_with_image(image, top_k=3)
                         logger.debug(results)
 
-                        # Convert labels into nicely formatted dictionary
-                        dict_labels = dict(labels)
-
                         # Convert results into nicely formatted dictionary
                         dict_results = {}
                         for result in results:
@@ -93,9 +90,9 @@ class Classify(object):
 
                         # Remove items from database not in top k
                         print(dict_results.keys())
-                        print(dict_labels.items())
-                        print(dict(dict_results.keys() ^ dict_labels.items()))
-                        remove_me = dict(dict_results.keys() ^ dict_labels.items())
+                        print(labels)
+                        print(dict(dict_results.keys() ^ labels))
+                        remove_me = dict(dict_results.keys() ^ labels)
                         for label in remove_me.items():
                             del database[name][label]
 
