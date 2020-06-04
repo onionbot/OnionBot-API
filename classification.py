@@ -79,9 +79,9 @@ class Classify(object):
                             queue = deque(result_data["queue"])
                             queue.append(confidence)
                             queue.popleft()
-                            result_data["queue"] = queue
+                            result_data["queue"] = list(queue)
                             average = round(sum(queue) / 10, 2)
-                            result["average"] = average
+                            result_data["average"] = average
 
                     elif name in database:
                         # Remove classifiers in database that are not active
