@@ -191,7 +191,7 @@ class ThermalCamera(object):
                         continue
 
                     if max(frame) > CHESSBOARD_MAX_THRESHOLD:
-                        logger.info(
+                        logger.debug(
                             "Frame capture error, retrying [Max Temp Error: %0.2f ]"
                             % (max(frame))
                         )
