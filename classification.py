@@ -53,53 +53,62 @@ class Classify(object):
                     if name in active:
 
                         # Ensure classifer is in database
-                        if name not in database:
-                            database[name] = {}
+                        try:
+                            storage = database[name]
+                        except KeyError:
+                            storage = {}
 
                         # Run inference
                         logger.debug("Starting classifier %s " % (name))
                         engine = self.loaded[name]["model"]
                         labels = self.loaded[name]["labels"]
-                        results = engine.classify_with_image(image, top_k=3, threshold=0)
-                        logger.debug(results)
+                        results = engine.classify_with_image(
+                            image, top_k=3, threshold=0
+                        )  # Return top 3 probability items
+                        logger.debug("%s results: " % (results))
 
-                        # Convert results into nicely formatted dictionary
-                        dict_results = {}
+                        # Create dictionary including those not in top_k
+                        big_dict = {}
                         for result in results:
-                            dict_results[labels[result[0]]] = round(result[1].item(), 2)
+                            label = labels[result[0]]
+                            confidence = round(result[1].item(), 2)
+                            big_dict[label] = confidence
+
+                        not_in_top_k = big_dict.keys() ^ labels.values()
+                        for label in not_in_top_k:
+                            # Zero confidence ensures moving average keeps moving
+                            big_dict[label] = 0
 
                         # Iterate over the dictionary
-                        for label, confidence in dict_results.items():
+                        for label, confidence in big_dict.items():
 
-                            # Ensure label is in classifier database entry
-                            if label not in database[name]:
-                                database[name][label] = {}
-                                database[name][label]["queue"] = [0] * 10
+                            # Ensure label is in classifier storage entry
+                            if label not in storage:
+                                storage[label] = {}
+                                storage[label]["queue"] = [0] * 10
 
-                            # Update nested database dictionary
-                            result_data = database[name][label]
-                            result_data["confidence"] = confidence
+                            # Update nested storage dictionary
+                            this_label = storage[label]
+                            this_label["confidence"] = confidence
 
-                            # Use deque to update average
-                            queue = deque(result_data["queue"])
+                            # Use deque to update moving average
+                            queue = deque(this_label["queue"])
                             queue.append(confidence)
                             queue.popleft()
-                            result_data["queue"] = list(queue)
+                            this_label["queue"] = list(queue)
                             average = round(sum(queue) / 10, 2)
-                            result_data["average"] = average
+                            this_label["average"] = average
 
-                        # Remove items from database not in top 
-                        print(dict_results)
-                        print(labels)
-                        print(dict_results.keys())
-                        print(labels.values())
-                        remove_me = dict_results.keys() ^ labels.values()
-                        for label in remove_me:
-                            print(database[name])
-                            database[name].pop(label, None)
+                        # Find label with highest moving average
+                        averages = dict([(k, v["average"]) for k, v in storage.items()])
+                        max_label = max(averages, key=averages.get)
+                        storage[max_label]["max_label"] = True
 
+                        # Update database with all information from this classifier
+                        database[name] = storage
+
+                    # Remove classifiers in database that are not active
                     elif name in database:
-                        # Remove classifiers in database that are not active
                         del database[name]
 
                 self.database = database
