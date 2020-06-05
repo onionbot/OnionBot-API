@@ -111,6 +111,7 @@ class SousChef(object):
         with open("recipes.py", "r") as file:
             data = file.read().replace("\n", "")
         dispatch_table = eval(data)
+        self.dispatch_table = dispatch_table
 
         while True:
             result = False
@@ -143,22 +144,24 @@ class SousChef(object):
                 break  # Recipe is complete
 
     def next(self):
-        logger.info("Next called")
-        self.substep_ID = 1
-        self.step_ID += 1
+        if self.step_ID + 1 in self.dispatch_table.keys():
+            logger.info("Next called")
+            self.substep_ID = 1
+            self.step_ID += 1
 
     def previous(self):
-        logger.info("Previous called")
+        if self.step_ID - 1 in self.dispatch_table.keys():
+            logger.info("Previous called")
         self.substep_ID = 1
         self.step_ID -= 1
 
     def stop(self):
         logger.info("Stop called")
         self.stop_flag = True
-        self.t.join()  # Wait for recipe to finish before quitting
+        quit()
 
     def run(self):
-        self.t = Thread(target=self._worker, daemon=True)  # , args=(1,)
-        self.t.start()
+        t = Thread(target=self._worker, daemon=True)  # , args=(1,)
+        t.start()
         m = Thread(target=self._meta_worker, daemon=True)  # , args=(1,)
         m.start()
