@@ -38,7 +38,8 @@ class SousChef(object):
 
     def _post(self, data):
         try:
-            post(ip, data)
+            r = post(ip, data)
+            return r 
         except:
             logger.info("Connection error")
 
@@ -143,6 +144,7 @@ class SousChef(object):
                 step_ID = self.step_ID
                 substep_ID = self.substep_ID
 
+                _check_pan()
                 _update_screen()
 
                 substep = dispatch_table[step_ID][substep_ID]
