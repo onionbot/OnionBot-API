@@ -16,7 +16,7 @@ import logging
 # Fix logging faliure issue
 for handler in logging.root.handlers[:]:
     logging.root.removeHandler(handler)
-    
+
 # Initialise custom logging format
 FORMAT = "%(relativeCreated)6d %(levelname)-8s %(name)s %(process)d %(message)s"
 logging.basicConfig(format=FORMAT, level=logging.INFO)
@@ -27,9 +27,9 @@ labels = Labels()
 camera = Camera()
 thermal = ThermalCamera()
 cloud = Cloud()
-control = Control()
 classify = Classify()
 data = Data()
+control = Control()
 
 
 class OnionBot(object):
@@ -41,10 +41,10 @@ class OnionBot(object):
         logger.info("Launching worker threads...")
         camera.launch()
         thermal.launch()
-        control.launch()
         cloud.launch_camera()
         cloud.launch_thermal()
         classify.launch()
+        control.launch()
 
         self.latest_meta = " "
         self.session_ID = None
@@ -241,14 +241,14 @@ class OnionBot(object):
         self.quit_event.set()
         self.thread.join()
         logger.info("Main module quit")
+        control.quit()
+        logger.info("Control module quit")
         camera.quit()
         logger.info("Camera module quit")
         thermal.quit()
         logger.info("Thermal module quit")
         cloud.quit()
         logger.info("Cloud module quit")
-        control.quit()
-        logger.info("Control module quit")
         classify.quit()
         logger.info("Classifier module quit")
         logger.info("Quit process complete")
