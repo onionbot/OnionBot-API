@@ -27,7 +27,12 @@ class SousChef(object):
     def __init__(self):
         self.latest_meta = {}
         self.stop_flag = False
-        self.screen_message = "Onionbot is connected"
+        self.previous_message = "Previous message"
+        self.current_message = "Current message"
+        self.next_message = "Next message"
+
+        self.step_ID = 1
+        self.substep_ID = 1
 
     def _meta_worker(self):
         while True:
@@ -37,64 +42,84 @@ class SousChef(object):
             sleep(0.1)
 
     def _worker(self):
-        def _update_screen(args):
-            print(args["message"])
+        def _update_screen():
+            step_ID = self.step_ID
+
+            try:
+
+                self.previous_message = dispatch_table[step_ID - 1]["message"]
+            except KeyError:
+                self.previous_message = "Onionbot is connected"
+
+            self.current_message = dispatch_table[step_ID]["message"]
+            logger.debug(self.current_message)
+
+            try:
+                self.next_message = dispatch_table[step_ID + 1]["message"]
+            except KeyError:
+                self.next_message = "Recipe complete!"
 
         def _classify(args):
+
             model = args["model"]
             label = args["label"]
-            logger.info("Classifying Model %s | Label %s" % (model, label))
+            logger.debug("Classifying Model %s | Label %s" % (model, label))
 
             meta = self.latest_meta
             try:
                 data = meta["attributes"]["classification_data"]
                 if data[model][label]["boolean"]:
                     logger.info("Classifier: " + model + " " + label + " returned true")
+
+                    rolling_window = float(meta["attributes"]["interval"]) * 5
+                    logger.info("Sleeping for %s seconds..." % (rolling_window))
+                    sleep(rolling_window)
                     return True
             except KeyError:
-                return False
+                pass
+            return False
 
         def _set_classifiers(args):
             value = args["value"]
             logger.info("Setting classifiers")
             data = {"action": "set_classifiers", "value": str(value)}
             post(ip, data)
+            return True
 
         def _set_fixed_setpoint(args):
             value = args["value"]
             logger.info("Setting fixed_setpoint")
             data = {"action": "fixed_setpoint", "value": str(value)}
             post(ip, data)
+            return True
 
         def _set_temperature_target(args):
             value = args["value"]
             logger.info("Setting temperature_target")
             data = {"action": "set_temperature_target", "value": str(value)}
             post(ip, data)
+            return True
 
         def _set_hob_off():
             logger.info("Turning hob off")
             data = {"action": "set_hob_off"}
             post(ip, data)
-
-        # Wait for everything to be ready
-        sleep(10)
+            return True
 
         # Import recipe from file
-        with open("recipes.txt", "r") as file:
+        with open("recipes.py", "r") as file:
             data = file.read().replace("\n", "")
         dispatch_table = eval(data)
 
-        self.step_ID = 1
-        self.substep_ID = 1
-
         while True:
             result = False
+            logger.info("Step %s | Substep %s" % (self.step_ID, self.substep_ID))
             while result is False and self.stop_flag is False:
+                result = False
                 step_ID = self.step_ID
                 substep_ID = self.substep_ID
 
-                logger.info("Step %s | Substep %s" % (step_ID, substep_ID))
+                _update_screen()
 
                 substep = dispatch_table[step_ID][substep_ID]
 
@@ -103,7 +128,7 @@ class SousChef(object):
                     result = substep["func"](args=arguments)
                 else:
                     result = substep["func"]()
-                sleep(1)
+                sleep(0.1)
 
             # Increment all substeps then increment steps
             if self.stop_flag is True:
@@ -112,6 +137,7 @@ class SousChef(object):
                 self.substep_ID += 1
             elif self.step_ID + 1 in dispatch_table.keys():
                 self.step_ID += 1
+                self.substep_ID = 1
             else:
                 break  # Recipe is complete
 
