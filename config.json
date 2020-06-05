@@ -32,16 +32,34 @@
     },
     "classifiers": {
         "pasta": {
+            "model": "models/pasta.tflite",
             "labels": "models/pasta.txt",
-            "model": "models/pasta.tflite"
+            "thresholds": {
+                "add_pasta": 0.5,
+                "empty_pan": 0.5,
+                "water_boiling": 0.5,
+                "add_water": 0.5
+            }
         },
         "sauce": {
+            "model": "models/sauce.tflite",
             "labels": "models/sauce.txt",
-            "model": "models/sauce.tflite"
+            "thresholds": {
+                "add_onions" : 0.5,
+                "add_tomatoes" : 0.5,
+                "add_oil" : 0.5,
+                "empty_pan" : 0.5,
+                "onions_cooked" : 0.5,
+                "add_puree" : 0.5
+            }
         },
         "pan_on_off": {
+            "model": "models/pan_on_off.tflite",
             "labels": "models/pan_on_off.txt",
-            "model": "models/pan_on_off.tflite"
+            "thresholds": {
+                "pan_off" : 0.5,
+                "pan_on" : 0.5
+            }
         }
     }
 }

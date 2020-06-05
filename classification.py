@@ -58,10 +58,13 @@ class Classify(object):
                         except KeyError:
                             storage = {}
 
-                        # Run inference
-                        logger.debug("Starting classifier %s " % (name))
+                        # Load classifier information
                         engine = self.loaded[name]["model"]
                         labels = self.loaded[name]["labels"]
+                        thresholds = self.loaded[name]["thresholds"]
+
+                        # Run inference
+                        logger.debug("Starting classifier %s " % (name))
                         results = engine.classify_with_image(
                             image, top_k=3, threshold=0
                         )  # Return top 3 probability items
@@ -99,10 +102,8 @@ class Classify(object):
                             average = round(sum(queue) / 10, 2)
                             this_label["average"] = average
 
-                        # Find label with highest moving average
-                        averages = dict([(k, v["average"]) for k, v in storage.items()])
-                        max_label = max(averages, key=averages.get)
-                        storage[max_label]["max_label"] = True
+                            # Use threshold storage to check whether it exceeds
+                            this_label["boolean"] = average >= thresholds[label]
 
                         # Update database with all information from this classifier
                         database[name] = storage
@@ -135,6 +136,7 @@ class Classify(object):
                     output = {}
                     output["labels"] = dataset_utils.read_label_file(attr["labels"])
                     output["model"] = ClassificationEngine(attr["model"])
+                    output["thresholds"] = attr["thresholds"]
                     self.loaded[name] = output
                 except KeyError:
                     raise KeyError("Classifier name not found in database")
