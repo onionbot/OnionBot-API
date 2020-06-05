@@ -103,6 +103,7 @@ class Classify(object):
                             this_label["average"] = average
 
                             # Use threshold storage to check whether it exceeds
+                            this_label["threshold"] = thresholds[label]
                             this_label["boolean"] = average >= thresholds[label]
 
                         # Update database with all information from this classifier

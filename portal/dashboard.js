@@ -114,13 +114,19 @@ function update() {
             }
 
             if (meta.attributes.classification_data && filename == "inference.html") {
+                console.log(meta.attributes.classification_data)
                 let table_data = []
-                for (let [key, value] of Object.entries(meta.attributes.classification_data)) {
-                    table_data.push({
-                        "model": key,
-                        "result": value.label,
-                        "probability": value.confidence,
-                    });
+                for (let [model, attributes] of Object.entries(meta.attributes.classification_data)) {
+                    for (let [label, results] of Object.entries(attributes)) {
+                        table_data.push({
+                            "model": model,
+                            "result": label,
+                            "confidence": results.confidence,
+                            "moving_confidence": results.average,
+                            "threshold": results.threshold,
+                            "boolean": results.boolean
+                        });
+                    };
                 }
                 $('#inference-table').bootstrapTable('load', table_data);
             }
