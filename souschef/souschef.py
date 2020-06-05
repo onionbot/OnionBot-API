@@ -154,10 +154,10 @@ class SousChef(object):
     def stop(self):
         logger.info("Stop called")
         self.stop_flag = True
+        self.t.join()  # Wait for recipe to finish before quitting
 
     def run(self):
-        t = Thread(target=self._worker, daemon=True)  # , args=(1,)
-        t.start()
+        self.t = Thread(target=self._worker, daemon=True)  # , args=(1,)
+        self.t.start()
         m = Thread(target=self._meta_worker, daemon=True)  # , args=(1,)
         m.start()
-        t.join()  # Wait for recipe to finish before quitting
