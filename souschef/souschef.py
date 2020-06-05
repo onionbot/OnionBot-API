@@ -1,6 +1,7 @@
 from requests import post
 from time import sleep
 from threading import Thread
+
 # import socket
 import logging
 from sys import exit
@@ -82,9 +83,9 @@ class SousChef(object):
                 if data[model][label]["boolean"]:
                     logger.info("Classifier: " + model + " " + label + " returned true")
 
-                    rolling_window = float(meta["attributes"]["interval"]) * 5
-                    logger.info("Sleeping for %s seconds..." % (rolling_window))
-                    sleep(rolling_window)
+                    # rolling_window = float(meta["attributes"]["interval"]) * 5
+                    # logger.info("Sleeping for %s seconds..." % (rolling_window))
+                    # sleep(rolling_window)
                     return True
             except KeyError:
                 pass
@@ -116,6 +117,17 @@ class SousChef(object):
             data = {"action": "set_hob_off"}
             self._post(data)
             return True
+
+        def _check_pan():
+            logger.info("Checking pan on")
+            while True:
+                if _classify({"model": "pan_on_off", "label": "pan_off"}):
+                    logger.info("No pan detected")
+                    self.previous_message = "No pan detected!"
+                    self.current_message = "Return pan to hob to continue"
+                    self.next_message = ""
+                else:
+                    break
 
         # Import recipe from file
         with open("recipes.py", "r") as file:
@@ -162,8 +174,8 @@ class SousChef(object):
     def previous(self):
         if self.step_ID - 1 in self.dispatch_table.keys():
             logger.info("Previous called")
-        self.substep_ID = 1
-        self.step_ID -= 1
+            self.substep_ID = 1
+            self.step_ID -= 1
 
     def stop(self):
         logger.info("Stop called")
