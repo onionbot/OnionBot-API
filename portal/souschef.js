@@ -54,7 +54,15 @@ function update() {
 
     $('#ip-address-output').html(localStorage.ip_address);
 
-    get("get_screen_message", function(data) {
+    get("next_message", function(data) {
+        $("#next-instruction").html(data)
+    });
+
+    get("previous_message", function(data) {
+        $("#previous-instruction").html(data)
+    });
+
+    get("current_message", function(data) {
         // data is a js object 
         connection_success()
 

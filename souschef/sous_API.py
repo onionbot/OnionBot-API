@@ -26,15 +26,15 @@ def index():
 
     if request.form["action"] == "current_message":
         logger.debug("current_message called")
-        return sous.current_message
+        return str(sous.current_message)
 
     if request.form["action"] == "previous_message":
         logger.debug("previous_message called")
-        return sous.previous_message
+        return str(sous.previous_message)
 
     if request.form["action"] == "next_message":
         logger.debug("next_message called")
-        return sous.next_message
+        return str(sous.next_message)
 
     if request.form["action"] == "next":
         logger.debug("next called")
