@@ -12,11 +12,12 @@ logger.setLevel(logging.ERROR)  # Note! Set again below
 
 # Initialise SousChef
 sous = SousChef()
-sous.run()
 
 # Initialise flask server
 app = Flask(__name__)
 CORS(app)
+
+sous.run()
 
 
 @app.route("/", methods=["GET", "POST"])
@@ -44,4 +45,4 @@ def index():
 
 
 if __name__ == "__main__":
-    app.run(debug=False, host="0.0.0.0, port=5001")
+    app.run(debug=False, host="0.0.0.0", port="5001")

@@ -8,11 +8,11 @@
 // ---------------- APPLICATION VARIABLES ----------------
 
 
-var endpoint_url = 'http://192.168.0.1:5000/'
+var endpoint_url = 'http://192.168.0.1:5001/'
 if (!localStorage.ip_address) {
     $('#IPmodal').modal('show');
 } else {
-    var endpoint_url = 'http://192.168.0.' + localStorage.ip_address + ':5000/';
+    var endpoint_url = 'http://192.168.0.' + localStorage.ip_address + ':5001/';
 }
 
 var update_interval = 100;

@@ -15,13 +15,12 @@ logger = logging.getLogger(__name__)
 
 ip_address = "192.168.0.78"
 
-testIP = "8.8.8.8"
-s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-s.connect((testIP, 0))
-ip_address = s.getsockname()[0]
+# testIP = "8.8.8.8"
+# s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+# s.connect((testIP, 0))
+# ip_address = s.getsockname()[0]
 
 ip = "http://" + ip_address + ":5000/"
-print(ip)
 
 
 class SousChef(object):
@@ -78,6 +77,9 @@ class SousChef(object):
             data = {"action": "set_hob_off"}
             post(ip, data)
 
+        # Wait for everything to be ready
+        sleep(10)
+
         # Import recipe from file
         with open("recipes.txt", "r") as file:
             data = file.read().replace("\n", "")
@@ -124,7 +126,7 @@ class SousChef(object):
         self.step_ID -= 1
 
     def stop(self):
-        logger.info("Off called")
+        logger.info("Stop called")
         self.stop_flag = True
 
     def run(self):
@@ -132,10 +134,4 @@ class SousChef(object):
         t.start()
         m = Thread(target=self._meta_worker, daemon=True)  # , args=(1,)
         m.start()
-        sleep(0.5)
-        self.next()
         t.join()  # Wait for recipe to finish before quitting
-
-
-s = SousChef()
-s.run()
