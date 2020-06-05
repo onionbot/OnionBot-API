@@ -24,7 +24,7 @@ sous.run()
 def index():
     """Index is run automatically on init by flask"""
 
-    if request.form["action"] == "get_message":
+    if request.form["action"] == "get_screen_message":
         logger.debug("get_message called")
         return sous.screen_message
 

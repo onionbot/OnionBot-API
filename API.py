@@ -21,7 +21,6 @@ bot.run()
 app = Flask(__name__)
 CORS(app)
 logger.setLevel(logging.INFO)
-logger.info("Web server is ready. Go to 0.0.0.0:8888/portal to connect")
 logger.setLevel(logging.ERROR)
 
 
