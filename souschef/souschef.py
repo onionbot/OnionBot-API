@@ -44,8 +44,11 @@ class SousChef(object):
     def _meta_worker(self):
         while True:
             data = {"action": "get_latest_meta"}
-            r = self.post(data)
-            self.latest_meta = dict(r.json())
+            r = self._post(data)
+            try:
+                self.latest_meta = dict(r.json())
+            except AttributeError:
+                pass
             sleep(0.1)
 
     def _worker(self):
@@ -91,27 +94,27 @@ class SousChef(object):
             value = args["value"]
             logger.info("Setting classifiers")
             data = {"action": "set_classifiers", "value": str(value)}
-            self.post(data)
+            self._post(data)
             return True
 
         def _set_fixed_setpoint(args):
             value = args["value"]
             logger.info("Setting fixed_setpoint")
             data = {"action": "set_fixed_setpoint", "value": str(value)}
-            self.post(data)
+            self._post(data)
             return True
 
         def _set_temperature_target(args):
             value = args["value"]
             logger.info("Setting temperature_target")
             data = {"action": "set_temperature_target", "value": str(value)}
-            self.post(data)
+            self._post(data)
             return True
 
         def _set_hob_off():
             logger.info("Turning hob off")
             data = {"action": "set_hob_off"}
-            self.post(data)
+            self._post(data)
             return True
 
         # Import recipe from file
