@@ -46,13 +46,14 @@ class SousChef(object):
             step_ID = self.step_ID
 
             try:
-
                 self.previous_message = dispatch_table[step_ID - 1]["message"]
             except KeyError:
                 self.previous_message = "Onionbot is connected"
 
-            self.current_message = dispatch_table[step_ID]["message"]
-            logger.debug(self.current_message)
+            try:
+                self.current_message = dispatch_table[step_ID]["message"]
+            except KeyError:
+                print("hmmm")
 
             try:
                 self.next_message = dispatch_table[step_ID + 1]["message"]

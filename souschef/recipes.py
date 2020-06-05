@@ -1,6 +1,6 @@
 {
     1: {
-        "message": {"Place a pan on the hob to start"},
+        "message": "Place a pan on the hob to start",
         1: {
             "func": _set_classifiers,
             "args": {
@@ -26,7 +26,7 @@
         },
     },
     2: {
-        "message": {"Add 300ml of water"},
+        "message": "Add 300ml of water",
         1: {
             "func": _classify,
             "args": {
@@ -36,7 +36,7 @@
         }
     },
     3: {
-        "message": {"Autoheating water until boiling"},
+        "message": "Autoheating water until boiling",
         1: {
             "func": _set_fixed_setpoint,
             "args": {
@@ -53,7 +53,7 @@
 
     },
     4: {
-        "message": {"Add 30g of pasta"},
+        "message": "Add 30g of pasta",
         1: {
             "func": _classify,
             "args": {
