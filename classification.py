@@ -11,7 +11,6 @@ from collections import deque
 import logging
 
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.ERROR)
 
 classifiers = Classifiers()
 
@@ -113,8 +112,6 @@ class Classify(object):
                         del database[name]
 
                 self.database = database
-
-                logger.critical(database)
 
                 self.file_queue.task_done()
 
