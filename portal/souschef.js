@@ -117,7 +117,7 @@ $(document).ready(function() {
         localStorage.ip_address = $('#ip-address-input').val();
         $('#ip-address-output').html(localStorage.ip_address);
         $('#ip-address-input').val('');
-        endpoint_url = 'http://192.168.0.' + localStorage.ip_address + ':5000/';
+        endpoint_url = 'http://192.168.0.' + localStorage.ip_address + ':5001/';
     });
 
     $('#next').on('click', function() {
