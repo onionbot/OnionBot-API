@@ -1,8 +1,9 @@
 from requests import post
 from time import sleep
 from threading import Thread
-import socket
+# import socket
 import logging
+from sys import exit
 
 # # Fix logging faliure issue
 # for handler in logging.root.handlers[:]:
@@ -34,10 +35,16 @@ class SousChef(object):
         self.step_ID = 1
         self.substep_ID = 1
 
+    def _post(self, data):
+        try:
+            post(ip, data)
+        except:
+            logger.info("Connection error")
+
     def _meta_worker(self):
         while True:
             data = {"action": "get_latest_meta"}
-            r = post(ip, data)
+            r = self.post(data)
             self.latest_meta = dict(r.json())
             sleep(0.1)
 
@@ -84,27 +91,27 @@ class SousChef(object):
             value = args["value"]
             logger.info("Setting classifiers")
             data = {"action": "set_classifiers", "value": str(value)}
-            post(ip, data)
+            self.post(data)
             return True
 
         def _set_fixed_setpoint(args):
             value = args["value"]
             logger.info("Setting fixed_setpoint")
             data = {"action": "set_fixed_setpoint", "value": str(value)}
-            post(ip, data)
+            self.post(data)
             return True
 
         def _set_temperature_target(args):
             value = args["value"]
             logger.info("Setting temperature_target")
             data = {"action": "set_temperature_target", "value": str(value)}
-            post(ip, data)
+            self.post(data)
             return True
 
         def _set_hob_off():
             logger.info("Turning hob off")
             data = {"action": "set_hob_off"}
-            post(ip, data)
+            self.post(data)
             return True
 
         # Import recipe from file
@@ -158,7 +165,7 @@ class SousChef(object):
     def stop(self):
         logger.info("Stop called")
         self.stop_flag = True
-        quit()
+        exit()
 
     def run(self):
         t = Thread(target=self._worker, daemon=True)  # , args=(1,)
