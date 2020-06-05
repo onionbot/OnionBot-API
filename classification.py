@@ -7,12 +7,11 @@ from queue import Queue, Empty
 from config import Classifiers
 from json import dumps
 from collections import deque
-from statistics import mean
 
 import logging
 
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.ERROR)
 
 classifiers = Classifiers()
 
@@ -88,7 +87,7 @@ class Classify(object):
                             # Ensure label is in classifier storage entry
                             if label not in storage:
                                 storage[label] = {}
-                                storage[label]["queue"] = [0] * 10
+                                storage[label]["queue"] = [0] * 5
 
                             # Update nested storage dictionary
                             this_label = storage[label]
@@ -99,7 +98,7 @@ class Classify(object):
                             queue.append(confidence)
                             queue.popleft()
                             this_label["queue"] = list(queue)
-                            average = round(sum(queue) / 10, 2)
+                            average = round(sum(queue) / 5, 2)
                             this_label["average"] = average
 
                             # Use threshold storage to check whether it exceeds
