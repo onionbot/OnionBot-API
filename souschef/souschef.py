@@ -90,7 +90,7 @@ class SousChef(object):
         def _set_fixed_setpoint(args):
             value = args["value"]
             logger.info("Setting fixed_setpoint")
-            data = {"action": "fixed_setpoint", "value": str(value)}
+            data = {"action": "set_fixed_setpoint", "value": str(value)}
             post(ip, data)
             return True
 
