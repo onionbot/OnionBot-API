@@ -63,4 +63,25 @@
         },
 
     },
+    5: {
+        "message": "Cooking for 10 seconds",
+        1: {
+            "func": _start_timer,
+            "args": {
+                "name": "pasta",
+                "duration": 10
+            }
+        },
+        2: {
+            "func": _poll_timer,
+            "args": {
+                "name": "pasta"
+            }
+        },
+    },
+    6: {
+        "message": "Pasta is ready",
+        1: {
+            "func": _set_hob_off
+        },
 }

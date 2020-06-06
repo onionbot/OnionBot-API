@@ -1,5 +1,5 @@
 from requests import post
-from time import sleep
+from time import sleep, time
 from threading import Thread
 
 # import socket
@@ -28,6 +28,7 @@ ip = "http://" + ip_address + ":5000/"
 class SousChef(object):
     def __init__(self):
         self.latest_meta = {}
+        self.timers = {}
         self.stop_flag = False
         self.previous_message = "Previous message"
         self.current_message = "Current message"
@@ -121,14 +122,27 @@ class SousChef(object):
             self._post(data)
             return True
 
+        def _start_timer(args):
+            name = args["name"]
+            duration = float(args["duration"])
+            self.time[name] = time() + duration
+            return True
+
+        def _poll_timer(args):
+            name = args["name"]
+            if time() > self.timers[name]:
+                return True
+            else:
+                return False
+
         def _check_pan():
-            logger.info("Checking pan on")
+            logger.debug("Checking pan on")
             while True:
                 if _classify({"model": "pan_on_off", "label": "pan_off"}):
                     logger.debug("No pan detected")
-                    self.previous_message = "No pan detected!"
+                    self.previous_message = None
                     self.current_message = "Return pan to hob to continue"
-                    self.next_message = ""
+                    self.next_message = None
                 else:
                     break
 
