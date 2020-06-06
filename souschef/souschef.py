@@ -146,12 +146,13 @@ class SousChef(object):
             else:
                 if _classify({"model": "pan_on_off", "label": "pan_off"}):
                     while True:
+                        sleep(0.1)
                         if _classify({"model": "pan_on_off", "label": "pan_off"}):
                             logger.debug("No pan detected")
                             _set_hob_off()
-                            self.previous_message = None
+                            self.previous_message = ""
                             self.current_message = "Return pan to hob to continue"
-                            self.next_message = None
+                            self.next_message = ""
                         else:
                             _set_fixed_setpoint({"value": servo_setpoint})
                             break
@@ -208,10 +209,13 @@ class SousChef(object):
     def stop(self):
         logger.info("Stop called")
         self.stop_flag = True
-        exit()
+        for t in self.threads:
+            t.join()
 
     def run(self):
+        t = Thread(target=self._meta_worker, daemon=True)  # , args=(1,)
+        t.start()
+        self.threads.append(t)
         t = Thread(target=self._worker, daemon=True)  # , args=(1,)
         t.start()
-        m = Thread(target=self._meta_worker, daemon=True)  # , args=(1,)
-        m.start()
+        self.threads.append(t)
