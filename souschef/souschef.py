@@ -139,14 +139,20 @@ class SousChef(object):
 
         def _check_pan():
             logger.debug("Checking pan on")
-            while True:
-                if _classify({"model": "pan_on_off", "label": "pan_off"}):
-                    logger.debug("No pan detected")
-                    self.previous_message = None
-                    self.current_message = "Return pan to hob to continue"
-                    self.next_message = None
-                else:
-                    break
+            try:
+                servo_setpoint = self.latest_meta["attributes"]["servo_setpoint"]
+            except KeyError:
+                pass
+            else:
+                while True:
+                    if _classify({"model": "pan_on_off", "label": "pan_off"}):
+                        logger.debug("No pan detected")
+                        _set_hob_off()
+                        self.previous_message = None
+                        self.current_message = "Return pan to hob to continue"
+                        self.next_message = None
+                    else:
+                        _set_fixed_setpoint({"value": servo_setpoint})
 
         # Import recipe from file
         with open("recipes.py", "r") as file:
