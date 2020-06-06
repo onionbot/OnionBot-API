@@ -50,15 +50,11 @@ def index():
         return "1"
 
     if request.form["action"] == "stop":
-        logger.debug("stop called")
-        sous.stop()
         server_quit = request.environ.get("werkzeug.server.shutdown")
         if server_quit is None:
             raise RuntimeError("Not running with the Werkzeug Server")
         server_quit()
         sys.exit()
-        os.system("sleep 1 ; pkill -f sous_API.py")  # If all else fails...
-        return "1"
 
 
 if __name__ == "__main__":
