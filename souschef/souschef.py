@@ -27,6 +27,7 @@ ip = "http://" + ip_address + ":5000/"
 
 class SousChef(object):
     def __init__(self):
+        self.threads = []
         self.latest_meta = {}
         self.timers = {}
         self.stop_flag = False
