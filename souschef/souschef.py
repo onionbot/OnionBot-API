@@ -39,7 +39,7 @@ class SousChef(object):
     def _post(self, data):
         try:
             r = post(ip, data)
-            return r 
+            return r
         except:
             logger.info("Connection error")
 
@@ -82,7 +82,9 @@ class SousChef(object):
             try:
                 data = meta["attributes"]["classification_data"]
                 if data[model][label]["boolean"]:
-                    logger.info("Classifier: " + model + " " + label + " returned true")
+                    logger.debug(
+                        "Classifier: " + model + " " + label + " returned true"
+                    )
 
                     # rolling_window = float(meta["attributes"]["interval"]) * 5
                     # logger.info("Sleeping for %s seconds..." % (rolling_window))
@@ -123,7 +125,7 @@ class SousChef(object):
             logger.info("Checking pan on")
             while True:
                 if _classify({"model": "pan_on_off", "label": "pan_off"}):
-                    logger.info("No pan detected")
+                    logger.debug("No pan detected")
                     self.previous_message = "No pan detected!"
                     self.current_message = "Return pan to hob to continue"
                     self.next_message = ""
