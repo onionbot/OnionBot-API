@@ -125,7 +125,7 @@ class SousChef(object):
         def _start_timer(args):
             name = args["name"]
             duration = float(args["duration"])
-            self.time[name] = time() + duration
+            self.timers[name] = time() + duration
             return True
 
         def _poll_timer(args):
@@ -134,6 +134,8 @@ class SousChef(object):
                 return True
             else:
                 return False
+
+        # SPECIAL FUNCTIONS
 
         def _check_pan():
             logger.debug("Checking pan on")
