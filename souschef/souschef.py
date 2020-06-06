@@ -4,7 +4,6 @@ from threading import Thread
 
 # import socket
 import logging
-from sys import exit
 
 # # Fix logging faliure issue
 # for handler in logging.root.handlers[:]:
@@ -30,9 +29,10 @@ class SousChef(object):
         self.latest_meta = {}
         self.timers = {}
         self.stop_flag = False
-        self.previous_message = "Previous message"
-        self.current_message = "Current message"
-        self.next_message = "Next message"
+        self.previous_message = ""
+        self.current_message = ""
+        self.next_message = ""
+        self.error_message = ""
 
         self.step_ID = 1
         self.substep_ID = 1
@@ -156,13 +156,10 @@ class SousChef(object):
                                     {"model": "pan_on_off", "label": "pan_off"}
                                 ):
                                     _set_hob_off()
-                                    self.previous_message = ""
-                                    self.current_message = (
-                                        "Return pan to hob to continue"
-                                    )
-                                    self.next_message = ""
+                                    self.error_message = "Return pan to hob to continue"
                                 else:
                                     logger.info("Pan detected")
+                                    self.error_message = ""
                                     _set_fixed_setpoint({"value": servo_setpoint})
                                     break
 
@@ -177,6 +174,7 @@ class SousChef(object):
         while True:
             result = False
             logger.info("Step %s | Substep %s" % (self.step_ID, self.substep_ID))
+
             while result is False and self.stop_flag is False:
                 result = False
                 step_ID = self.step_ID

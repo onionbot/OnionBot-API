@@ -39,6 +39,10 @@ def index():
         logger.debug("next_message called")
         return str(sous.next_message)
 
+    if request.form["action"] == "error_message":
+        logger.debug("error_message called")
+        return str(sous.error_message)
+
     if request.form["action"] == "next":
         logger.debug("next called")
         sous.next()
