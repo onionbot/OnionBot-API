@@ -27,7 +27,6 @@ ip = "http://" + ip_address + ":5000/"
 
 class SousChef(object):
     def __init__(self):
-        self.threads = []
         self.latest_meta = {}
         self.timers = {}
         self.stop_flag = False
@@ -98,27 +97,27 @@ class SousChef(object):
 
         def _set_classifiers(args):
             value = args["value"]
-            logger.info("Setting classifiers")
+            logger.debug("Setting classifiers")
             data = {"action": "set_classifiers", "value": str(value)}
             self._post(data)
             return True
 
         def _set_fixed_setpoint(args):
             value = args["value"]
-            logger.info("Setting fixed_setpoint")
+            logger.debug("Setting fixed_setpoint")
             data = {"action": "set_fixed_setpoint", "value": str(value)}
             self._post(data)
             return True
 
         def _set_temperature_target(args):
             value = args["value"]
-            logger.info("Setting temperature_target")
+            logger.debug("Setting temperature_target")
             data = {"action": "set_temperature_target", "value": str(value)}
             self._post(data)
             return True
 
         def _set_hob_off():
-            logger.info("Turning hob off")
+            logger.debug("Turning hob off")
             data = {"action": "set_hob_off"}
             self._post(data)
             return True
@@ -139,24 +138,28 @@ class SousChef(object):
         # SPECIAL FUNCTIONS
 
         def _check_pan():
-            logger.debug("Checking pan on")
-            try:
-                servo_setpoint = self.latest_meta["attributes"]["servo_setpoint"]
-            except KeyError:
-                pass
-            else:
-                if _classify({"model": "pan_on_off", "label": "pan_off"}):
-                    while True:
-                        sleep(0.1)
+            def _pan_worker():
+                while True:
+                    sleep(0.1)
+                    try:
+                        servo_setpoint = self.latest_meta["attributes"]["servo_setpoint"]
+                    except KeyError:
+                        pass
+                    else:
                         if _classify({"model": "pan_on_off", "label": "pan_off"}):
-                            logger.debug("No pan detected")
-                            _set_hob_off()
-                            self.previous_message = ""
-                            self.current_message = "Return pan to hob to continue"
-                            self.next_message = ""
-                        else:
-                            _set_fixed_setpoint({"value": servo_setpoint})
-                            break
+                            logger.info("No pan detected")
+                            while True:
+                                sleep(0.1)
+                                if _classify({"model": "pan_on_off", "label": "pan_off"}):
+                                    _set_hob_off()
+                                    self.previous_message = ""
+                                    self.current_message = "Return pan to hob to continue"
+                                    self.next_message = ""
+                                else:
+                                    logger.info("Pan detected")
+                                    _set_fixed_setpoint({"value": servo_setpoint})
+                                    break
+            Thread(target=_pan_worker, daemon=True).start()
 
         # Import recipe from file
         with open("recipes.py", "r") as file:
@@ -207,16 +210,6 @@ class SousChef(object):
             self.substep_ID = 1
             self.step_ID -= 1
 
-    def stop(self):
-        logger.info("Stop called")
-        self.stop_flag = True
-        for t in self.threads:
-            t.join()
-
     def run(self):
-        t = Thread(target=self._meta_worker, daemon=True)  # , args=(1,)
-        t.start()
-        self.threads.append(t)
-        t = Thread(target=self._worker, daemon=True)  # , args=(1,)
-        t.start()
-        self.threads.append(t)
+        Thread(target=self._meta_worker, daemon=True).start()
+        Thread(target=self._worker, daemon=True).start()
