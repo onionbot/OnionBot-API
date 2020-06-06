@@ -142,7 +142,9 @@ class SousChef(object):
                 while True:
                     sleep(0.1)
                     try:
-                        servo_setpoint = self.latest_meta["attributes"]["servo_setpoint"]
+                        servo_setpoint = self.latest_meta["attributes"][
+                            "servo_setpoint"
+                        ]
                     except KeyError:
                         pass
                     else:
@@ -150,15 +152,20 @@ class SousChef(object):
                             logger.info("No pan detected")
                             while True:
                                 sleep(0.1)
-                                if _classify({"model": "pan_on_off", "label": "pan_off"}):
+                                if _classify(
+                                    {"model": "pan_on_off", "label": "pan_off"}
+                                ):
                                     _set_hob_off()
                                     self.previous_message = ""
-                                    self.current_message = "Return pan to hob to continue"
+                                    self.current_message = (
+                                        "Return pan to hob to continue"
+                                    )
                                     self.next_message = ""
                                 else:
                                     logger.info("Pan detected")
                                     _set_fixed_setpoint({"value": servo_setpoint})
                                     break
+
             Thread(target=_pan_worker, daemon=True).start()
 
         # Import recipe from file
@@ -174,10 +181,6 @@ class SousChef(object):
                 result = False
                 step_ID = self.step_ID
                 substep_ID = self.substep_ID
-
-                _check_pan()
-                _update_screen()
-
                 substep = dispatch_table[step_ID][substep_ID]
 
                 arguments = substep.get("args")
@@ -185,6 +188,9 @@ class SousChef(object):
                     result = substep["func"](args=arguments)
                 else:
                     result = substep["func"]()
+
+                _update_screen()
+
                 sleep(0.1)
 
             # Increment all substeps then increment steps

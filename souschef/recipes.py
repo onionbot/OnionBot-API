@@ -12,8 +12,9 @@
     },
     3: {
         "message": "Autoheating water until boiling",
-        1: {"func": _set_fixed_setpoint, "args": {"value": 50}},
-        2: {"func": _classify, "args": {"model": "pasta", "label": "water_boiling"}},
+        1: {"func": _set_hob_off},
+        2: {"func": _set_fixed_setpoint, "args": {"value": 50}},
+        3: {"func": _classify, "args": {"model": "pasta", "label": "water_boiling"}},
     },
     4: {
         "message": "Add 30g of pasta",
@@ -25,5 +26,6 @@
         2: {"func": _poll_timer, "args": {"name": "pasta"}},
     },
     6: {"message": "Pasta is ready", 
-        1: {"func": _set_hob_off},},
+            1: {"func": _set_hob_off},
+        },
 }
