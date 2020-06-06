@@ -137,7 +137,7 @@ class SousChef(object):
 
         # SPECIAL FUNCTIONS
 
-        def _check_pan():
+        def _start_pan_detector():
             def _pan_worker():
                 while True:
                     sleep(0.1)

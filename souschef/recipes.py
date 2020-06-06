@@ -12,7 +12,7 @@
     },
     3: {
         "message": "Autoheating water until boiling",
-        1: {"func": _set_hob_off},
+        1: {"func": _start_pan_detector},
         2: {"func": _set_fixed_setpoint, "args": {"value": 50}},
         3: {"func": _classify, "args": {"model": "pasta", "label": "water_boiling"}},
     },
