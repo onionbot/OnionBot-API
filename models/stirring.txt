@@ -1,0 +1,2 @@
+stirring
+not_stirring
