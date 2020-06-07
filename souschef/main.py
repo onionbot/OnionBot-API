@@ -25,7 +25,7 @@ class SousChef(object):
         self.substep_ID = 1
 
         # Import recipe from file
-        with open("recipes.py", "r") as file:
+        with open(recipe, "r") as file:
             data = file.read().replace("\n", "")
         dispatch_table = eval(data)
         self.dispatch_table = dispatch_table
