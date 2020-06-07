@@ -11,7 +11,7 @@ import logging
 
 # Silence Flask werkzeug logger
 logger = logging.getLogger("werkzeug")
-logger.setLevel(logging.ERROR)
+logger.setLevel(logging.ERROR)  # Note! Set again below
 
 # Initialise OnionBot
 bot = OnionBot()
@@ -20,8 +20,6 @@ bot.run()
 # Initialise flask server
 app = Flask(__name__)
 CORS(app)
-logger.setLevel(logging.INFO)
-logger.setLevel(logging.ERROR)
 
 
 @app.route("/", methods=["GET", "POST"])
@@ -56,7 +54,7 @@ def index():
         return "1"
 
     if request.form["action"] == "set_classifiers":
-        logger.debug("set_classifier called")
+        logger.debug("set_classifiers called")
         bot.set_classifiers(request.form["value"])
         return "1"
 

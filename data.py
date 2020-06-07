@@ -1,4 +1,4 @@
-from json import dump, dumps
+from json import dump
 from cloud import Cloud
 from os import makedirs, path
 from datetime import datetime
