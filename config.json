@@ -60,6 +60,22 @@
                 "pan_off" : 0.5,
                 "pan_on" : 0.5
             }
+        },
+        "boilover": {
+            "model": "models/boilover.tflite",
+            "labels": "models/boilover.txt",
+            "thresholds": {
+                "not_boiling_over" : 0.5,
+                "boiling_over" : 0.5
+            }
+        },
+        "stirring": {
+            "model": "models/stirring.tflite",
+            "labels": "models/stirring.txt",
+            "thresholds": {
+                "stirring" : 0.5,
+                "not_stirring" : 0.5
+            }
         }
     }
 }
