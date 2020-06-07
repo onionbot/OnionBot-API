@@ -9,13 +9,18 @@ import sys
 
 import logging
 
+import argparse
+parser = argparse.ArgumentParser()
+parser.add_argument("recipe")
+args = parser.parse_args()
+
 # Silence Flask werkzeug logger
 logger = logging.getLogger("werkzeug")
 logger.setLevel(logging.ERROR)  # Note! Set again below
 
 # Initialise OnionBot
 bot = OnionBot()
-bot.run()
+bot.run(args.recipe)
 
 # Initialise flask server
 app = Flask(__name__)
