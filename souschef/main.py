@@ -186,7 +186,7 @@ class SousChef(object):
                                 {"model": "stirring", "label": "not_stirring"}
                             ):
                                 self.error_message = (
-                                    "Pan has not been stirred for seconds "
+                                    "Pan has not been stirred for "
                                     + str(duration)
                                     + " seconds"
                                 )
