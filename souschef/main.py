@@ -38,8 +38,8 @@ class SousChef(object):
             r = self._post(data)
             try:
                 self.latest_meta = dict(r.json())
-            except AttributeError:
-                pass
+            except:
+                logger.info("Error in parsing JSON")
             sleep(0.1)
 
     def _worker(self):
@@ -220,7 +220,7 @@ class SousChef(object):
                             while True:
                                 sleep(0.1)
                                 if _classify(
-                                    {"model": "boilover", "label": "boilover"}
+                                    {"model": "boilover", "label": "boiling_over"}
                                 ):
                                     _set_hob_off()
                                     self.error_message = "Pan is boiling over"
@@ -232,7 +232,6 @@ class SousChef(object):
                                         _set_temperature_target(
                                             {"value": temperature_target * 0.9}
                                         )
-                                    break
                                     sleep(5)
                                     break
 
