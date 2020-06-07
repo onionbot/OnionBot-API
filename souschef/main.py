@@ -172,7 +172,7 @@ class SousChef(object):
                     sleep(0.1)
 
                     if _classify({"model": "stirring", "label": "not_stirring"}):
-                        while _poll_timer("stir_detector"):
+                        while _poll_timer({"name": "stir_detector"}):
                             sleep(0.1)
                             if _classify(
                                 {"model": "stirring", "label": "not_stirring"}

@@ -40,8 +40,8 @@
     },
     9: {
         "message": "Autosimmering for 20 minutes",
-        1: {"func": _start_timer, "args": {"name": "puree", "duration": 3*60}},
-        2: {"func": _poll_timer, "args": {"name": "puree"}},
+        1: {"func": _start_timer, "args": {"name": "simmer", "duration": 3*60}},
+        2: {"func": _poll_timer, "args": {"name": "simmer"}},
         3: {"func": _set_fixed_setpoint, "args": {"value": 20}},
         4: {"func": _set_temperature_target, "args": {"value": 90}},
     },
