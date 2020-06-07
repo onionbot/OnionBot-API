@@ -165,12 +165,11 @@ class SousChef(object):
                                 else:
                                     logger.info("Pan detected")
                                     self.error_message = ""
+                                    _set_fixed_setpoint({"value": servo_setpoint})
                                     if pid_enabled:
                                         _set_temperature_target(
                                             {"value": temperature_target}
                                         )
-                                    else:
-                                        _set_fixed_setpoint({"value": servo_setpoint})
                                     break
 
             Thread(target=_pan_worker, daemon=True).start()
@@ -228,16 +227,12 @@ class SousChef(object):
                                 else:
                                     logger.info("Pan no longer boiling over")
                                     self.error_message = ""
+                                    _set_fixed_setpoint({"value": servo_setpoint * 0.9})
                                     if pid_enabled:
                                         _set_temperature_target(
                                             {"value": temperature_target * 0.9}
                                         )
-                                    else:
-                                        _set_fixed_setpoint(
-                                            {"value": servo_setpoint * 0.9}
-                                        )
                                     break
-
                                     sleep(5)
                                     break
 
