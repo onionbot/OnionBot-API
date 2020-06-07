@@ -187,8 +187,8 @@ class SousChef(object):
                             ):
                                 self.error_message = (
                                     "Pan has not been stirred for "
-                                    + str(duration)
-                                    + " seconds"
+                                    + str(duration/60)
+                                    + " minutes"
                                 )
                             else:
                                 logger.info("Stirring detected again")
