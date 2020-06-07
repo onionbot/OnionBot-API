@@ -146,6 +146,10 @@ class SousChef(object):
                         servo_setpoint = self.latest_meta["attributes"][
                             "servo_setpoint"
                         ]
+                        pid_enabled = self.latest_meta["attributes"]["pid_enabled"]
+                        temperature_target = self.latest_meta["attributes"][
+                            "temperature_target"
+                        ]
                     except KeyError:
                         pass
                     else:
@@ -161,7 +165,12 @@ class SousChef(object):
                                 else:
                                     logger.info("Pan detected")
                                     self.error_message = ""
-                                    _set_fixed_setpoint({"value": servo_setpoint})
+                                    if pid_enabled:
+                                        _set_temperature_target(
+                                            {"value": temperature_target}
+                                        )
+                                    else:
+                                        _set_fixed_setpoint({"value": servo_setpoint})
                                     break
 
             Thread(target=_pan_worker, daemon=True).start()
@@ -179,7 +188,7 @@ class SousChef(object):
                             ):
                                 self.error_message = (
                                     "Pan has not been stirred for seconds "
-                                    + duration
+                                    + str(duration)
                                     + " seconds"
                                 )
                             else:
@@ -200,6 +209,10 @@ class SousChef(object):
                         servo_setpoint = self.latest_meta["attributes"][
                             "servo_setpoint"
                         ]
+                        pid_enabled = self.latest_meta["attributes"]["pid_enabled"]
+                        temperature_target = self.latest_meta["attributes"][
+                            "temperature_target"
+                        ]
                     except KeyError:
                         pass
                     else:
@@ -215,8 +228,16 @@ class SousChef(object):
                                 else:
                                     logger.info("Pan no longer boiling over")
                                     self.error_message = ""
-                                    new_setpoint = float(servo_setpoint) * 0.9
-                                    _set_fixed_setpoint({"value": new_setpoint})
+                                    if pid_enabled:
+                                        _set_temperature_target(
+                                            {"value": temperature_target * 0.9}
+                                        )
+                                    else:
+                                        _set_fixed_setpoint(
+                                            {"value": servo_setpoint * 0.9}
+                                        )
+                                    break
+
                                     sleep(5)
                                     break
 
