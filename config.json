@@ -49,7 +49,7 @@
                 "add_tomatoes" : 0.5,
                 "add_oil" : 0.5,
                 "empty_pan" : 0.5,
-                "onions_cooked" : 0.5,
+                "onions_cooked" : 0.7,
                 "add_puree" : 0.5
             }
         },
