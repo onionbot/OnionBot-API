@@ -166,5 +166,9 @@ $(document).ready(function() {
         set("stop", function(foo) {});
     });
 
+    $('#header').on('click', function() {
+        location.reload();
+    });
+
 
 });
