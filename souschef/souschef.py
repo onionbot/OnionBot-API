@@ -3,18 +3,26 @@ from flask import request
 from flask_cors import CORS
 
 from souschef import SousChef
-
-import os
 import sys
 
 import logging
+
+import argparse
+parser = argparse.ArgumentParser()
+parser.add_argument("recipe")
+args = parser.parse_args()
+
+# Silence Flask werkzeug logger
+logger = logging.getLogger("werkzeug")
+logger.setLevel(logging.ERROR)  # Note! Set again below
+
 
 # Silence Flask werkzeug logger
 logger = logging.getLogger("werkzeug")
 logger.setLevel(logging.ERROR)  # Note! Set again below
 
 # Initialise SousChef
-sous = SousChef()
+sous = SousChef(args.recipe)
 
 # Initialise flask server
 app = Flask(__name__)
