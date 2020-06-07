@@ -168,9 +168,9 @@ class SousChef(object):
 
         def _start_stir_detector(args):
             def _stir_worker():
+                _start_timer({"name": "stir_detector", "duration": duration})
                 while True:
                     sleep(0.1)
-
                     if _classify({"model": "stirring", "label": "not_stirring"}):
                         while _poll_timer({"name": "stir_detector"}):
                             sleep(0.1)
