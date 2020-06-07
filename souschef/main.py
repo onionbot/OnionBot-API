@@ -1,31 +1,18 @@
 from requests import post
 from time import sleep, time
 from threading import Thread
-
-# import socket
 import logging
-
-# # Fix logging faliure issue
-# for handler in logging.root.handlers[:]:
-#     logging.root.removeHandler(handler)
 
 # Initialise custom logging format
 FORMAT = "%(relativeCreated)6d %(levelname)-8s %(name)s %(process)d %(message)s"
 logging.basicConfig(format=FORMAT, level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-ip_address = "192.168.0.78"
-
-# testIP = "8.8.8.8"
-# s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-# s.connect((testIP, 0))
-# ip_address = s.getsockname()[0]
-
-ip = "http://" + ip_address + ":5000/"
+ip = "http://" + "192.168.0.78" + ":5000/"
 
 
 class SousChef(object):
-    def __init__(self):
+    def __init__(self, recipe):
         self.latest_meta = {}
         self.timers = {}
         self.stop_flag = False
@@ -36,6 +23,12 @@ class SousChef(object):
 
         self.step_ID = 1
         self.substep_ID = 1
+
+        # Import recipe from file
+        with open("recipes.py", "r") as file:
+            data = file.read().replace("\n", "")
+        dispatch_table = eval(data)
+        self.dispatch_table = dispatch_table
 
     def _post(self, data):
         try:
@@ -59,17 +52,17 @@ class SousChef(object):
             step_ID = self.step_ID
 
             try:
-                self.previous_message = dispatch_table[step_ID - 1]["message"]
+                self.previous_message = self.dispatch_table[step_ID - 1]["message"]
             except KeyError:
                 self.previous_message = "Onionbot is connected"
 
             try:
-                self.current_message = dispatch_table[step_ID]["message"]
+                self.current_message = self.dispatch_table[step_ID]["message"]
             except KeyError:
                 print("hmmm")
 
             try:
-                self.next_message = dispatch_table[step_ID + 1]["message"]
+                self.next_message = self.dispatch_table[step_ID + 1]["message"]
             except KeyError:
                 self.next_message = "Recipe complete!"
 
@@ -110,6 +103,7 @@ class SousChef(object):
             return True
 
         def _set_temperature_target(args):
+            sleep(1)  # Time to allow initial fixed setpoint to send
             value = args["value"]
             logger.debug("Setting temperature_target")
             data = {"action": "set_temperature_target", "value": str(value)}
@@ -121,6 +115,18 @@ class SousChef(object):
             data = {"action": "set_hob_off"}
             self._post(data)
             return True
+
+        def _poll_temperature(args):
+            target = args["target"]
+            logger.debug("Turning hob off")
+            try:
+                temperature = self.latest_meta["attributes"]["temperature"]
+            except KeyError:
+                return False
+            if float(temperature) > float(target):
+                return True
+            else:
+                return False
 
         def _start_timer(args):
             name = args["name"]
@@ -165,7 +171,7 @@ class SousChef(object):
 
             Thread(target=_pan_worker, daemon=True).start()
 
-        def _start_stir_detector():
+        def _start_stir_detector(args):
             def _stir_worker():
                 while True:
                     sleep(0.1)
@@ -176,14 +182,19 @@ class SousChef(object):
                             if _classify(
                                 {"model": "stirring", "label": "not_stirring"}
                             ):
-                                self.error_message = "Pan has not been stirred for 10 seconds"
+                                self.error_message = (
+                                    "Pan has not been stirred for seconds "
+                                    + duration
+                                    + " seconds"
+                                )
                             else:
                                 logger.info("Stirring detected again")
                                 self.error_message = ""
                                 break
                     else:
-                        _start_timer({"name": "stir_detector", "duration": 10})
+                        _start_timer({"name": "stir_detector", "duration": duration})
 
+            duration = args["duration"]
             Thread(target=_stir_worker, daemon=True).start()
 
         def _start_boilover_detector():
@@ -197,7 +208,7 @@ class SousChef(object):
                     except KeyError:
                         pass
                     else:
-                        if _classify({"model": "boilover", "label": "boilover"}):
+                        if _classify({"model": "boilover", "label": "boiling_over"}):
                             logger.info("Boilover event detected")
                             while True:
                                 sleep(0.1)
@@ -216,11 +227,7 @@ class SousChef(object):
 
             Thread(target=_boilover_worker, daemon=True).start()
 
-        # Import recipe from file
-        with open("recipes.py", "r") as file:
-            data = file.read().replace("\n", "")
-        dispatch_table = eval(data)
-        self.dispatch_table = dispatch_table
+        # MAIN LOOP
 
         while True:
             result = False
@@ -230,7 +237,7 @@ class SousChef(object):
                 result = False
                 step_ID = self.step_ID
                 substep_ID = self.substep_ID
-                substep = dispatch_table[step_ID][substep_ID]
+                substep = self.dispatch_table[step_ID][substep_ID]
 
                 arguments = substep.get("args")
                 if arguments:
@@ -245,9 +252,9 @@ class SousChef(object):
             # Increment all substeps then increment steps
             if self.stop_flag is True:
                 break
-            elif self.substep_ID + 1 in dispatch_table[self.step_ID].keys():
+            elif self.substep_ID + 1 in self.dispatch_table[self.step_ID].keys():
                 self.substep_ID += 1
-            elif self.step_ID + 1 in dispatch_table.keys():
+            elif self.step_ID + 1 in self.dispatch_table.keys():
                 self.step_ID += 1
                 self.substep_ID = 1
             else:
