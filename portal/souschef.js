@@ -53,49 +53,75 @@ function get(function_name, callback) {
 function update() {
 
     $('#ip-address-output').html(localStorage.ip_address);
+    
+    get("error_message", function(data) {
 
-    get("next_message", function(data) {
-        $("#next-instruction").html(data)
-    });
+            if (data != "") {
+                $("#previous-instruction").html("");
+                $("#next-instruction").html("");
+                data = data.concat('&nbsp;&nbsp;<span data-feather="alert-circle" style="height: 1.1em; width: 1.1em"></span>');
+                $("#current-instruction").html(data);
+                feather.replace();
+                previous_message = "foo"
+            } else {
 
-    get("previous_message", function(data) {
-        $("#previous-instruction").html(data)
-    });
+                get("next_message", function(data) {
 
-    get("current_message", function(data) {
-        // data is a js object 
-        connection_success()
+                    next = 'Next:&nbsp;'
+                    data = next.concat(data);
+                    $("#next-instruction").html(data);
 
-        // Only refresh when new data
-        if (data == previous_message) {
-            // Update previous meta
-            previous_message = data
-        } else {
-            previous_message = data
+                });
 
-            $("#current-instruction").html(data)
+                get("previous_message", function(data) {
 
-            
-            fitty.fitAll()
+                    data = data.concat('&nbsp;&nbsp;<span data-feather="check-circle" style="height: 1.1em; width: 1.1em"></span>');
+                    $("#previous-instruction").html(data);
+                    feather.replace();
+
+                });
+
+                get("current_message", function(data) {
+                    // data is a js object 
+                    connection_success()
+
+                    // Only refresh when new data
+                    if (data == previous_message) {
+                        // Update previous meta
+                        previous_message = data
+                    } else {
+                        previous_message = data
+
+                        $("#current-instruction").html(data)
+                        console.log("fitty")
+                        fitty.fitAll()
 
 
-        }
+                    }
 
-    });
+                });
+            }
+
+        });
+
 }
-
-
 // ------------- UPDATE ON CONNECTION SUCCESS -------------
 
 
 function connection_success() {
     $("#not-connected").hide();
     $('#connected').show();
+    $("#current-instruction").show();
+    $("#next-instruction").show();
 }
 
 function connection_failed() {
     $("#connected").hide();
     $("#not-connected").show();
+    $("#previous-instruction").html("Not connected")
+    $("#current-instruction").hide();
+    $("#next-instruction").hide();
+
 }
 
 
