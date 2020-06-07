@@ -2,7 +2,7 @@ from flask import Flask
 from flask import request
 from flask_cors import CORS
 
-from souschef import SousChef
+from main import SousChef
 import sys
 
 import logging
