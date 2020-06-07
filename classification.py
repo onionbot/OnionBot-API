@@ -38,6 +38,13 @@ class Classify(object):
             try:  # Timeout raises queue.Empty
 
                 image = self.file_queue.get(block=True, timeout=0.1)
+
+            except Empty:
+                if self.quit_event.is_set():
+                    logger.debug("Quitting thread...")
+                    break
+
+            else:
                 image = Image.open(image)
 
                 library = self.library
@@ -63,10 +70,15 @@ class Classify(object):
 
                         # Run inference
                         logger.debug("Starting classifier %s " % (name))
-                        results = engine.classify_with_image(
-                            image, top_k=3, threshold=0
-                        )  # Return top 3 probability items
-                        logger.debug("%s results: " % (results))
+
+                        try:
+                            results = engine.classify_with_image(
+                                image, top_k=3, threshold=0
+                            )  # Return top 3 probability items
+                            logger.debug("%s results: " % (results))
+                        except OSError:
+                            logger.info("OSError detected, retrying")
+                            break
 
                         # Create dictionary including those not in top_k
                         big_dict = {}
@@ -114,11 +126,6 @@ class Classify(object):
                 self.database = database
 
                 self.file_queue.task_done()
-
-            except Empty:
-                if self.quit_event.is_set():
-                    logger.debug("Quitting thread...")
-                    break
 
     def load_classifiers(self, input_string):
         for name in input_string.split(","):
