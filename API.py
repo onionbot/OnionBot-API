@@ -9,6 +9,10 @@ import sys
 
 import logging
 
+# Silence Flask werkzeug logger
+logger = logging.getLogger("werkzeug")
+logger.setLevel(logging.ERROR)  # Note! Set again below
+
 # Initialise OnionBot
 bot = OnionBot()
 bot.run()
