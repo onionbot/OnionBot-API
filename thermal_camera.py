@@ -16,6 +16,7 @@ logger = logging.getLogger(__name__)
 
 
 CHESSBOARD_MAX_THRESHOLD = 300
+CHESSBOARD_MIN_THRESHOLD = 5
 
 TEMPERATURE_MULTIPLIER = 1.35
 TEMPERATURE_OFFSET = -6
@@ -184,6 +185,10 @@ class ThermalCamera(object):
                         logger.debug("Frame capture error, retrying [RuntimeError]")
                         time.sleep(0.1)
                         continue
+                    except OSError:  # Handle RuntimeError in module
+                        logger.info("Frame capture error, retrying [OSError]")
+                        time.sleep(0.1)
+                        continue
 
                     if 0 in frame:  # Handle chessboard error zeros
                         logger.debug("Frame capture error, retrying [Zero Error]")
@@ -194,6 +199,13 @@ class ThermalCamera(object):
                         logger.debug(
                             "Frame capture error, retrying [Max Temp Error: %0.2f ]"
                             % (max(frame))
+                        )
+                        time.sleep(0.1)
+                        continue
+                    elif min(frame) < CHESSBOARD_MIN_THRESHOLD:
+                        logger.debug(
+                            "Frame capture error, retrying [MIN Temp Error: %0.2f ]"
+                            % (min(frame))
                         )
                         time.sleep(0.1)
                         continue
