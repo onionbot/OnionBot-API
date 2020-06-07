@@ -20,15 +20,10 @@ class SousChef(object):
         self.current_message = ""
         self.next_message = ""
         self.error_message = ""
+        self.recipe = recipe
 
         self.step_ID = 1
         self.substep_ID = 1
-
-        # Import recipe from file
-        with open(recipe, "r") as file:
-            data = file.read().replace("\n", "")
-        dispatch_table = eval(data)
-        self.dispatch_table = dispatch_table
 
     def _post(self, data):
         try:
@@ -228,6 +223,12 @@ class SousChef(object):
             Thread(target=_boilover_worker, daemon=True).start()
 
         # MAIN LOOP
+
+        # Import recipe from file
+        with open(self.recipe, "r") as file:
+            data = file.read().replace("\n", "")
+        dispatch_table = eval(data)
+        self.dispatch_table = dispatch_table
 
         while True:
             result = False
