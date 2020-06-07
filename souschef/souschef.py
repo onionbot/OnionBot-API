@@ -165,6 +165,57 @@ class SousChef(object):
 
             Thread(target=_pan_worker, daemon=True).start()
 
+        def _start_stir_detector():
+            def _stir_worker():
+                while True:
+                    sleep(0.1)
+
+                    if _classify({"model": "stirring", "label": "not_stirring"}):
+                        while _poll_timer("stir_detector"):
+                            sleep(0.1)
+                            if _classify(
+                                {"model": "stirring", "label": "not_stirring"}
+                            ):
+                                self.error_message = "Pan has not been stirred for 10 seconds"
+                            else:
+                                logger.info("Stirring detected again")
+                                self.error_message = ""
+                                break
+                    else:
+                        _start_timer({"name": "stir_detector", "duration": 10})
+
+            Thread(target=_stir_worker, daemon=True).start()
+
+        def _start_boilover_detector():
+            def _boilover_worker():
+                while True:
+                    sleep(0.1)
+                    try:
+                        servo_setpoint = self.latest_meta["attributes"][
+                            "servo_setpoint"
+                        ]
+                    except KeyError:
+                        pass
+                    else:
+                        if _classify({"model": "boilover", "label": "boilover"}):
+                            logger.info("Boilover event detected")
+                            while True:
+                                sleep(0.1)
+                                if _classify(
+                                    {"model": "boilover", "label": "boilover"}
+                                ):
+                                    _set_hob_off()
+                                    self.error_message = "Pan is boiling over"
+                                else:
+                                    logger.info("Pan no longer boiling over")
+                                    self.error_message = ""
+                                    new_setpoint = float(servo_setpoint) * 0.9
+                                    _set_fixed_setpoint({"value": new_setpoint})
+                                    sleep(5)
+                                    break
+
+            Thread(target=_boilover_worker, daemon=True).start()
+
         # Import recipe from file
         with open("recipes.py", "r") as file:
             data = file.read().replace("\n", "")
