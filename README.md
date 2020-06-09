@@ -9,7 +9,7 @@ An assistive stove-top cooking device with machine vision - for domestic automat
     <img src="https://www.raspberrypi.org/wp-content/uploads/2011/10/Raspi-PGB001.png" height="100"/>
     <img src="https://www.nasuni.com/wp-content/uploads/2019/10/googleCloudPartner.png" height="100"/>
     <img src="https://miro.medium.com/max/400/0*xNxZokzztcgpPueM.png" height="100"/>
-    <img src="https://www.mouser.com/images/suppliers/logos/google-coral.png" height="100"/>
+    <img src="https://user-images.githubusercontent.com/32883278/84203339-32fb2d80-aaa1-11ea-843e-f7f69da66e53.png" height="100"/>
 </p>
 
 
