@@ -7,7 +7,7 @@ A streamlined data collection, labelling and training platform for cooking data.
 <p float="left">
     <img src="https://www.raspberrypi.org/wp-content/uploads/2011/10/Raspi-PGB001.png" height="100"/>
     <img src="https://www.nasuni.com/wp-content/uploads/2019/10/googleCloudPartner.png" height="100"/>
-    <img src="https://github.com/bencobley/onionbot/blob/master/img/automl.png" height="100"/>
+    <img src="https://miro.medium.com/max/400/0*xNxZokzztcgpPueM.png" height="100"/>
 </p>
 
 
