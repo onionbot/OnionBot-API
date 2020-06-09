@@ -26,6 +26,8 @@ DEADBAND_THRESHOLD = 2.5
 
 
 class Control(object):
+    """Wrapper for PID module, manage control data structures for `main.py`"""
+
     def __init__(self):
 
         logger.info("Initialising control script...")

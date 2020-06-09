@@ -33,6 +33,8 @@ control = Control()
 
 
 class OnionBot(object):
+    """Main OnionBot script"""
+
     def __init__(self):
 
         self.quit_event = Event()

@@ -10,6 +10,8 @@ logger = logging.getLogger(__name__)
 
 
 class Camera(object):
+    """Control the camera using the Picamera module (threaded)"""
+
     def __init__(self):
         self.file_queue = JoinableQueue(1)
 

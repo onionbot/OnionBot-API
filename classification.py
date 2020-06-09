@@ -16,7 +16,7 @@ classifiers = Classifiers()
 
 
 class Classify(object):
-    """Save image to file"""
+    """Classify images with TensorFlow and the Coral Edge TPU (threaded)"""
 
     def __init__(self):
 

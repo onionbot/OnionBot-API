@@ -16,6 +16,7 @@ BUCKET = cloud.bucket
 
 class Data:
     def __init__(self):
+        """Manage data structures and metadata for API"""
 
         logger.info("Initialising data management...")
 

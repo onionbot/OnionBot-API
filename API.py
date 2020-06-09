@@ -1,11 +1,11 @@
+import os
+import sys
+
 from flask import Flask
 from flask import request
 from flask_cors import CORS
 
 from main import OnionBot
-
-import os
-import sys
 
 import logging
 
@@ -24,7 +24,7 @@ CORS(app)
 
 @app.route("/", methods=["GET", "POST"])
 def index():
-    """Index is run automatically on init by flask"""
+    """Access the OnionBot portal over the local network"""
 
     if request.form["action"] == "start":
         logger.debug("start called")

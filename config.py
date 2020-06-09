@@ -4,6 +4,8 @@ FILE = "/home/pi/onionbot/config.json"
 
 
 class Settings(object):
+    """Interface with the `config.json` settings dictionary"""
+
     def get_setting(self, key):
 
         with open(FILE) as json_data_file:
@@ -35,6 +37,8 @@ class Settings(object):
 
 
 class Labels(object):
+    """Interface with the `config.json` labels dictionary"""
+
     def get_labels(self):
 
         with open(FILE) as json_data_file:
@@ -44,6 +48,8 @@ class Labels(object):
 
 
 class Classifiers(object):
+    """Interface with the `config.json` classifiers dictionary"""
+
     def get_classifiers(self):
 
         with open(FILE) as json_data_file:

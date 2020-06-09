@@ -14,7 +14,7 @@ PATH = path.dirname(__file__)
 
 
 class Cloud(object):
-    """Save image to file"""
+    """Upload images to Google Cloud storage buckets (threaded)"""
 
     def __init__(self):
 
