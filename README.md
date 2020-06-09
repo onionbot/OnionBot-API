@@ -1,6 +1,3 @@
-[![](http://img.youtube.com/vi/poE4O6JZY0E/0.jpg)](http://www.youtube.com/watch?v=poE4O6JZY0E "OnionBot Video Demonstration")
-[Watch on YouTube](https://youtu.be/poE4O6JZY0E)
-
 # OnionBot | An open source collaborative cooking robot 
 An assistive stove-top cooking device with machine vision - for domestic automation research
 [See it in action](https://youtu.be/poE4O6JZY0E)
@@ -29,6 +26,9 @@ Script will run on boot. Otherwise SSH into Pi
 3. `pip install Adafruit-Blinka`
 4. [Tensorflow install guide](https://www.tensorflow.org/lite/models/image_classification/overview)
 5. [Servo driver install](http://parallax.com/product/900-00008)
+
+### 3D Files
+Visit [3d_files folder](https://github.com/bencobley/onionbot/tree/master/3d_files) to view 3D stls.
 
 ### System structure
 ![Screenshot 2020-06-09 at 21 40 54](https://user-images.githubusercontent.com/32883278/84198237-270c6d00-aa9b-11ea-9481-0a2cd971f2a7.png)
@@ -65,5 +65,4 @@ Script will run on boot. Otherwise SSH into Pi
 
 `thermal_camera.py` Wrapper for the Adafruit MLX90640 thermal camera module (threaded)
 
-### 3D Files
-Visit [3d_files folder](https://github.com/bencobley/onionbot/tree/master/3d_files) to view 3D stls. 
+
