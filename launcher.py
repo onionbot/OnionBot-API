@@ -5,6 +5,8 @@ from requests import post
 import logging
 import socket
 
+"""Launch OnionBot software from the big red button"""
+
 FORMAT = "       %(levelname)-8s %(name)s %(process)d %(message)s"
 logging.basicConfig(format=FORMAT, level=logging.INFO)
 logger = logging.getLogger("launcher")

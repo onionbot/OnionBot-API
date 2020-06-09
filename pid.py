@@ -1,4 +1,4 @@
-# Adaptation of simple_pid controller
+# Adaptation of https://pypi.org/project/simple-pid/ simple_pid controller
 
 import time
 import warnings

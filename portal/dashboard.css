@@ -3,7 +3,7 @@ html, body {
     height: 100%;
     overflow: hidden;
     font-size: 1rem;
-
+    font-family: 'Roboto', sans-serif;
 }
 
 body {
@@ -173,3 +173,65 @@ label {
 
 .border-top { border-top: 1px solid #e5e5e5; }
 .border-bottom { border-bottom: 1px solid #e5e5e5; }
+
+
+.touchscreen-nav {
+  color: #bbb;
+}
+
+.touchscreen-nav h1{
+  font-size: 18px;
+}
+
+.touchscreen-feather {
+  width: 50px;
+  height: 50px;
+  color: #ddd;
+}
+
+.fit {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+/*#previous-instruction{
+  color: #aaa;
+}
+
+#current-instruction{
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+#next-instruction {
+  color: #aaa;
+
+}*/
+
+.fade-box {
+  height: 80px; 
+  position: relative;
+  overflow: hidden;
+  color: gray;
+}
+
+#top_fade {
+  width: 800px;
+  height:50px;
+  /*max-height: 80% !important;*/
+  z-index: 99;
+  position: absolute;
+  top: 0px;
+  background: url("top-fade.png") top center no-repeat;
+}
+
+#bottom_fade {
+  width: 800px;
+  height:50px;
+  /*max-height: 80% !important;*/
+  z-index: 99;
+  position: absolute;
+  bottom: 0px;
+  background: url("bottom-fade.png") bottom center no-repeat;
+}
+

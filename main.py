@@ -7,7 +7,7 @@ from cloud import Cloud
 from classification import Classify
 from control import Control
 from data import Data
-from config import Config
+from config import Settings, Labels
 
 from datetime import datetime
 from json import dumps
@@ -17,42 +17,47 @@ import logging
 for handler in logging.root.handlers[:]:
     logging.root.removeHandler(handler)
 
+# Initialise custom logging format
 FORMAT = "%(relativeCreated)6d %(levelname)-8s %(name)s %(process)d %(message)s"
 logging.basicConfig(format=FORMAT, level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-config = Config()
-cloud = Cloud()
-thermal = ThermalCamera()
+settings = Settings()
+labels = Labels()
 camera = Camera()
-control = Control()
-data = Data()
+thermal = ThermalCamera()
+cloud = Cloud()
 classify = Classify()
+data = Data()
+control = Control()
 
 
 class OnionBot(object):
+    """Main OnionBot script"""
+
     def __init__(self):
 
         self.quit_event = Event()
 
         # Launch multiprocessing threads
-        logger.info("Launching worker threads")
+        logger.info("Launching worker threads...")
         camera.launch()
         thermal.launch()
-        control.launch()
         cloud.launch_camera()
         cloud.launch_thermal()
         classify.launch()
+        control.launch()
 
         self.latest_meta = " "
         self.session_ID = None
         self.label = None
 
+        logger.info("OnionBot is ready")
+
     def run(self):
         """Start logging"""
 
         def _worker():
-            """Threaded to run capture loop in background while allowing other processes to continue"""
 
             measurement_ID = 0
             file_data = None
@@ -82,7 +87,7 @@ class OnionBot(object):
                     file_data=queued_file_data,
                     thermal_data=thermal.data,
                     control_data=control.data,
-                    classification_data=classify.data,
+                    classification_data=classify.database,
                 )
 
                 # Start sensor capture
@@ -96,18 +101,10 @@ class OnionBot(object):
                     cloud.start_thermal(file_data["thermal_file"])
                     classify.start(file_data["camera_file"])
 
-                    # inference.start(previous_meta)
-
                     # Wait for all meantime processes to finish
-
                     cloud.join_camera()
                     cloud.join_thermal()
                     classify.join()
-
-                    # if not cloud.join():
-                    #     meta["attributes"]["camera_filepath"] = "placeholder.png"
-                    #     meta["attributes"]["thermal_filepath"] = "placeholder.png"
-                    # inference.join()
 
                     # Push meta information to file level for API access
                     self.labels_csv_filepath = file_data["label_file"]
@@ -141,13 +138,13 @@ class OnionBot(object):
                 meta = queued_meta
 
                 # Add delay until ready for next loop
-                frame_interval = float(config.get_config("frame_interval"))
+                frame_interval = float(settings.get_setting("frame_interval"))
                 while True:
                     if (datetime.now() - timer).total_seconds() > frame_interval:
                         break
                     elif self.quit_event.is_set():
                         break
-                    sleep(0.1)
+                    sleep(0.01)
 
                 # Check quit flag
                 if self.quit_event.is_set():
@@ -155,19 +152,21 @@ class OnionBot(object):
                     break
 
         # Start thread
+        logger.info("Starting main script")
         self.thread = Thread(target=_worker, daemon=True)
         self.thread.start()
 
     def start(self, session_ID):
         data.start_session(session_ID)
         self.session_ID = session_ID
-        return "1"
 
     def stop(self):
         """Stop logging"""
         self.session_ID = None
         labels = self.labels_csv_filepath
-        cloud.start_camera(labels)
+        cloud.start_camera(
+            labels
+        )  # Use cloud uploader camera thread to upload label file
         cloud.join_camera()
         return cloud.get_public_path(labels)
 
@@ -179,109 +178,79 @@ class OnionBot(object):
         """Returns last 300 temperature readings"""
         return self.thermal_history
 
-    def get_chosen_labels(self):
-        """Returns options for labels selected from `all_labels` in new session process"""
-        # (Placeholder) TODO: Update to return list of labels that adapts to selected dropdown
-        return '[{"ID":"0","label":"discard"},{"ID":"1","label":"water_boiling"},{"ID":"2","label":"water_not_boiling"}]'
-
-    def set_chosen_labels(self, string):
-        """Returns options for labels selected from `all_labels` in new session process"""
-        self.chosen_labels = string
-        return "1"
-
     def set_label(self, string):
-        """Command to change current active label -  for building training datasets"""
+        """Command to change current label -  for building training datasets"""
         self.label = string
-        return "1"
 
     def set_no_label(self):
-        """Command to set active label to None type"""
+        """Command to set label to None type"""
         self.label = None
-        return "1"
 
-    # def set_active_model(self, string):
-    #     """Command to change current active model for predictions"""
-
-    #     if string == "tflite_water_boiling_1":
-    #         self.camera_classifier = Classify(
-    #             labels="models/tflite-boiling_water_1_20200111094256-2020-01-11T11_51_24.886Z_dict.txt",
-    #             model="models/tflite-boiling_water_1_20200111094256-2020-01-11T11_51_24.886Z_model.tflite",
-    #         )
-    #         self.thermal_classifier = Classify(
-    #             labels="models/tflite-boiling_1_thermal_20200111031542-2020-01-11T18_45_13.068Z_dict.txt",
-    #             model="models/tflite-boiling_1_thermal_20200111031542-2020-01-11T18_45_13.068Z_model.tflite",
-    #         )
-    #         self.active_model = string
-
-    #     return "1"
+    def set_classifiers(self, string):
+        """Command to change current classifier for predictions"""
+        classify.set_classifiers(string)
 
     def set_fixed_setpoint(self, value):
         """Command to change fixed setpoint"""
         control.update_fixed_setpoint(value)
-        return "1"
 
     def set_temperature_target(self, value):
         """Command to change temperature target"""
         control.update_temperature_target(value)
-        return "1"
 
     def set_temperature_hold(self):
         """Command to hold current temperature"""
         control.hold_temperature()
-        return "1"
 
     def set_hob_off(self):
         """Command to turn hob off"""
         control.hob_off()
-        return "1"
 
     def set_frame_interval(self, value):
-        """Command to change camera targe refresh rate"""
-        config.set_config("frame_interval", value)
-        return "1"
+        """Command to change camera target refresh rate"""
+        settings.set_setting("frame_interval", value)
 
     def get_all_labels(self):
         """Returns available image labels for training"""
-        # data = '[{"ID":"0","label":"discard,water_boiling,water_not_boiling"},{"ID":"1","label":"discard,onions_cooked,onions_not_cooked"}]'
-        labels = dumps(data.generate_labels())
-        return labels
+        return labels.get_labels()
 
-    def get_all_models(self):
+    def get_all_classifiers(self):
         """Returns available models for prediction"""
-        data = '[{"ID":"0","label":"tflite_water_boiling_1"}]'
-        return data
+        return classify.get_classifiers()
 
     def set_pid_enabled(self, enabled):
+        """Command to start PID controller"""
         control.set_pid_enabled(enabled)
-        return "1"
 
     def set_p_coefficient(self, coefficient):
+        """Command to set PID P coeffient"""
         control.set_p_coefficient(coefficient)
-        return "1"
 
     def set_i_coefficient(self, coefficient):
+        """Command to set PID I coeffient"""
         control.set_i_coefficient(coefficient)
-        return "1"
 
     def set_d_coefficient(self, coefficient):
+        """Command to set PID D coeffient"""
         control.set_d_coefficient(coefficient)
-        return "1"
 
     def set_pid_reset(self):
+        """Command to reset PID components to 0 (not to be confused with coefficients)"""
         control.set_pid_reset()
-        return "1"
 
     def quit(self):
         logger.info("Raising exit flag")
         self.quit_event.set()
         self.thread.join()
         logger.info("Main module quit")
+        control.quit()
+        logger.info("Control module quit")
         camera.quit()
         logger.info("Camera module quit")
         thermal.quit()
         logger.info("Thermal module quit")
         cloud.quit()
         logger.info("Cloud module quit")
-        control.quit()
-        logger.info("Control module quit")
+        classify.quit()
+        logger.info("Classifier module quit")
         logger.info("Quit process complete")

@@ -1,29 +1,58 @@
-import json
+from json import dumps, dump, load
 
 FILE = "/home/pi/onionbot/config.json"
 
 
-class Config(object):
-    def get_config(self, key):
+class Settings(object):
+    """Interface with the `config.json` settings dictionary"""
+
+    def get_setting(self, key):
 
         with open(FILE) as json_data_file:
-            config = json.load(json_data_file)
+            config = load(json_data_file)
+
+            settings = config["settings"]
+
             try:
-                return config[key]
+                return settings[key]
             except KeyError:
-                raise KeyError("Config key not found")
+                raise KeyError("Settings key not found")
 
-    def set_config(self, key, value):
+    def set_setting(self, key, value):
 
         with open(FILE) as json_data_file:
-            config = json.load(json_data_file)
+            config = load(json_data_file)
 
-            if key in config:
-                config[key] = value
+            settings = config["settings"]
 
-                # Close file then dump new version of config
-                json_data_file.close()
-                with open(FILE, "w") as outfile:
-                    json.dump(config, outfile)
-            else:
-                raise KeyError("Config key not found")
+        if key in settings:
+            settings[key] = value
+            config["settings"] = settings
+
+            # dump new version of config
+            with open(FILE, "w") as outfile:
+                dump(config, outfile, indent=4)
+        else:
+            raise KeyError("Settings key not found")
+
+
+class Labels(object):
+    """Interface with the `config.json` labels dictionary"""
+
+    def get_labels(self):
+
+        with open(FILE) as json_data_file:
+            config = load(json_data_file)
+            labels = config["labels"]
+            return dumps(labels)
+
+
+class Classifiers(object):
+    """Interface with the `config.json` classifiers dictionary"""
+
+    def get_classifiers(self):
+
+        with open(FILE) as json_data_file:
+            config = load(json_data_file)
+            classifiers = config["classifiers"]
+            return classifiers

@@ -1,7 +1,7 @@
 from threading import Thread, Event
 from collections import deque
 
-from config import Config
+from config import Settings
 from pid import PID
 from knob import Knob
 
@@ -9,26 +9,28 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-config = Config()
+config = Settings()
 pid = PID(
-    Kp=config.get_config("Kp"),
-    Ki=config.get_config("Ki"),
-    Kd=config.get_config("Kd"),
-    sample_time=config.get_config("sample_time"),
-    output_limits=(0, config.get_config("output_limit")),
+    Kp=config.get_setting("Kp"),
+    Ki=config.get_setting("Ki"),
+    Kd=config.get_setting("Kd"),
+    sample_time=config.get_setting("sample_time"),
+    output_limits=(0, config.get_setting("output_limit")),
     is_enabled=False,
     proportional_on_measurement=True,
 )
 knob = Knob()
 
 
-DEADBAND_THRESHOLD = 0
+DEADBAND_THRESHOLD = 2.5
 
 
 class Control(object):
+    """Wrapper for PID module, manage control data structures for `main.py`"""
+
     def __init__(self):
 
-        logger.info("Initialising control script")
+        logger.info("Initialising control script...")
 
         self.quit_event = Event()
 
@@ -69,7 +71,7 @@ class Control(object):
                 target_setpoint = self.fixed_setpoint
 
             delta = abs(target_setpoint - current_setpoint)
-            logger.debug("Servo setpoint delta: {:.1f}".format(delta))
+            # logger.debug("Servo setpoint delta: {:.1f}".format(delta))
 
             if delta >= DEADBAND_THRESHOLD:
                 knob.update_setpoint(target_setpoint)
@@ -101,7 +103,9 @@ class Control(object):
 
     def hold_temperature(self):
         setpoint = str(self.temperature)
-        logger.debug("Updating self.temperature_target to hold at %s degrees " % (setpoint))
+        logger.debug(
+            "Updating self.temperature_target to hold at %s degrees " % (setpoint)
+        )
         self.temperature_target = float(setpoint)
         self.set_pid_enabled(True)
         self.fixed_setpoint = None
@@ -111,17 +115,17 @@ class Control(object):
 
     def set_p_coefficient(self, Kp):
         Kp = float(Kp)
-        config.set_config("Kp", Kp)
+        config.set_setting("Kp", Kp)
         pid.set_coefficients(Kp, None, None)
 
     def set_i_coefficient(self, Ki):
         Ki = float(Ki)
-        config.set_config("Ki", Ki)
+        config.set_setting("Ki", Ki)
         pid.set_coefficients(None, Ki, None)
 
     def set_d_coefficient(self, Kd):
         Kd = float(Kd)
-        config.set_config("Kd", Kd)
+        config.set_setting("Kd", Kd)
         pid.set_coefficients(None, None, Kd)
 
     def set_pid_reset(self):

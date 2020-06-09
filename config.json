@@ -1,1 +1,81 @@
-{"frame_interval": "10", "Kp": 1.5, "Ki": 0.03, "Kd": 0.0, "sample_time": 0.01, "output_limit": 75}
+{
+    "settings": {
+        "frame_interval": "0",
+        "Kp": 1.5,
+        "Ki": 0.03,
+        "Kd": 0.0,
+        "sample_time": 0.01,
+        "output_limit": 75
+    },
+    "labels": {
+        "type": "labels",
+        "attributes": {
+            "pan_on_off": {
+                "0": "pan_on",
+                "1": "pan_off"
+            },
+            "pasta": {
+                "0": "empty_pan",
+                "1": "add_water",
+                "2": "water_boiling",
+                "3": "add_pasta"
+            },
+            "sauce": {
+                "0": "empty_pan",
+                "1": "add_oil",
+                "2": "add_onions",
+                "3": "onions_cooked",
+                "4": "add_puree",
+                "5": "add_tomatoes"
+            }
+        }
+    },
+    "classifiers": {
+        "pasta": {
+            "model": "models/pasta.tflite",
+            "labels": "models/pasta.txt",
+            "thresholds": {
+                "add_pasta": 0.5,
+                "empty_pan": 0.5,
+                "water_boiling": 0.5,
+                "add_water": 0.5
+            }
+        },
+        "sauce": {
+            "model": "models/sauce.tflite",
+            "labels": "models/sauce.txt",
+            "thresholds": {
+                "add_onions" : 0.5,
+                "add_tomatoes" : 0.5,
+                "add_oil" : 0.5,
+                "empty_pan" : 0.5,
+                "onions_cooked" : 0.7,
+                "add_puree" : 0.5
+            }
+        },
+        "pan_on_off": {
+            "model": "models/pan_on_off.tflite",
+            "labels": "models/pan_on_off.txt",
+            "thresholds": {
+                "pan_off" : 0.5,
+                "pan_on" : 0.5
+            }
+        },
+        "boilover": {
+            "model": "models/boilover.tflite",
+            "labels": "models/boilover.txt",
+            "thresholds": {
+                "not_boiling_over" : 0.5,
+                "boiling_over" : 0.5
+            }
+        },
+        "stirring": {
+            "model": "models/stirring.tflite",
+            "labels": "models/stirring.txt",
+            "thresholds": {
+                "stirring" : 0.5,
+                "not_stirring" : 0.5
+            }
+        }
+    }
+}

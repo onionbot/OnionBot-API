@@ -7,6 +7,7 @@
 // -------------------------------------------------------
 // ---------------- APPLICATION VARIABLES ----------------
 
+
 var endpoint_url = 'http://192.168.0.1:5000/'
 if (!localStorage.ip_address) {
     $('#IPmodal').modal('show');
@@ -35,6 +36,21 @@ if (filename == "labelling.html") {
         return '<span class="badge badge-light" style="font-size: 17px;">' + value + '</span>'
     }
 }
+
+if (filename == "inference.html") {
+    $('#inference-table').bootstrapTable({
+        data: [],
+        formatNoMatches: function() {
+            return 'Ready to start inference';
+        }
+    });
+
+    function badgeFormatter(value) {
+        return '<span class="badge badge-light" style="font-size: 17px;">' + value + '</span>'
+    }
+}
+
+
 
 // ------------------ INTERFACE WITH API ----------------
 
@@ -69,9 +85,11 @@ function get(function_name, callback) {
 
 function update() {
 
+    $('#ip-address-output').html(localStorage.ip_address);
+    // fitty.fitAll()
+
     get("get_latest_meta", function(data) {
         // data is a js object 
-
         connection_success()
 
         // Only refresh when new data
@@ -95,6 +113,24 @@ function update() {
                 $('#label-table').bootstrapTable('load', table_data);
             }
 
+            if (meta.attributes.classification_data && filename == "inference.html") {
+                console.log(meta.attributes.classification_data)
+                let table_data = []
+                for (let [model, attributes] of Object.entries(meta.attributes.classification_data)) {
+                    for (let [label, results] of Object.entries(attributes)) {
+                        table_data.push({
+                            "model": model,
+                            "result": label,
+                            "confidence": results.confidence,
+                            "moving_confidence": results.average,
+                            "threshold": results.threshold,
+                            "boolean": results.boolean
+                        });
+                    };
+                }
+                $('#inference-table').bootstrapTable('load', table_data);
+            }
+
             // Update key information
             $('#session-id-output').html(meta.attributes.session_ID);
             $('#measurement-id').html(meta.attributes.measurement_ID);
@@ -104,6 +140,7 @@ function update() {
             } else {
                 $('#label').html("None");
             }
+
 
             // Load new images
             $('#camera-image').attr("src", meta.attributes.camera_filepath);
@@ -152,11 +189,11 @@ function update() {
 
 function connection_success() {
     $("#not-connected").hide();
-    $("#connected").show();
+    $('#recipe-control-buttons').show();
     if (connected == false) {
         // Refresh data on first reconnect
         get_all_labels()
-        get_all_models()
+        get_all_classifiers()
         connected = true
     }
 
@@ -181,7 +218,7 @@ $(document).ready(function() {
     $("#stop").hide();
 
     get_all_labels()
-    get_all_models()
+    get_all_classifiers()
 
     // Refresh page
     setInterval(update, update_interval);
@@ -235,22 +272,24 @@ function get_all_labels() {
     });
 }
 
-function get_all_models() {
-    get("get_all_models", function(data) {
+function get_all_classifiers() {
+    get("get_all_classifiers", function(data) {
         // data is a js object 
 
-        let dropdown = $('#select-model');
+        console.log(data)
+
+        let dropdown = $('#select-classifiers');
 
         dropdown.empty();
 
-        dropdown.append('<option selected="true" disabled>Select model</option>');
+        dropdown.append('<option selected="true" disabled>Select from list</option>');
         dropdown.prop('selectedIndex', 0);
 
         // Populate dropdown
         var dataJSON = JSON.parse(data);
 
-        $.each(dataJSON, function(key, entry) {
-            dropdown.append($('<option></option>').attr('value', entry.label).text(entry.label));
+        $.each(dataJSON, function(key) {
+            dropdown.append($('<option></option>').attr('value', key).text(key));
         });
     });
 }
@@ -384,8 +423,8 @@ $(document).ready(function() {
 
     // Live inference
 
-    $('#select-model-button').on('click', function() {
-        set('set_active_model', $('#select-model').val());
+    $('#select-classifiers-button').on('click', function() {
+        set('set_classifiers', $('#select-classifiers').val());
     });
 
 });

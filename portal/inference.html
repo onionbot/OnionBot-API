@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.16.0/dist/bootstrap-table.min.css">
     <link href='https://fonts.googleapis.com/css?family=Roboto Mono' rel='stylesheet'>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
     <link href="dashboard.css" rel="stylesheet">
   </head>
   <body>
@@ -49,7 +50,7 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="/portal/souschef.html">
+                <a class="nav-link" href="/portal/index.html">
                   <span data-feather="chevrons-right"></span>
                   Sous Chef
                 </a>
@@ -132,10 +133,9 @@
               <div class="row">
                 <div class="col">
                   <div class="row justify-content-between pl-3 pr-3">
-                    <label>Select models</label>
-                    <select id="select-models" class="custom-select" style="width: 300px"><option selected="true" disabled>Select from group</option></select>
-                    <button id="select-models-button" type="button" class="btn btn-outline-secondary supplementary-button"><span data-feather="play-circle"></span>&nbsp;&nbsp;Start</button>
-                    <button id="stop-inference" type="button" class="btn btn-outline-danger supplementary-button d-none"><span data-feather="stop-circle"></span>&nbsp;&nbsp;Stop</button>
+                    <label>Select classifier</label>
+                    <select id="select-classifiers" class="custom-select" style="width: 300px"><option selected="true" disabled>Select from list</option></select>
+                    <button id="select-classifiers-button" type="button" class="btn btn-outline-secondary supplementary-button"><span data-feather="check"></span>&nbsp;&nbsp;Submit</button>
                   </div>
                 </div>
                 <div class="col">&nbsp;
@@ -144,14 +144,15 @@
               <div class="row mt-3">
                 <div class="col">
                   <label>Inference results</label>
-                  <table id="table">
+                  <table id="inference-table">
                     <thead>
                       <tr>
-                        <th data-field="model">Model</th>
-                        <th data-field="result" data-formatter="badgeFormatter"><span data-feather="cpu"></span>&nbsp;&nbsp;Result</th>
-                        <th data-field="probability">Probability</th>
-                        <th data-field="result" data-formatter="badgeFormatter"><span data-feather="cpu"></span>&nbsp;&nbsp;Rolling result</th>
-                        <th data-field="probability">Rolling probability</th>
+                        <th data-field="model" data-sortable="true">Model</th>
+                        <th data-field="result" data-sortable="true" data-formatter="badgeFormatter"><span data-feather="cpu"></span>&nbsp;&nbsp;Result</th>
+                        <th data-field="confidence" data-sortable="true">Confidence</th>
+                        <th data-field="moving_confidence" data-sortable="true">Average</th>
+                        <th data-field="threshold" data-sortable="true">Threshold</th>
+                        <th data-field="boolean" data-sortable="true">Boolean</th>
                       </tr>
                     </thead>
                   </table>
