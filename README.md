@@ -1,4 +1,5 @@
 [![](http://img.youtube.com/vi/poE4O6JZY0E/0.jpg)](http://www.youtube.com/watch?v=poE4O6JZY0E "OnionBot Video Demonstration")
+[Watch on YouTube](https://youtu.be/poE4O6JZY0E)
 
 # OnionBot | An open source collaborative cooking robot 
 An assistive stove-top cooking device with machine vision - for domestic automation research
@@ -64,5 +65,5 @@ Script will run on boot. Otherwise SSH into Pi
 
 `thermal_camera.py` Wrapper for the Adafruit MLX90640 thermal camera module (threaded)
 
-### System structure
+### 3D Files
 Visit [3d_files folder](https://github.com/bencobley/onionbot/tree/master/3d_files) to view 3D stls. 
