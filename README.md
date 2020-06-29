@@ -1,5 +1,4 @@
-![hardware](https://user-images.githubusercontent.com/32883278/84203188-eb74a180-aaa0-11ea-9f77-fd6a6f6a2b2e.png)
-
+![hardware](https://user-images.githubusercontent.com/32883278/85966401-91883d00-b9b7-11ea-88c1-4c76d83ab26e.png)
 
 # OnionBot | An open source collaborative cooking robot 
 An assistive stove-top cooking device with machine vision - for domestic automation research
@@ -20,6 +19,8 @@ Script will run on boot. Otherwise SSH into Pi
 3. `. runonion`
 
 ### To connect to the web portal
+![labelling](https://user-images.githubusercontent.com/32883278/85966412-9cdb6880-b9b7-11ea-9306-bfe3712407bd.png)
+
 1. Start your local web server of choice (we use Apache)
 2. Point the server to `onionbot/portal`
 3. Start cooking! 
@@ -32,6 +33,8 @@ Script will run on boot. Otherwise SSH into Pi
 5. [Servo driver install](http://parallax.com/product/900-00008)
 
 ### 3D Files
+![crosssection](https://user-images.githubusercontent.com/32883278/85966366-74ec0500-b9b7-11ea-9172-a9a3ca8de29f.png)
+
 Visit [3d_files folder](https://github.com/bencobley/onionbot/tree/master/3d_files) to view 3D stls.
 
 ### System structure
