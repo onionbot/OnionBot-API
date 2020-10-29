@@ -1,8 +1,12 @@
-![hardware](https://user-images.githubusercontent.com/32883278/85966401-91883d00-b9b7-11ea-88c1-4c76d83ab26e.png)
+![Header](https://user-images.githubusercontent.com/32883278/97621285-a4208a80-1a1a-11eb-8b7f-90141d867982.png)
 
-# OnionBot | An open source collaborative cooking robot 
-An assistive stove-top cooking device with machine vision - for domestic automation research
-[See it in action](https://youtu.be/poE4O6JZY0E)
+# OnionBot | Python API
+*A collaborative computational cooking robot built with Raspberry Pi*
+
+Python API integrating sensors, actuators and interfaces
+
+[See it in action on YouTube](https://youtu.be/poE4O6JZY0E) | [Read the full project story on DesignSpark]https://www.rs-online.com/designspark/student-innovation-onionbot-building-a-robot-sous-chef
+
 
 <p float="left">
     <img src="https://www.raspberrypi.org/wp-content/uploads/2011/10/Raspi-PGB001.png" height="100"/>
@@ -12,18 +16,9 @@ An assistive stove-top cooking device with machine vision - for domestic automat
 </p>
 
 
-### To start the API 
-Script will run on boot. Otherwise SSH into Pi 
-1. `ssh USER@YOUR_PI`
-2. `cd onionbot`
-3. `. runonion`
+### System
+![Hardware](https://user-images.githubusercontent.com/32883278/97621266-9ec34000-1a1a-11eb-82a4-4ef906dfa522.png)
 
-### To connect to the web portal
-![labelling](https://user-images.githubusercontent.com/32883278/85966412-9cdb6880-b9b7-11ea-9306-bfe3712407bd.png)
-
-1. Start your local web server of choice (we use Apache)
-2. Point the server to `onionbot/portal`
-3. Start cooking! 
 
 ### Dependencies
 1. `pip3 install pillow`
@@ -32,12 +27,10 @@ Script will run on boot. Otherwise SSH into Pi
 4. [Tensorflow install guide](https://www.tensorflow.org/lite/models/image_classification/overview)
 5. [Servo driver install](http://parallax.com/product/900-00008)
 
-### 3D Files
-![crosssection](https://user-images.githubusercontent.com/32883278/85966366-74ec0500-b9b7-11ea-9172-a9a3ca8de29f.png)
+Use `runonion` to start the API
 
-Visit [3d_files folder](https://github.com/bencobley/onionbot/tree/master/3d_files) to view 3D stls.
 
-### System structure
+### API structure
 ![Screenshot 2020-06-09 at 21 40 54](https://user-images.githubusercontent.com/32883278/84198237-270c6d00-aa9b-11ea-9481-0a2cd971f2a7.png)
 
 `API.py` Access the OnionBot portal over the local network
