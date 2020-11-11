@@ -71,7 +71,7 @@ The problem: kitchens pose very different design engineering challenges to produ
 5. [Servo driver install](http://parallax.com/product/900-00008)
 
 
-### The OnionBot idea was developed through a research project
+### The OnionBot idea was developed through a research project at Imperial College London
 
 Check out the paper for technical details in much more depth!
 
