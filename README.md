@@ -83,6 +83,3 @@ Check out the paper for technical details in much more depth!
 ### Interested in building a cooking automation robot?
 
 Get in touch! 
-
-
-
