@@ -4,7 +4,6 @@
 
 <p float="left">
     <img src="https://www.raspberrypi.org/wp-content/uploads/2011/10/Raspi-PGB001.png" height="100"/>
-    <img src="https://www.nasuni.com/wp-content/uploads/2019/10/googleCloudPartner.png" height="100"/>
     <img src="https://miro.medium.com/max/400/0*xNxZokzztcgpPueM.png" height="100"/>
     <img src="https://user-images.githubusercontent.com/32883278/84203339-32fb2d80-aaa1-11ea-843e-f7f69da66e53.png" height="50"/>
 </p>
@@ -13,8 +12,7 @@
 
 Python API integrating sensors, actuators and interfaces
 
-[See it in action on YouTube](https://youtu.be/W4utRCyo5C4) | 
-[Read more about the project on DesignSpark](https://www.rs-online.com/designspark/student-innovation-onionbot-building-a-robot-sous-chef)
+[See it in action on YouTube](https://youtu.be/W4utRCyo5C4)
 
 ### About 
 *How can we apply robotics to home cooking?*
